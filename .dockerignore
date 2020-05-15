@@ -1,0 +1,10 @@
+/settings/
+/bin/
+/build/
+/doc/
+/papers/
+.classpath
+.gitignore
+.project
+.README.md
+*Dockerfile*

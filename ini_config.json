@@ -1,0 +1,13 @@
+{
+	environments: {
+		development: {
+			brokerConnectionString: "amqp://localhost"
+		},
+		test: {
+			brokerConnectionString: "amqp://localhost"
+		},
+		production: {
+			brokerConnectionString: "amqp://localhost"
+		}
+	}
+}

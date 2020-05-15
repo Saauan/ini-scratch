@@ -1,0 +1,89 @@
+<project name="INI" default="build.parser">
+
+	<property name="javacCommand" value="javac" />
+
+	<!-- Directory definition -->
+
+	<property name="src" value="${basedir}/src" />
+	<property name="build" value="${basedir}/build" />
+	<property name="examples" value="${basedir}/examples" />
+	<property name="doc" value="${basedir}/doc" />
+
+	<!-- ================================== -->
+	<!--          GENERATE PARSER           -->
+	<!-- ================================== -->
+
+	<target name="build.parser">
+		<echo>Generating INI parser...</echo>
+		<echo message="compile classpath: ${compile_classpath}" />
+		<java classname="java_cup.Main" fork="true" failonerror="true" classpath="${compile_classpath}">
+			<arg value="-expect" />
+			<arg value="0" />
+			<arg value="-package" />
+			<arg value="ini.parser" />
+			<arg value="-parser" />
+			<arg value="IniParser" />
+			<arg value="src/main/java/ini/parser/ini.cup" />
+		</java>
+		<move file="IniParser.java" todir="src/main/java/ini/parser" overwrite="true">
+		</move>
+		<move file="sym.java" todir="src/main/java/ini/parser" overwrite="true">
+		</move>
+		<echo>Generating INI lexer...</echo>
+		<java classname="JFlex.Main" fork="true" failonerror="true" classpath="${compile_classpath}">
+			<arg value="src/main/java/ini/parser/ini.lex" />
+		</java>
+
+	</target>
+	
+	<!-- ================================== -->
+	<!--               CLEAN                -->
+	<!-- ================================== -->
+
+	<target name="clean">
+		<delete dir="${doc}/javadoc" />
+	</target>
+
+	<!-- ================================== -->
+	<!--               VERSION              -->
+	<!-- ================================== -->
+
+	<target name="release">
+		<zip destfile="ini-pre-alpha-1.zip">
+			<zipfileset dir="bin" prefix="bin"/>
+			<zipfileset dir="ini" prefix="ini"/>
+			<zipfileset dir="lib" prefix="lib" excludes="jetty.jar, servlet-api-2.5.jar"/>
+		    <fileset dir="." includes="README.md"/>
+		</zip>
+	</target>
+		
+	<!-- ================================== -->
+	<!--               WWW                  -->
+	<!-- ================================== -->
+	<property environment="env"/>
+
+	<target name="www">
+		<!--<javadoc sourcepath="${src}" destdir="${doc}/javadoc" encoding="UTF-8" linksource="false" use="true" version="true" author="true" windowtitle="INI">
+			<package name="ini" />
+		</javadoc>-->
+		<mkdir dir="${doc}/papers/ini_manual/web."/>
+		<exec executable="sh" dir="${doc}/papers/ini_manual" searchpath="true" vmlauncher="true">
+			<env key="PATH" path="${env.PATH}:/usr/texbin:/usr/local/bin"/>
+			<arg value="/usr/texbin/htlatex"/>
+			<arg value="ini_manual.tex"/>
+			<arg value="ini_manual"/>
+			<arg value=""/>
+			<arg value="'-dweb'"/>
+		</exec>
+		  <move todir="www/manual">
+		    <fileset dir="${doc}/papers/ini_manual/web."/>
+		  </move>
+		<copy todir="www/images">
+			<fileset dir="images">
+			    <exclude name="**/*.xcf"/>
+			</fileset>
+		</copy>
+		<copy file="${doc}/papers/ini_manual/ini_manual.pdf" todir="www/manual" />
+	</target>
+
+</project>
