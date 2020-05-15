@@ -24,7 +24,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <java.version>1.8</java.version>
         <spring-boot.version>2.2.2.RELEASE</spring-boot.version>
-        <start-class>ini.Main</start-class>
+        <start-class>ini.IniLanguage</start-class>
         <graal.version>19.2.1</graal.version>
 	</properties>
 	
@@ -69,7 +69,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ini.Main</mainClass>
+							<mainClass>ini.IniLanguage</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

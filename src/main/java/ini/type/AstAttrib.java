@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import ini.Main;
+import ini.IniLanguage;
 import ini.ast.ArrayAccess;
 import ini.ast.Assignment;
 import ini.ast.AstNode;
