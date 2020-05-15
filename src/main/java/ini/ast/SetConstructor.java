@@ -3,6 +3,8 @@ package ini.ast;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 import ini.parser.IniParser;
 
 public class SetConstructor extends NamedElement implements Expression {
@@ -43,5 +45,11 @@ public class SetConstructor extends NamedElement implements Expression {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitSetConstructor(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

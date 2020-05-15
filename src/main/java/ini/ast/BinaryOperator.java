@@ -4,6 +4,10 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.NodeInfo;
+
+@NodeInfo(description="An operator that takes two arguments")
 public class BinaryOperator extends AstElement implements Expression {
 
 	public enum Kind {
@@ -79,6 +83,12 @@ public class BinaryOperator extends AstElement implements Expression {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitBinaryOperator(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

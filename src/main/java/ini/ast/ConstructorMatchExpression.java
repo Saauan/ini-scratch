@@ -5,6 +5,8 @@ import ini.parser.IniParser;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class ConstructorMatchExpression extends NamedElement implements Expression {
 
 	public List<Expression> fieldMatchExpressions;
@@ -40,6 +42,12 @@ public class ConstructorMatchExpression extends NamedElement implements Expressi
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitConstructorMatchExpression(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -5,6 +5,8 @@ import ini.parser.IniParser;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class AtBinding extends NamedElement {
 
 	public String className;
@@ -28,6 +30,12 @@ public class AtBinding extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitAtBinding(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

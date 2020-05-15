@@ -2,7 +2,9 @@ package ini.ast;
 
 import java.io.PrintStream;
 
-import ini.Main;
+import com.oracle.truffle.api.frame.VirtualFrame;
+
+import ini.IniLanguage;
 //import ini.eval.data.TypeInfo;
 import ini.parser.IniParser;
 
@@ -62,6 +64,12 @@ public class NumberLiteral extends AstElement implements Expression {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitNumberLiteral(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

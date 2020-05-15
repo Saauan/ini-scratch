@@ -4,6 +4,8 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class Field extends NamedElement {
 
 	public Constructor constructor;
@@ -22,6 +24,12 @@ public class Field extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitField(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

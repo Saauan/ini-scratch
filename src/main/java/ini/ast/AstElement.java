@@ -7,10 +7,20 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.oracle.truffle.api.dsl.TypeSystemReference;
+import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.Node;
+import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
+
+import ini.IniTypes;
 import ini.parser.IniParser;
 import ini.type.Type;
+import ini.IniTypesGen;
 
-public abstract class AstElement implements AstNode {
+@TypeSystemReference(IniTypes.class)
+@NodeInfo(language = "INI", description = "The abstract base node for all expressions")
+public abstract class AstElement extends Node implements AstNode {
 
 	transient public IniParser parser;
 	transient public Token token;
@@ -19,6 +29,33 @@ public abstract class AstElement implements AstNode {
 	public String owner;
 	public List<Expression> annotations;
 
+	public abstract Object execute(VirtualFrame virtualFrame);
+	
+	public NumberLiteral executeNumberLiteral(VirtualFrame virtualFrame)
+			throws UnexpectedResultException{
+		return IniTypesGen.INI_TYPES.expectNumberLiteral(
+				this.execute(virtualFrame));
+	}
+	
+	public BooleanLiteral executeBooleanLiteral(VirtualFrame virtualFrame)
+			throws UnexpectedResultException{
+		return IniTypesGen.INI_TYPES.expectBooleanLiteral(
+				this.execute(virtualFrame));
+	}
+	
+	public CharLiteral executeCharLiteral(VirtualFrame virtualFrame)
+			throws UnexpectedResultException{
+		return IniTypesGen.INI_TYPES.expectCharLiteral(
+				this.execute(virtualFrame));
+	}
+	
+	public StringLiteral executeStringLiteral(VirtualFrame virtualFrame)
+			throws UnexpectedResultException{
+		return IniTypesGen.INI_TYPES.expectStringLiteral(
+				this.execute(virtualFrame));
+	}
+	
+	
 	@Override
 	public String getAnnotationStringValue(String... keys) {
 		if (annotations != null && !annotations.isEmpty()) {

@@ -2,6 +2,8 @@ package ini.ast;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 import ini.parser.IniParser;
 
 public class LTLPredicate extends NamedElement {
@@ -25,6 +27,12 @@ public class LTLPredicate extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitLTLPredicate(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

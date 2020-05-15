@@ -7,6 +7,8 @@ import ini.type.Type;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class Binding extends NamedElement {
 
 	public String className;
@@ -120,5 +122,10 @@ public class Binding extends NamedElement {
 	public void prettyPrint(PrintStream out) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

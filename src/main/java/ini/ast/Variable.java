@@ -4,6 +4,8 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class Variable extends NamedElement implements VariableAccess {
 
 	private boolean declaration = false;
@@ -36,6 +38,12 @@ public class Variable extends NamedElement implements VariableAccess {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitVariable(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

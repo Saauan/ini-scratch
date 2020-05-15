@@ -4,6 +4,8 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class StringLiteral extends AstElement implements Expression {
 
 	public String value;
@@ -27,5 +29,11 @@ public class StringLiteral extends AstElement implements Expression {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitStringLiteral(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

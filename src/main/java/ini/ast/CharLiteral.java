@@ -4,6 +4,10 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.NodeInfo;
+
+@NodeInfo(shortName="char")
 public class CharLiteral extends AstElement implements Expression {
 
 	public char value;
@@ -23,6 +27,12 @@ public class CharLiteral extends AstElement implements Expression {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitCharLiteral(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

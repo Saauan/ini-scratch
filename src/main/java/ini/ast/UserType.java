@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class UserType extends NamedElement {
 
 	// private static int index = 1;
@@ -66,6 +68,12 @@ public class UserType extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitUserType(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

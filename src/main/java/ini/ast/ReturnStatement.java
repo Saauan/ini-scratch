@@ -4,6 +4,8 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class ReturnStatement extends AstElement implements Statement {
 
 	public Expression expression;
@@ -26,6 +28,12 @@ public class ReturnStatement extends AstElement implements Statement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitReturnStatement(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

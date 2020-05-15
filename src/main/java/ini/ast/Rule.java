@@ -3,6 +3,8 @@ package ini.ast;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 import ini.parser.IniParser;
 
 public class Rule extends AstElement {
@@ -59,6 +61,12 @@ public class Rule extends AstElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitRule(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

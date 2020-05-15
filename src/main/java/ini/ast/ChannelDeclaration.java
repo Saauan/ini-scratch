@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 //import ini.broker.ChannelConfiguration;
 //import ini.eval.data.Data;
 //import ini.eval.data.RawData;
@@ -110,6 +112,12 @@ public class ChannelDeclaration extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitChannel(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -4,6 +4,8 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class UnaryOperator extends AstElement implements Expression, Statement {
 
 	public enum Kind {
@@ -64,6 +66,12 @@ public class UnaryOperator extends AstElement implements Expression, Statement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitUnaryOperator(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

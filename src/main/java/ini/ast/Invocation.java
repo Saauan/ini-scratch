@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 import ini.parser.IniParser;
 
 public class Invocation extends NamedElement implements Statement, Expression {
@@ -32,6 +34,12 @@ public class Invocation extends NamedElement implements Statement, Expression {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitInvocation(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

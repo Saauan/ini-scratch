@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class Constructor extends NamedElement {
 
 	private static int index = 1;
@@ -61,6 +63,12 @@ public class Constructor extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitConstructor(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

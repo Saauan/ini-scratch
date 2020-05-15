@@ -4,6 +4,8 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class SubArrayAccess extends AstElement {
 
 	public Expression targetExpression;
@@ -32,6 +34,12 @@ public class SubArrayAccess extends AstElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitSubArrayAccess(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

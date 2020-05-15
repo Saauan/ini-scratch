@@ -5,6 +5,8 @@ import ini.parser.IniParser;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class SetExpression extends AstElement implements Expression {
 
 	public List<Variable> variables;
@@ -32,6 +34,12 @@ public class SetExpression extends AstElement implements Expression {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitSetExpression(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

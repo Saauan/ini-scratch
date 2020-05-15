@@ -5,6 +5,10 @@ import ini.parser.IniParser;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.NodeInfo;
+
+@NodeInfo(shortName="case")
 public class CaseStatement extends AstElement implements Statement {
 	public List<Rule> cases;
 	public Sequence<Statement> defaultStatements;
@@ -41,6 +45,12 @@ public class CaseStatement extends AstElement implements Statement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitCaseStatement(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

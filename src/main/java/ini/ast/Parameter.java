@@ -4,6 +4,8 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class Parameter extends NamedElement {
 
 	public Expression defaultValue;
@@ -30,6 +32,12 @@ public class Parameter extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitParameter(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

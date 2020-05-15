@@ -5,6 +5,8 @@ import ini.parser.IniParser;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 public class AtPredicate extends NamedElement {
 
 	public enum Kind {
@@ -75,6 +77,12 @@ public class AtPredicate extends NamedElement {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitAtPredicate(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

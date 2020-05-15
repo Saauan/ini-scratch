@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 //import ini.eval.Context;
 //import ini.eval.IniEval;
 //import ini.eval.IniEval.ReturnException;
@@ -211,6 +213,12 @@ public class Process extends Executable {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitProcess(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

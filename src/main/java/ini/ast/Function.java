@@ -3,6 +3,8 @@ package ini.ast;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 //import ini.eval.IniEval;
 //import ini.eval.IniEval.ReturnException;
 import ini.parser.IniParser;
@@ -52,6 +54,12 @@ public class Function extends Executable {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitFunction(this);
+	}
+
+	@Override
+	public Object execute(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
