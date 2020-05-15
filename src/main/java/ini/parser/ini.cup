@@ -10,8 +10,8 @@ import java.io.*;
 import ini.*;
 import ini.ast.*;
 import ini.ast.Process;
-import ini.eval.function.*;
-import ini.eval.at.*;
+//import ini.eval.function.*;
+//import ini.eval.at.*;
 
 parser code {:
 
@@ -31,39 +31,39 @@ parser code {:
 
 	private List<Executable> createBuiltInExecutables() {
 		return Arrays.asList( //
-			new AnyFunction(this), //
-			new ChannelFunction(this), //
-			new ClearFunction(this), //
-			new CopyFunction(this), //
-			new ErrorFunction(this), //
-			new ExitFunction(this), //
-			new FirstFunction(this), //
-			new KeyFunction(this), //
-			new KeysFunction(this), //
-			new KillAt(this), //
-			new NodeFunction(this), //
-			new PrintFunction(this), //
-			new PrintlnFunction(this), //
-			new ProduceFunction(this), //
-			new ReadKeyboardFunction(this), //
-			new RestFunction(this), //
-			new SizeFunction(this), //
-			new SleepFunction(this), //
-			new SwapFunction(this), //
-			new TimeFunction(this), //
-			new ToIntFunction(this), //
-			new ToJsonFunction(this), //
-			new ToLongFunction(this), //
-			new ToByteFunction(this), //
-			new ToCharFunction(this), //
-			new ToFloatFunction(this), //
-			new ToDoubleFunction(this), //
-			new ToStringFunction(this), //
-			new WaitFunction(this), //
-			// ========================
-			// will be removed from default builtins and accessed through bindings
-			new StartWebServiceFunction(this), //
-			new StopWebServiceFunction(this)
+//          new AnyFunction(this), //
+//          new ChannelFunction(this), //
+//          new ClearFunction(this), //
+//          new CopyFunction(this), //
+//          new ErrorFunction(this), //
+//          new ExitFunction(this), //
+//          new FirstFunction(this), //
+//          new KeyFunction(this), //
+//          new KeysFunction(this), //
+//          new KillAt(this), //
+//          new NodeFunction(this), //
+//          new PrintFunction(this), //
+//          new PrintlnFunction(this), //
+//          new ProduceFunction(this), //
+//          new ReadKeyboardFunction(this), //
+//          new RestFunction(this), //
+//          new SizeFunction(this), //
+//          new SleepFunction(this), //
+//          new SwapFunction(this), //
+//          new TimeFunction(this), //
+//          new ToIntFunction(this), //
+//          new ToJsonFunction(this), //
+//          new ToLongFunction(this), //
+//          new ToByteFunction(this), //
+//          new ToCharFunction(this), //
+//          new ToFloatFunction(this), //
+//          new ToDoubleFunction(this), //
+//          new ToStringFunction(this), //
+//          new WaitFunction(this), //
+//          // ========================
+//          // will be removed from default builtins and accessed through bindings
+//          new StartWebServiceFunction(this), //
+//          new StopWebServiceFunction(this)
 		);
 	}
 	
