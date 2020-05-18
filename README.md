@@ -37,7 +37,7 @@ Build with:
 
 ```console
 $ cd {ini_root_dir}
-$ mvn package -Dmaven.test.skip=true
+$ mvn clean package -Dmaven.test.skip=true
 ```
 
 Start an INI shell (UNIX-based OS):
