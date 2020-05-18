@@ -4,11 +4,19 @@ import ini.parser.IniParser;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.dsl.NodeField;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+/**
+ * When executed, returns the value of the variable (value access)
+ */
 public class Variable extends NamedElement implements VariableAccess {
 
 	private boolean declaration = false;
+	private final FrameSlot slot;
 
 	/**
 	 * If this variable is an access to a global channel declaration, it will
@@ -18,9 +26,41 @@ public class Variable extends NamedElement implements VariableAccess {
 	public ChannelDeclaration channelLiteral;
 
 	public Variable(IniParser parser, Token token, String name) {
+		this(parser, token, name, null); // BUG : TODELETE
+	}
+	
+	public Variable(IniParser parser, Token token, String name, FrameSlot slot) {
 		super(parser, token, name);
 		this.nodeTypeId = AstNode.VARIABLE;
+		this.slot = slot;
 	}
+	
+    /**
+     * Returns the descriptor of the accessed local variable. */
+    protected FrameSlot getSlot() {
+    	return slot;
+    }
+    
+    // BUG : Might have bug because char and boolean are not objects
+    // TODO : more specialization
+    
+    protected Object readObject(VirtualFrame frame) {
+        if (!frame.isObject(getSlot())) {
+            /*
+             * The FrameSlotKind has been set to Object, so from now on all writes to the local
+             * variable will be Object writes. However, now we are in a frame that still has an old
+             * non-Object value. This is a slow-path operation: we read the non-Object value, and
+             * write it immediately as an Object value so that we do not hit this path again
+             * multiple times for the same variable of the same frame.
+             */
+            CompilerDirectives.transferToInterpreter();
+            Object result = frame.getValue(getSlot());
+            frame.setObject(getSlot(), result);
+            return result;
+        }
+
+        return FrameUtil.getObjectSafe(frame, getSlot());
+    }
 
 	public final void setDeclaration(boolean declaration) {
 		this.declaration = declaration;
