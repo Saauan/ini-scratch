@@ -31,27 +31,27 @@ public abstract class AstElement extends Node implements AstNode {
 
 	public abstract Object execute(VirtualFrame virtualFrame);
 	
-	public NumberLiteral executeNumberLiteral(VirtualFrame virtualFrame)
+	public Number executeNumber(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
-		return IniTypesGen.INI_TYPES.expectNumberLiteral(
+		return IniTypesGen.expectNumber(
 				this.execute(virtualFrame));
 	}
 	
-	public BooleanLiteral executeBooleanLiteral(VirtualFrame virtualFrame)
+	public boolean executeBoolean(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
-		return IniTypesGen.INI_TYPES.expectBooleanLiteral(
+		return IniTypesGen.expectBoolean(
 				this.execute(virtualFrame));
 	}
 	
-	public CharLiteral executeCharLiteral(VirtualFrame virtualFrame)
+	public char executeChar(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
-		return IniTypesGen.INI_TYPES.expectCharLiteral(
+		return IniTypesGen.expectCharacter(
 				this.execute(virtualFrame));
 	}
 	
-	public StringLiteral executeStringLiteral(VirtualFrame virtualFrame)
+	public String executeString(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
-		return IniTypesGen.INI_TYPES.expectStringLiteral(
+		return IniTypesGen.expectString(
 				this.execute(virtualFrame));
 	}
 	
