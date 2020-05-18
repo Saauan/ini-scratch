@@ -32,8 +32,7 @@ public class StringLiteral extends AstElement implements Expression {
 	}
 
 	@Override
-	public Object execute(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+	public String executeGeneric(VirtualFrame virtualFrame) {
+		return value;
 	}
 }

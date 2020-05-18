@@ -29,30 +29,30 @@ public abstract class AstElement extends Node implements AstNode {
 	public String owner;
 	public List<Expression> annotations;
 
-	public abstract Object execute(VirtualFrame virtualFrame);
+	public abstract Object executeGeneric(VirtualFrame virtualFrame);
 	
 	public Number executeNumber(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
 		return IniTypesGen.expectNumber(
-				this.execute(virtualFrame));
+				this.executeGeneric(virtualFrame));
 	}
 	
 	public boolean executeBoolean(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
 		return IniTypesGen.expectBoolean(
-				this.execute(virtualFrame));
+				this.executeGeneric(virtualFrame));
 	}
 	
 	public char executeChar(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
 		return IniTypesGen.expectCharacter(
-				this.execute(virtualFrame));
+				this.executeGeneric(virtualFrame));
 	}
 	
 	public String executeString(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
 		return IniTypesGen.expectString(
-				this.execute(virtualFrame));
+				this.executeGeneric(virtualFrame));
 	}
 	
 	

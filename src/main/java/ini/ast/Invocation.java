@@ -37,7 +37,7 @@ public class Invocation extends NamedElement implements Statement, Expression {
 	}
 
 	@Override
-	public Object execute(VirtualFrame virtualFrame) {
+	public Object executeGeneric(VirtualFrame virtualFrame) {
 		// TODO Auto-generated method stub
 		return null;
 	}

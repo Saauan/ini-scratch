@@ -25,7 +25,7 @@ public class ThisLiteral extends AstElement implements Expression {
 	}
 
 	@Override
-	public Object execute(VirtualFrame virtualFrame) {
+	public Object executeGeneric(VirtualFrame virtualFrame) {
 		// TODO Auto-generated method stub
 		return null;
 	}

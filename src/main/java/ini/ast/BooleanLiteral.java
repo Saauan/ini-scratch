@@ -28,9 +28,8 @@ public class BooleanLiteral extends AstElement implements Expression {
 	}
 
 	@Override
-	public Object execute(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object executeGeneric(VirtualFrame virtualFrame) {
+		return value;
 	}
 	
 }

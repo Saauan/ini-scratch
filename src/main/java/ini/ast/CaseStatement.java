@@ -48,7 +48,7 @@ public class CaseStatement extends AstElement implements Statement {
 	}
 
 	@Override
-	public Object execute(VirtualFrame virtualFrame) {
+	public Object executeGeneric(VirtualFrame virtualFrame) {
 		// TODO Auto-generated method stub
 		return null;
 	}

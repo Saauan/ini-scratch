@@ -34,7 +34,7 @@ public class Assignment extends AstElement implements Statement, Expression {
 	}
 
 	@Override
-	public Object execute(VirtualFrame virtualFrame) {
+	public Object executeGeneric(VirtualFrame virtualFrame) {
 		// TODO Auto-generated method stub
 		return null;
 	}
