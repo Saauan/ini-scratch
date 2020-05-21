@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
+import com.oracle.truffle.api.frame.VirtualFrame;
 
 public interface AstNode {
 
@@ -53,6 +54,8 @@ public interface AstNode {
 	int USER_TYPE = UNARY_OPERATOR + 1;
 	int VARIABLE = USER_TYPE + 1;
 
+	public Object executeGeneric(VirtualFrame virtualFrame);
+	
 	void accept(Visitor visitor);
 	
 	void prettyPrint(PrintStream out);
