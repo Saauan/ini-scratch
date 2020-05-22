@@ -29,6 +29,14 @@ public class Scanner implements Visitor {
 		}
 		return this;
 	}
+	
+	private <T extends AstNode> Scanner scan(AstElement[] array) {
+		int nbElements = array.length;
+		for(int i=0; i<nbElements; i++) {
+			scan(array[i]);
+		}
+		return this;
+	}
 
 	public void visitAstElement(AstElement element) {
 		scan(element.annotations);
@@ -136,7 +144,7 @@ public class Scanner implements Visitor {
 
 	public void visitInvocation(Invocation invocation) {
 		visitAstElement(invocation);
-		scan(invocation.arguments);
+		scan(invocation.argumentNodes);
 	}
 
 	public void visitListExpression(ListExpression listExpression) {
