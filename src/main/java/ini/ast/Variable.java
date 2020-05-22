@@ -6,6 +6,7 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeField;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -16,7 +17,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class Variable extends NamedElement implements VariableAccess {
 
 	private boolean declaration = false;
-	private final FrameSlot slot;
+	private FrameSlot slot;
 
 	/**
 	 * If this variable is an access to a global channel declaration, it will
@@ -25,8 +26,9 @@ public class Variable extends NamedElement implements VariableAccess {
 	 */
 	public ChannelDeclaration channelLiteral;
 
+	@Deprecated
 	public Variable(IniParser parser, Token token, String name) {
-		this(parser, token, name, null); // BUG : TODELETE
+		this(parser, token, name, null);
 	}
 	
 	public Variable(IniParser parser, Token token, String name, FrameSlot slot) {
@@ -41,10 +43,17 @@ public class Variable extends NamedElement implements VariableAccess {
     	return slot;
     }
     
+    protected FrameSlot getSlotFromFrameDescriptor(FrameDescriptor frameDescriptor) {
+    	return frameDescriptor.findFrameSlot(name);
+    }
+    
     // BUG : Might have bug because char and boolean are not objects
     // TODO : more specialization
     
     protected Object readObject(VirtualFrame frame) {
+    	if (this.slot == null) {
+    		this.slot = getSlotFromFrameDescriptor(frame.getFrameDescriptor());
+    	}
         if (!frame.isObject(getSlot())) {
             /*
              * The FrameSlotKind has been set to Object, so from now on all writes to the local
@@ -82,8 +91,7 @@ public class Variable extends NamedElement implements VariableAccess {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+		return readObject(virtualFrame);
 	}
 	
 }
