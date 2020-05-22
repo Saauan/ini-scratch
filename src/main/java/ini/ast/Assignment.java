@@ -19,12 +19,13 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 @NodeInfo(shortName="=")
 public class Assignment extends AstElement implements Statement, Expression {
 
-	public final VariableAccess assignee;
-	public final Expression assignment;
+	public VariableAccess assignee;
+	public Expression assignment;
 	private final FrameSlot slot;
 
+	@Deprecated
 	public Assignment(IniParser parser, Token token, VariableAccess assignee, Expression assignment) {
-		this(parser, token, assignee, assignment, null); // BUG : TODELETE
+		this(parser, token, assignee, assignment, null);
 	}
 	
 	public Assignment(IniParser parser, Token token, VariableAccess assignee, Expression assignment, FrameSlot slot) {
@@ -41,6 +42,7 @@ public class Assignment extends AstElement implements Statement, Expression {
      * created by the Truffle DSL based on the {@link NodeField} annotation on the class.
      */
     protected FrameSlot getSlot() {
+    	assert slot!=null;
     	return slot;
     }
 	
@@ -49,6 +51,7 @@ public class Assignment extends AstElement implements Statement, Expression {
     /**
      * Generic write method that works for all possible types.
      */
+//    @Specialization
     protected Object write(VirtualFrame frame, Object assignmentValue) {
         frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
 
@@ -70,9 +73,10 @@ public class Assignment extends AstElement implements Statement, Expression {
 	}
 
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object executeGeneric(VirtualFrame frame) {
+		Object assignmentValue = assignment.executeGeneric(frame);
+		this.write(frame, assignmentValue);
+		return assignmentValue;
 	}
 	
 }
