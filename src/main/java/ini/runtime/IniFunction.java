@@ -27,11 +27,11 @@ public class IniFunction {
         this.lexicalScope = lexicalScope;
     }
 
-    public static IniFunction create(IniLanguage lang, FrameSlot[] arguments,
+    public static IniFunction create(IniLanguage lang, FrameSlot[] parametersSlots,
     		Sequence<AstElement> bodyNodes, FrameDescriptor frameDescriptor) {
         return new IniFunction(
                 Truffle.getRuntime().createCallTarget(
-                        IniRootNode.create(lang, arguments, bodyNodes, frameDescriptor)));
+                        IniRootNode.create(lang, parametersSlots, bodyNodes, frameDescriptor)));
     }
     
     // e.g. MumblerFunction.create(this, new FrameSlot[] {}, nodes, context.getGlobalFrame().getFrameDescriptor())

@@ -32,17 +32,17 @@ public class IniRootNode extends RootNode {
 		return s.get().executeGeneric(frame);
 	}
 
-	public static IniRootNode create(IniLanguage lang, FrameSlot[] argumentNames, Sequence<AstElement> bodyNodes,
+	public static IniRootNode create(IniLanguage lang, FrameSlot[] parametersSlots, Sequence<AstElement> bodyNodes,
 			FrameDescriptor frameDescriptor) {
 		Sequence<AstElement> allNodes = new Sequence<AstElement>(null);
-		for (int arg_index = argumentNames.length - 1; arg_index >= 0; arg_index--) {
-			allNodes.insertNext(createAssignment(argumentNames, arg_index));
+		for (int arg_index = parametersSlots.length - 1; arg_index >= 0; arg_index--) {
+			allNodes.insertNext(createAssignment(parametersSlots, arg_index));
 		}
 		assert allNodes.get() == null;
-		assert allNodes.size() == argumentNames.length;
+		assert allNodes.size() == parametersSlots.length;
 		allNodes = allNodes.next();
 		allNodes.last().insertNext(bodyNodes);
-		assert allNodes.size() == argumentNames.length + bodyNodes.size();
+		assert allNodes.size() == parametersSlots.length + bodyNodes.size();
 		return new IniRootNode(lang, allNodes, frameDescriptor);
 	}
 
