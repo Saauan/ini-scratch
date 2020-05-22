@@ -7,6 +7,7 @@ import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
@@ -17,11 +18,16 @@ import ini.runtime.IniFunction;
 @NodeInfo(shortName="function", description="builds and contain a IniFunction")
 public class Function extends Executable {
 
-	private final IniFunction function;
+	private IniFunction function;
+	private final FrameSlot[] parametersSlots;
 	public Sequence<AstElement> statements;
 	public boolean oneExpressionLambda = false;
 	private boolean scopeSet = false;
+	
+	private FrameDescriptor frameDescriptor;
+	private IniLanguage lang;
 
+	@Deprecated
 	public Function(IniParser parser, Token token, String name, List<Parameter> parameters,
 			Sequence<AstElement> statements) {
 		this(parser, token, name, parameters, statements, null, null);
@@ -32,11 +38,16 @@ public class Function extends Executable {
 		super(parser, token, name, parameters);
 		this.statements = statements;
 		this.nodeTypeId = AstNode.FUNCTION;
-		FrameSlot[] parametersSlots = convertListToFrameSlot(parameters, frameDescriptor);
-		this.function = IniFunction.create(lang, parametersSlots, statements, frameDescriptor);
+		this.parametersSlots = convertListToFrameSlotArray(parameters, frameDescriptor);
+		
+		this.frameDescriptor = frameDescriptor;
+		this.lang = lang;
 	}
 	
-	private static FrameSlot[] convertListToFrameSlot(List<Parameter> parameters, FrameDescriptor frameDescriptor) {
+	/**
+	 * Converts a list of Parameters to an array of frame slots. The identifier of the slot is the parameter name
+	 */
+	private static FrameSlot[] convertListToFrameSlotArray(List<Parameter> parameters, FrameDescriptor frameDescriptor) {
 		FrameSlot[] result = new FrameSlot[parameters.size()];
 		int nbParam = parameters.size();
 		for(int i=0; i<nbParam; i++) {
@@ -50,8 +61,7 @@ public class Function extends Executable {
 	}
 	
 
-    @Specialization
-    public Object getIniFunction(VirtualFrame virtualFrame) {
+    public IniFunction getIniFunction(VirtualFrame virtualFrame) {
         IniFunction function = this.getFunction();
         if (!isScopeSet()) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
@@ -100,9 +110,18 @@ public class Function extends Executable {
 		visitor.visitFunction(this);
 	}
 
+	/**
+	 * Stores the function in the frame using a slot created with the function name and the number of arguments
+	 * 
+	 * @return the slot in which the function is stored
+	 */
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+	public IniFunction executeGeneric(VirtualFrame virtualFrame) {
+		this.function = IniFunction.create(lang, parametersSlots, statements, frameDescriptor); // creates the function
+		this.function.setLexicalScope(virtualFrame.materialize());
+		String identifier = getFunctionIdentifier(this.name, this.parametersSlots.length);
+		FrameSlot functionSlot = virtualFrame.getFrameDescriptor().addFrameSlot(identifier); // stores the slot into the FrameDescriptor
+		virtualFrame.setObject(functionSlot, this.function); // stores the function into the frame
+		return function;
 	}
 }

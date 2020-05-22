@@ -8,11 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.Truffle;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.IndirectCallNode;
 
 import ini.parser.IniParser;
+import ini.runtime.IniFunction;
 
 /**
  * Invocations share the same name as the function or process they invoke
@@ -24,34 +27,32 @@ import ini.parser.IniParser;
  */
 public class Invocation extends NamedElement implements Statement, Expression {
 
-	public List<Expression> arguments;
-	@Child protected AstElement functionNode;
-	@Children protected final AstElement[] argumentNodes;
+	@Children public AstElement[] argumentNodes;
 	@Child protected IndirectCallNode callNode;
 
-	@Deprecated
-	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
-		this(parser,token,name,null,null);
-	}
+//	@Deprecated
+//	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
+//		this(parser,token,name,arguments);
+//	}
 	
-	public Invocation(IniParser parser, Token token, String name, AstElement functionNode, AstElement[] argumentNodes) {
+	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
 		super(parser, token, name);
 		this.nodeTypeId = AstNode.INVOCATION;
-		this.functionNode = functionNode;
-		this.argumentNodes = argumentNodes;
+		this.argumentNodes = arguments.toArray(new AstElement[0]);
 		this.callNode = Truffle.getRuntime().createIndirectCallNode();
 	}
 
 	@Override
 	public String toString() {
-		return name + "(" + StringUtils.join(arguments, ",") + ")";
+		return name + "(" + StringUtils.join(argumentNodes, ",") + ")";
 	}
 
 	@Override
+	@Deprecated
 	public void prettyPrint(PrintStream out) {
-		out.print(name + "(");
-		prettyPrintList(out, arguments, ",");
-		out.print(")");
+//		out.print(name + "(");
+//		prettyPrintList(out, argumentsNodes, ",");
+//		out.print(")");
 	}
 
 	@Override
@@ -62,8 +63,7 @@ public class Invocation extends NamedElement implements Statement, Expression {
 	@Override
 	@ExplodeLoop
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		Executable function = (Executable) this.functionNode.executeGeneric(virtualFrame);
-		
+		IniFunction function = this.lookupFunction(virtualFrame, this.name, this.argumentNodes);
         /*
          * The number of arguments is constant for one invoke node. During compilation, the loop is
          * unrolled and the execute methods of all arguments are inlined. This is triggered by the
@@ -71,12 +71,27 @@ public class Invocation extends NamedElement implements Statement, Expression {
          * array length is really constant.
          */
         CompilerAsserts.compilationConstant(this.argumentNodes.length);
-		
-		Object[] argumentValues = new Object[this.argumentNodes.length + 1];
+
+		Object[] argumentValues = new Object[this.argumentNodes.length ];
+		// The first element of the frame's argument is the lexical scope
+//		argumentValues[0] = function.getLexicalScope(); // TODO : Add lexical scope ?
 		for(int i=0; i<this.argumentNodes.length; i++) {
 			argumentValues[i] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
+		
 		return call(virtualFrame, function.callTarget, argumentValues);
+	}
+	
+	public IniFunction lookupFunction(VirtualFrame frame, String name, AstElement[] argumentNodes) {
+		String identifier = AstElement.getFunctionIdentifier(name, argumentNodes.length);
+		FrameSlot functionSlot = frame.getFrameDescriptor().findFrameSlot(identifier);
+		IniFunction function;
+		try {
+			function = (IniFunction) frame.getObject(functionSlot);
+		} catch (FrameSlotTypeException e) {
+			throw new RuntimeException("FrameSlotTypeException : The slot was not an object type");
+		}
+		return function;
 	}
 	
     protected Object call(VirtualFrame virtualFrame, CallTarget callTarget,
