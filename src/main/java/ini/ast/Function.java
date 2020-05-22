@@ -22,7 +22,6 @@ public class Function extends Executable {
 	public boolean oneExpressionLambda = false;
 	private boolean scopeSet = false;
 
-	@Deprecated
 	public Function(IniParser parser, Token token, String name, List<Parameter> parameters,
 			Sequence<AstElement> statements) {
 		this(parser, token, name, parameters, statements, null, null);
@@ -68,7 +67,7 @@ public class Function extends Executable {
 
 	@Override
 	public void prettyPrint(PrintStream out) {
-		if (name != null) {
+		if(name != null) {
 			out.print("function " + name);
 		}
 		out.print("(");
@@ -83,6 +82,19 @@ public class Function extends Executable {
 		out.println("}");
 	}
 
+//	@Override
+//	public void eval(IniEval eval) {
+//		try {
+//			Sequence<AstNode> s = this.statements;
+//			while (s != null) {
+//				eval.eval(s.get());
+//				s = s.next();
+//			}
+//		} catch (ReturnException e) {
+//			// swallow
+//		}
+//	}
+	
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitFunction(this);

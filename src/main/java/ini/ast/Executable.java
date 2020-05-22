@@ -7,9 +7,6 @@ import java.util.List;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 
-import com.oracle.truffle.api.RootCallTarget;
-import com.oracle.truffle.api.frame.MaterializedFrame;
-
 //import ini.eval.Context;
 //import ini.eval.IniEval;
 //import ini.eval.data.Data;
@@ -24,8 +21,6 @@ public abstract class Executable extends NamedElement implements Expression {
 
 //	public transient Context accessibleContext;
 	public transient AttrContext accessibleAttrContext;
-    public final RootCallTarget callTarget;
-	private MaterializedFrame lexicalScope;
 
 	public List<Executable> overloads;
 
@@ -46,17 +41,9 @@ public abstract class Executable extends NamedElement implements Expression {
 		return i;
 	}
 
-	public MaterializedFrame getLexicalScope() {
-        return this.lexicalScope;
-    }
-	
-	public void setLexicalScope(MaterializedFrame lexicalScope) {
-        this.lexicalScope = lexicalScope;
-    }
-	
 	public boolean match(AstAttrib attrib, Invocation invocation) {
-		return invocation.arguments.size() >= getMandatoryParameterCount()
-				&& invocation.arguments.size() <= parameters.size();
+		return invocation.argumentNodes.length >= getMandatoryParameterCount()
+				&& invocation.argumentNodes.length <= parameters.size();
 	}
 
 	public boolean isAmbiguousWith(AstAttrib attrib, Executable executable) {
@@ -108,17 +95,11 @@ public abstract class Executable extends NamedElement implements Expression {
 		throw new RuntimeException("cannot find matching overload for invocation " + invocation);
 	}
 
-	@Deprecated
 	public Executable(IniParser parser, Token token, String name, List<Parameter> parameters) {
-		this(parser,token,name,parameters,null);
-	}
-	
-	public Executable(IniParser parser, Token token, String name, List<Parameter> parameters, RootCallTarget callTarget) {
 		super(parser, token, name);
 		this.parameters = parameters;
-		this.callTarget = callTarget;
 	}
-	
+
 	protected final void setDefaultValue(int parameterIndex, Expression expression) {
 		parameters.get(parameterIndex).defaultValue = expression;
 	}
