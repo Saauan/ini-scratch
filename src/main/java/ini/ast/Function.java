@@ -28,7 +28,6 @@ public class Function extends Executable {
 		this(parser, token, name, parameters, statements, null, null);
 	}
 
-	@Deprecated
 	public Function(IniParser parser, Token token, String name, List<Parameter> parameters,
 			Sequence<AstElement> statements, FrameDescriptor frameDescriptor, IniLanguage lang) {
 		super(parser, token, name, parameters);
