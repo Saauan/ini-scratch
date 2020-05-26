@@ -1,13 +1,14 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
-@NodeInfo(description="An operator that takes two arguments")
+import ini.parser.IniParser;
+
+@NodeInfo(description = "An operator that takes two arguments")
 public class BinaryOperator extends AstElement implements Expression {
 
 	public enum Kind {
@@ -18,8 +19,7 @@ public class BinaryOperator extends AstElement implements Expression {
 	public Expression left;
 	public Expression right;
 
-	public BinaryOperator(IniParser parser, Token token, Kind kind,
-			Expression left, Expression right) {
+	public BinaryOperator(IniParser parser, Token token, Kind kind, Expression left, Expression right) {
 		super(parser, token);
 		this.kind = kind;
 		this.left = left;
@@ -87,8 +87,63 @@ public class BinaryOperator extends AstElement implements Expression {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			switch (kind) {
+			case PLUS:
+				return plus(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
+			case MINUS:
+				return minus(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
+			case MULT:
+				return mult(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
+			default:
+				System.out.println("Method not set");
+				return null;
+			}
+		} catch(UnexpectedResultException e) {
+			System.out.println(e);
+			System.exit(-1); // Make a better exit
+			return null;
+		}
+		
 	}
-	
+
+	Number plus(Number n1, Number n2) {
+		if (n1 instanceof Byte && n1 instanceof Byte) {
+			return n1.byteValue() + n2.byteValue();
+		}
+		if (n1 instanceof Integer && n1 instanceof Integer) {
+			return n1.intValue() + n2.intValue();
+		}
+		return n1.doubleValue() + n2.doubleValue();
+	}
+
+	Number mult(Number n1, Number n2) {
+		if (n1 instanceof Byte && n1 instanceof Byte) {
+			return n1.byteValue() * n2.byteValue();
+		}
+		if (n1 instanceof Integer && n1 instanceof Integer) {
+			return n1.intValue() * n2.intValue();
+		}
+		return n1.doubleValue() * n2.doubleValue();
+	}
+
+	Number minus(Number n1, Number n2) {
+		if (n1 instanceof Byte && n1 instanceof Byte) {
+			return n1.byteValue() - n2.byteValue();
+		}
+		if (n1 instanceof Integer && n1 instanceof Integer) {
+			return n1.intValue() - n2.intValue();
+		}
+		return n1.doubleValue() - n2.doubleValue();
+	}
+
+	Number minus(Number n) {
+		if (n instanceof Byte) {
+			return -n.byteValue();
+		}
+		if (n instanceof Integer) {
+			return -n.intValue();
+		}
+		return -n.doubleValue();
+	}
 }
