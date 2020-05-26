@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 public interface AstNode {
 
@@ -55,6 +56,10 @@ public interface AstNode {
 	int VARIABLE = USER_TYPE + 1;
 
 	public Object executeGeneric(VirtualFrame virtualFrame);
+	public Number executeNumber(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public boolean executeBoolean(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public char executeChar(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public String executeString(VirtualFrame virtualFrame) throws UnexpectedResultException;
 	
 	void accept(Visitor visitor);
 	
