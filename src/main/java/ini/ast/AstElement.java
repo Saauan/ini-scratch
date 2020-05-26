@@ -14,10 +14,9 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import ini.IniTypes;
-import ini.IniTypesGen;
 import ini.parser.IniParser;
 import ini.type.Type;
-import ini.ast.Token;
+import ini.IniTypesGen;
 
 @TypeSystemReference(IniTypes.class)
 @NodeInfo(language = "INI", description = "The abstract base node for all expressions")
@@ -32,24 +31,10 @@ public abstract class AstElement extends Node implements AstNode {
 
 	public abstract Object executeGeneric(VirtualFrame virtualFrame);
 	
-	public int executeInt(VirtualFrame virtualFrame)
+	public Number executeNumber(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
-		return IniTypesGen.expectInteger(this.executeGeneric(virtualFrame));
-	}
-	
-	public long executeLong(VirtualFrame virtualFrame)
-			throws UnexpectedResultException{
-		return IniTypesGen.expectLong(this.executeGeneric(virtualFrame));
-	}
-	
-	public float executeFloat(VirtualFrame virtualFrame)
-			throws UnexpectedResultException{
-		return IniTypesGen.expectFloat(this.executeGeneric(virtualFrame));
-	}
-	
-	public double executeDouble(VirtualFrame virtualFrame)
-			throws UnexpectedResultException{
-		return IniTypesGen.expectDouble(this.executeGeneric(virtualFrame));
+		return IniTypesGen.expectNumber(
+				this.executeGeneric(virtualFrame));
 	}
 	
 	public boolean executeBoolean(VirtualFrame virtualFrame)

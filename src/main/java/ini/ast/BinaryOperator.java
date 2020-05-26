@@ -87,24 +87,23 @@ public class BinaryOperator extends AstElement implements Expression {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-//		try {
-//			switch (kind) {
-//			case PLUS:
-//				return plus(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
-//			case MINUS:
-//				return minus(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
-//			case MULT:
-//				return mult(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
-//			default:
-//				System.out.println("Method not set");
-//				return null;
-//			}
-//		} catch(UnexpectedResultException e) {
-//			System.out.println(e);
-//			System.exit(-1); // Make a better exit
-//			return null;
-//		}
-		return null;
+		try {
+			switch (kind) {
+			case PLUS:
+				return plus(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
+			case MINUS:
+				return minus(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
+			case MULT:
+				return mult(left.executeNumber(virtualFrame),(Number) right.executeNumber(virtualFrame));
+			default:
+				System.out.println("Method not set");
+				return null;
+			}
+		} catch(UnexpectedResultException e) {
+			System.out.println(e);
+			System.exit(-1); // Make a better exit
+			return null;
+		}
 		
 	}
 
