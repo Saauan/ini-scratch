@@ -29,6 +29,7 @@ public abstract class AstElement extends Node implements AstNode {
 	public String owner;
 	public List<Expression> annotations;
 
+	@Override
 	public abstract Object executeGeneric(VirtualFrame virtualFrame);
 	
 	public Number executeNumber(VirtualFrame virtualFrame)
@@ -37,18 +38,21 @@ public abstract class AstElement extends Node implements AstNode {
 				this.executeGeneric(virtualFrame));
 	}
 	
+	@Override
 	public boolean executeBoolean(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
 		return IniTypesGen.expectBoolean(
 				this.executeGeneric(virtualFrame));
 	}
 	
+	@Override
 	public char executeChar(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
 		return IniTypesGen.expectCharacter(
 				this.executeGeneric(virtualFrame));
 	}
 	
+	@Override
 	public String executeString(VirtualFrame virtualFrame)
 			throws UnexpectedResultException{
 		return IniTypesGen.expectString(
@@ -132,6 +136,10 @@ public abstract class AstElement extends Node implements AstNode {
 		if (parser != null) {
 			this.owner = parser.env.node;
 		}
+	}
+
+	public AstElement() {
+		super();
 	}
 
 	static public void prettyPrintList(PrintStream out, List<? extends AstNode> nodes, String separator) {
