@@ -4,6 +4,10 @@ import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
+
+import ini.ast.AstElement;
+import ini.eval.function.BuiltInExecutable;
+import ini.eval.function.PrintFunctionFactory;
 /**
  * The run-time state of INI during execution. The context is created by the {@link IniLanguage}.
  * <p>
@@ -35,6 +39,9 @@ public class IniContext {
 
 	    private static void addGlobalFunctions(IniLanguage lang, VirtualFrame virtualFrame) {
 	        FrameDescriptor frameDescriptor = virtualFrame.getFrameDescriptor();
+	        virtualFrame.setObject(frameDescriptor.addFrameSlot(AstElement.getFunctionIdentifier("print", 1)),
+	                BuiltInExecutable.createBuiltinFunction(lang, PrintFunctionFactory.getInstance(),
+	                        virtualFrame));
 	    }
 
 	    /**
