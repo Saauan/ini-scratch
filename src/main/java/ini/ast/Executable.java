@@ -103,24 +103,7 @@ public abstract class Executable extends NamedElement implements Expression {
 	protected final void setDefaultValue(int parameterIndex, Expression expression) {
 		parameters.get(parameterIndex).defaultValue = expression;
 	}
-//
-//	protected final Data getArgument(IniEval eval, int index) {
-//		return eval.invocationStack.peek().get(parameters.get(index).name);
-//	}
-//
-//	protected final Data getArgument(IniEval eval, int index, Data defaultValue) {
-//		Data d = getArgument(eval, index);
-//		return d == null ? defaultValue : d;
-//	}
-//
-//	protected final Data getArgument(IniEval eval, String name) {
-//		return eval.invocationStack.peek().get(name);
-//	}
-//
-//	protected final Data getArgument(IniEval eval, String name, Data defaultValue) {
-//		Data d = getArgument(eval, name);
-//		return d == null ? defaultValue : d;
-//	}
+
 
 	protected final Type getParameterType(int index) {
 		return getType().getTypeParameters().get(index);
@@ -148,8 +131,6 @@ public abstract class Executable extends NamedElement implements Expression {
 			throw new RuntimeException(e);
 		}
 	}
-
-//	public abstract void eval(IniEval eval);
 
 	public final Type getType() {
 		if (this.type == null) {
