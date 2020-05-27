@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.Truffle;
+import com.oracle.truffle.api.frame.Frame;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -72,11 +73,11 @@ public class Invocation extends NamedElement implements Statement, Expression {
          */
         CompilerAsserts.compilationConstant(this.argumentNodes.length);
 
-		Object[] argumentValues = new Object[this.argumentNodes.length ];
+		Object[] argumentValues = new Object[this.argumentNodes.length+1];
 		// The first element of the frame's argument is the lexical scope
-//		argumentValues[0] = function.getLexicalScope(); // TODO : Add lexical scope ?
+		argumentValues[0] = function.getLexicalScope();
 		for(int i=0; i<this.argumentNodes.length; i++) {
-			argumentValues[i] = this.argumentNodes[i].executeGeneric(virtualFrame);
+			argumentValues[i+1] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
 		
 		return call(virtualFrame, function.callTarget, argumentValues);
@@ -88,6 +89,10 @@ public class Invocation extends NamedElement implements Statement, Expression {
 		IniFunction function;
 		try {
 			function = (IniFunction) frame.getObject(functionSlot);
+			if(function==null) {
+				Frame globalFrame = (Frame) frame.getArguments()[0];
+				function = (IniFunction) globalFrame.getObject(functionSlot);
+			}
 		} catch (FrameSlotTypeException e) {
 			throw new RuntimeException("FrameSlotTypeException : The slot was not an object type");
 		}
