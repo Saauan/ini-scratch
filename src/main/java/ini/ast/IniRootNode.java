@@ -34,17 +34,15 @@ public class IniRootNode extends RootNode {
 
 	public static IniRootNode create(IniLanguage lang, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
 			FrameDescriptor frameDescriptor) {
-		AstElement[] allNodes = new AstElement[parametersSlots.length];
+		AstElement[] allNodes = new AstElement[parametersSlots.length+bodyNodes.length];
 		// Insert all parameters
 		if(parametersSlots.length>0) {
 			for (int arg_index = 0; arg_index < parametersSlots.length; arg_index--) {
 				allNodes[arg_index] = createAssignment(parametersSlots, arg_index);
 			}
 		}
-		assert allNodes.length == parametersSlots.length + 1;
 		System.arraycopy(bodyNodes, 0, allNodes,
                 parametersSlots.length, bodyNodes.length);
-		assert allNodes.length == parametersSlots.length + bodyNodes.length;
 		return new IniRootNode(lang, allNodes, frameDescriptor);
 	}
 
