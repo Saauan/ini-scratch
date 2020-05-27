@@ -20,7 +20,7 @@ public class Function extends Executable {
 
 	private IniFunction function;
 	private final FrameSlot[] parametersSlots;
-	public Sequence<AstElement> statements;
+	public AstElement[] statements;
 	public boolean oneExpressionLambda = false;
 	private boolean scopeSet = false;
 	
@@ -36,12 +36,21 @@ public class Function extends Executable {
 	public Function(IniParser parser, Token token, String name, List<Parameter> parameters,
 			Sequence<AstElement> statements, FrameDescriptor frameDescriptor, IniLanguage lang) {
 		super(parser, token, name, parameters);
-		this.statements = statements;
+		this.statements = convertSequenceToArray(statements);
 		this.nodeTypeId = AstNode.FUNCTION;
 		this.parametersSlots = convertListToFrameSlotArray(parameters, frameDescriptor);
 		
 		this.frameDescriptor = frameDescriptor;
 		this.lang = lang;
+	}
+	
+	private static AstElement[] convertSequenceToArray(Sequence<AstElement> statements) {
+		AstElement[] res = new AstElement[statements.size()];
+		for(int i=0; i<statements.size(); i++) {
+			res[i] = statements.get();
+			statements.next();
+		}
+		return res;
 	}
 	
 	/**
@@ -83,12 +92,13 @@ public class Function extends Executable {
 		out.print("(");
 		prettyPrintList(out, parameters, ",");
 		out.println(") {");
-		Sequence<AstElement> s = statements;
-		while (s != null) {
-			s.get().prettyPrint(out);
-			out.println();
-			s = s.next();
-		}
+		out.println("Not implemented yet");
+//		AstElement[] s = statements;
+//		while (s != null) {
+//			s.get().prettyPrint(out);
+//			out.println();
+//			s = s.next();
+//		}
 		out.println("}");
 	}
 

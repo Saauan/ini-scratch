@@ -28,7 +28,7 @@ public class IniFunction {
     }
 
     public static IniFunction create(IniLanguage lang, FrameSlot[] parametersSlots,
-    		Sequence<AstElement> bodyNodes, FrameDescriptor frameDescriptor) {
+    		AstElement[] bodyNodes, FrameDescriptor frameDescriptor) {
         return new IniFunction(
                 Truffle.getRuntime().createCallTarget(
                         IniRootNode.create(lang, parametersSlots, bodyNodes, frameDescriptor)));

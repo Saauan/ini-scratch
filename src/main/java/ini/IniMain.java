@@ -140,7 +140,7 @@ public class IniMain {
         IniFunction function = IniFunction.create(
         		null,
         		new FrameSlot[] {},
-        		convertArrayToSequence(nodes),
+        		nodes,
         		globalFrame.getFrameDescriptor());
         ((IniRootNode) function.callTarget.getRootNode()).setName("main");
 
