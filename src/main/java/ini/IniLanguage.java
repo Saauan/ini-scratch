@@ -41,7 +41,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 
 	@Override
 	protected IniContext createContext(Env env) {
-		return new IniContext(this, env);
+		return new IniContext(this);
 	}
 	
     public static IniContext getCurrentContext() {

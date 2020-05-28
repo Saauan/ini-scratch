@@ -136,7 +136,7 @@ public class IniMain {
      * @param out
      * @param jsap
      */
-    private static Object execute(AstElement[] nodes, MaterializedFrame globalFrame) {
+    public static Object execute(AstElement[] nodes, MaterializedFrame globalFrame) {
         IniFunction function = IniFunction.create(
         		null,
         		new FrameSlot[] {},
