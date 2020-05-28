@@ -9,7 +9,10 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ini.Main;
+import ini.IniContext;
+import ini.IniLanguage;
+import ini.IniMain;
+import ini.ast.AstElement;
 import ini.parser.IniParser;
 import ini.type.AstAttrib;
 import junit.framework.TestCase;
@@ -28,7 +31,7 @@ public abstract class IniTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		Main.LOGGER.info("=====================================================");
+		IniMain.LOGGER.info("=====================================================");
 		//outputStream = new ByteArrayOutputStream();
 		//out = new PrintStream(outputStream);
 		//System.setOut(out);
@@ -41,30 +44,6 @@ public abstract class IniTestCase extends TestCase {
 			parser = IniParser.createParserForCode(null, null, code);
 			parser.parse();
 			parsingAssertions.accept(parser);
-			AstAttrib attrib = new AstAttrib(parser);
-			attrib.attrib(parser);
-			attrib.unify();
-			attribAssertions.accept(attrib);
-		} catch (Exception e) {
-			if (parser != null && parser.hasErrors()) {
-				parser.printErrors(System.err);
-			}
-			e.printStackTrace();
-			fail();
-		}
-	}
-
-	protected void parseAndAttribFile(String file, Consumer<IniParser> parsingAssertions,
-			Consumer<AstAttrib> attribAssertions) {
-		IniParser parser = null;
-		try {
-			parser = IniParser.createParserForFile(null, null, file);
-			parser.parse();
-			parsingAssertions.accept(parser);
-			AstAttrib attrib = new AstAttrib(parser);
-			attrib.attrib(parser);
-			attrib.unify();
-			attribAssertions.accept(attrib);
 		} catch (Exception e) {
 			if (parser != null && parser.hasErrors()) {
 				parser.printErrors(System.err);
@@ -107,9 +86,7 @@ public abstract class IniTestCase extends TestCase {
 		try {
 			parser = file == null ? IniParser.createParserForCode(null, null, "process main() {}")
 					: IniParser.createParserForFile(null, null, file);
-			parser.out = new PrintStream(outputStream);
-			currentParser = parser;
-			//System.setOut(out);
+			System.setOut(new PrintStream(outputStream));
 
 			if (node != null) {
 				parser.env.deamon = true;
@@ -117,11 +94,9 @@ public abstract class IniTestCase extends TestCase {
 			}
 			parser.parse();
 			assertEquals("expected 0 errors: " + parser.errors, 0, parser.errors.size());
-			AstAttrib attrib = new AstAttrib(parser);
-			attrib.attrib(parser);
-			attrib.unify();
-			assertEquals("expected 0 errors: " + attrib.errors, 0, attrib.errors.size());
-			Main.mainEval(parser, attrib, null);
+			AstElement[] topLevelNodes = parser.topLevels.toArray(new AstElement[0]);
+			
+	        IniMain.execute(topLevelNodes, IniLanguage.getCurrentContext().getGlobalFrame());
 			if (sleepTime > 0) {
 				Thread.sleep(sleepTime);
 			}
