@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ini.IniContext;
-import ini.IniLanguage;
 import ini.IniMain;
 import ini.ast.AstElement;
 import ini.parser.IniParser;
@@ -96,7 +95,7 @@ public abstract class IniTestCase extends TestCase {
 			assertEquals("expected 0 errors: " + parser.errors, 0, parser.errors.size());
 			AstElement[] topLevelNodes = parser.topLevels.toArray(new AstElement[0]);
 			
-	        IniMain.execute(topLevelNodes, IniLanguage.getCurrentContext().getGlobalFrame());
+	        IniMain.execute(topLevelNodes, new IniContext().getGlobalFrame());
 			if (sleepTime > 0) {
 				Thread.sleep(sleepTime);
 			}
