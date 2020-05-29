@@ -1,32 +1,28 @@
 package ini.eval.function;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
-import com.oracle.truffle.api.dsl.CachedContext;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
-import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.IniContext;
-import ini.ast.AstElement;
-import ini.parser.IniParser;
-import ini.IniLanguage;
+import ini.IniEnv;
 
 @NodeInfo(shortName = "print")
-@NodeChild(value = "receiver", type=AstElement[].class)
 @GenerateNodeFactory()
 public abstract class PrintFunction extends BuiltInExecutable {
 	
 	public static String defaultName = "print";
+	
+	private static PrintStream out;
 
-	public PrintFunction(String[] parameterNames) {
+	public PrintFunction(IniEnv env, String[] parameterNames) {
 		super(parameterNames);
+		out=env.out;
 	}
 
-	private static final PrintStream out = System.out;
+
 	
     @Specialization
     public Number print(Number value) {
