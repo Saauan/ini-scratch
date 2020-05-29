@@ -53,6 +53,9 @@ public class Variable extends NamedElement implements VariableAccess {
     protected Object readObject(VirtualFrame frame) {
     	if (this.slot == null) {
     		this.slot = getSlotFromFrameDescriptor(frame.getFrameDescriptor());
+    		if (this.slot == null) {
+    			throw new RuntimeException(String.format("Variable %s not found", name));
+    		}
     	}
         if (!frame.isObject(getSlot())) {
             /*
