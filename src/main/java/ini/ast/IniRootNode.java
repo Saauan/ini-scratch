@@ -27,13 +27,13 @@ public class IniRootNode extends RootNode {
 		CompilerAsserts.compilationConstant(nbNodes);
 		int i;
 		try {
-		for (i = 0; i < nbNodes-1; i++) {
-			s[i].executeGeneric(frame);
-		}
-		return s[i].executeGeneric(frame);
+			for (i = 0; i < nbNodes-1; i++) {
+				s[i].executeGeneric(frame);
+			}
+			return s[i].executeGeneric(frame);
 		} catch(ReturnException e) {
 			return e.getResult();
-	}
+		}
 	}
 
 	public static IniRootNode create(IniLanguage lang, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
@@ -41,7 +41,7 @@ public class IniRootNode extends RootNode {
 		AstElement[] allNodes = new AstElement[parametersSlots.length+bodyNodes.length];
 		// Insert all parameters
 		if(parametersSlots.length>0) {
-			for (int arg_index = 0; arg_index < parametersSlots.length; arg_index--) {
+			for (int arg_index = 0; arg_index < parametersSlots.length; arg_index++) {
 				allNodes[arg_index] = createAssignment(parametersSlots, arg_index);
 			}
 		}
