@@ -102,19 +102,6 @@ public class Function extends Executable {
 		out.println("}");
 	}
 
-//	@Override
-//	public void eval(IniEval eval) {
-//		try {
-//			Sequence<AstNode> s = this.statements;
-//			while (s != null) {
-//				eval.eval(s.get());
-//				s = s.next();
-//			}
-//		} catch (ReturnException e) {
-//			// swallow
-//		}
-//	}
-	
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitFunction(this);

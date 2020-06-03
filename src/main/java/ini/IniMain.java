@@ -122,15 +122,6 @@ public class IniMain {
         execute(topLevelNodes, context.getGlobalFrame());
     }
 
-//    private static void runIni(String filename) throws IOException {
-//        Source source = Source.newBuilder(ID, new FileReader(new File(filename)), filename).build();
-//        IniContext context = new IniContext();
-//        ListSyntax sexp = Reader.read(source);
-//        Converter converter = new Converter(null, flags.tailCallOptimizationEnabled);
-//        IniNode[] nodes = converter.convertSexp(context, sexp);
-//        execute(nodes, context.getGlobalFrame());
-//    }
-
     /**
      * Wraps all top level nodes in a function and executes the function
      * @param out
