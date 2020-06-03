@@ -773,7 +773,7 @@ basic_rule ::= guard:g LCPAREN statement_list_opt:l RCPAREN
 
 boolean_expr_opt ::= ANDAND expr:e {: RESULT = e; :} | ;
 
-ret_statement ::= RETURN:r expr:e {: RESULT = new ReturnStatement(parser,(Token)r,(Expression)e); :}
+ret_statement ::= RETURN:r expr:e {: RESULT = new ReturnStatement(parser,(Token)r,(AstElement)e); :}
 	| RETURN:r {: RESULT = new ReturnStatement(parser,(Token)r,null); :}
 ;
 

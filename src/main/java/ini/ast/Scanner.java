@@ -176,7 +176,7 @@ public class Scanner implements Visitor {
 
 	public void visitReturnStatement(ReturnStatement returnStatement) {
 		visitAstElement(returnStatement);
-		scan(returnStatement.expression);
+		scan(returnStatement.valueNode);
 	}
 
 	public void visitRule(Rule rule) {

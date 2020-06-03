@@ -26,10 +26,14 @@ public class IniRootNode extends RootNode {
 		int nbNodes = s.length;
 		CompilerAsserts.compilationConstant(nbNodes);
 		int i;
+		try {
 		for (i = 0; i < nbNodes-1; i++) {
 			s[i].executeGeneric(frame);
 		}
 		return s[i].executeGeneric(frame);
+		} catch(ReturnException e) {
+			return e.getResult();
+	}
 	}
 
 	public static IniRootNode create(IniLanguage lang, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
