@@ -9,6 +9,7 @@ import java.util.*;
 import java.io.*;
 import ini.*;
 import ini.ast.*;
+import ini.ast.binary.*;
 import ini.ast.Process;
 //import ini.eval.function.*;
 //import ini.eval.at.*;
@@ -470,7 +471,7 @@ var_access ::= IDENTIFIER:v {: RESULT = new Variable(parser,(Token)v,v.toString(
 ;
 
 string_expr ::= single_string:s {: RESULT=s; :}
-	| single_string:e1 PLUS:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.PLUS,(Expression)e1,(Expression)e2); :}
+	| single_string:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 ;
 
 single_string ::= STRING:s {: RESULT=new StringLiteral(parser,(Token)s,s.toString()); :}
@@ -593,7 +594,7 @@ list_concat_expr ::= expr:e1 AND:op expr:e2 {: RESULT=new BinaryOperator(parser,
 algebraic_expr ::= NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.parseDouble(e.toString())); :}
 	| INT:e {: RESULT=new NumberLiteral(parser,(Token)e,Integer.parseInt(e.toString())); :} 
 	| pre_post_op:op {: RESULT=op; :}
-	| expr:e1 PLUS:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.PLUS,(Expression)e1,(Expression)e2); :}
+	| expr:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| expr:e1 MINUS:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MINUS,(Expression)e1,(Expression)e2); :}
 	| MINUS:op expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.MINUS,(Expression)e); :}
 	| expr:e1 MULT:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MULT,(Expression)e1,(Expression)e2); :}
@@ -628,7 +629,7 @@ ltl_expr ::= IDENTIFIER:e {: RESULT = new Variable(parser,(Token)e,e.toString())
 	| ltl_expr:e1 GTE:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.GTE,(Expression)e1,(Expression)e2); :}
 	| NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.parseDouble(e.toString())); :}
 	| INT:e {: RESULT=new NumberLiteral(parser,(Token)e,Integer.parseInt(e.toString())); :} 
-	| ltl_expr:e1 PLUS:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.PLUS,(Expression)e1,(Expression)e2); :}
+	| ltl_expr:e1 PLUS:op ltl_expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| ltl_expr:e1 MINUS:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MINUS,(Expression)e1,(Expression)e2); :}
 	| MINUS:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.MINUS,(Expression)e); :}
 	| ltl_expr:e1 MULT:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MULT,(Expression)e1,(Expression)e2); :}

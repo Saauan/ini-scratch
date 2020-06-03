@@ -9,19 +9,19 @@ public class TestExamples extends IniTestCase {
 	}
 	
 	public void testPrintln() {
-		testFile("ini/truffle/testPrintln.ini", 
-				(p, out) -> assertEquals("hello world"+ System.lineSeparator() + "hello world", out));
+		testFile("ini/truffle/TestPrintln.ini", 
+				(p, out) -> assertEquals("hello world"+ nl + "hello world", out));
 	}
 
 	public void testPrint() {
-		testFile("ini/truffle/testPrint.ini",
+		testFile("ini/truffle/TestPrint.ini",
 				(p, out) -> assertEquals("hello worldhello world", out));
 	}
 	
 	public void testVariable() {
-		testFile("ini/truffle/testVariable.ini", 
+		testFile("ini/truffle/TestVariable.ini", 
 				(p, out) -> assertEquals("5"
-						+ System.lineSeparator() + "5"
-						+ System.lineSeparator(), out));
+						+ nl + "5"
+						+ nl, out));
 	}
 }

@@ -24,6 +24,8 @@ public abstract class IniTestCase extends TestCase {
 
 	protected static boolean skipTestsUsingBroker = false;
 	
+	protected static String nl = System.lineSeparator();
+	
 	public IniTestCase(String name) {
 		super(name);
 	}
