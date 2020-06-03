@@ -44,11 +44,13 @@ public class Function extends Executable {
 		this.lang = lang;
 	}
 	
+	// TODO : Unfold loop and compilation final
 	private static AstElement[] convertSequenceToArray(Sequence<AstElement> statements) {
-		AstElement[] res = new AstElement[statements.size()];
-		for(int i=0; i<statements.size(); i++) {
+		final int nbStatements = statements.size();
+		AstElement[] res = new AstElement[nbStatements];
+		for (int i = 0; i < nbStatements; i++) {
 			res[i] = statements.get();
-			statements.next();
+			statements = statements.next();
 		}
 		return res;
 	}
