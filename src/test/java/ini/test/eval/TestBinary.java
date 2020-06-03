@@ -29,6 +29,6 @@ public class TestBinary extends IniTestCase {
 	public void testSub() {
 		testFile("ini/truffle/binary/TestSub.ini", 
 				(p, out) -> assertEquals("n3 = n1 - n2 = 2" + nl +
-						"n4 = 5-3 = " + nl, out));
+						"n4 = 5-3 = 2" + nl, out));
 	}
 }
