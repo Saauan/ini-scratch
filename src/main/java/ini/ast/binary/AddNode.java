@@ -14,11 +14,6 @@ public abstract class AddNode extends BinaryNode {
 		super(parser, token);
 		// TODO Auto-generated constructor stub
 	}
-
-	@Override
-	public void accept(Visitor visitor) {
-		
-	}
 	
     /**
      * Specialization for primitive {@code long} values. This is the fast path of the

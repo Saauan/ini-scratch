@@ -2,6 +2,7 @@ package ini.ast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -159,6 +160,16 @@ public abstract class AstElement extends Node implements AstNode {
 		return token;
 	}
 
+	@Override
+	public void prettyPrint(PrintStream out){
+		out.print("Default node representation");
+	}
+	
+	@Override
+	public void accept(Visitor visitor) {
+		System.out.println("DEBUG : No visitor accepted, default method in AstElement"); // TODO 
+	}
+	
 	@Override
 	public String toString() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
