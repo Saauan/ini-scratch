@@ -89,6 +89,7 @@ public class Invocation extends NamedElement implements Statement, Expression {
 		IniFunction function;
 		try {
 			function = (IniFunction) frame.getObject(functionSlot);
+			// If the function is not in the local context
 			if(function==null) {
 				Frame globalFrame = (Frame) frame.getArguments()[0];
 				function = (IniFunction) globalFrame.getObject(functionSlot);
