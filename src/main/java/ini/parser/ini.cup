@@ -604,7 +604,7 @@ algebraic_expr ::= NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.pars
 logical_expr ::= boolean_literal:e {: RESULT=e; :}
 	| expr:e1 ANDAND:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.AND,(Expression)e1,(Expression)e2); :}
 	| expr:e1 OROR:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.OR,(Expression)e1,(Expression)e2); :}
-	| NOT:op expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.NOT,(Expression)e); :}
+	| NOT:op expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstElement)e); :}
 	| QUESTION:op expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.OPT,(Expression)e); :}
 	| expr:e1 EQUALS:op expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| expr:e1 LT:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.LT,(Expression)e1,(Expression)e2); :}
@@ -619,7 +619,7 @@ ltl_expr ::= IDENTIFIER:e {: RESULT = new Variable(parser,(Token)e,e.toString())
     | boolean_literal:e {: RESULT=e; :}
 	| ltl_expr:e1 ANDAND:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.AND,(Expression)e1,(Expression)e2); :}
 	| ltl_expr:e1 OROR:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.OR,(Expression)e1,(Expression)e2); :}
-	| NOT:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.NOT,(Expression)e); :}
+	| NOT:op ltl_expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstElement)e); :}
 	| ltl_expr:e1 EQUALS:op ltl_expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| ltl_expr:e1 LT:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.LT,(Expression)e1,(Expression)e2); :}
 	| ltl_expr:e1 LTE:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.LTE,(Expression)e1,(Expression)e2); :}
