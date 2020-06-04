@@ -30,44 +30,75 @@ public abstract class AstElement extends Node implements AstNode {
 	public String owner;
 	public List<Expression> annotations;
 
+	/**
+	 * The execute method when no specialization is possible. This is the most
+	 * general case, therefore it must be provided by all subclasses.
+	 */
 	@Override
 	public abstract Object executeGeneric(VirtualFrame virtualFrame);
-	
-	public Number executeNumber(VirtualFrame virtualFrame)
-			throws UnexpectedResultException{
-		return IniTypesGen.expectNumber(
-				this.executeGeneric(virtualFrame));
-	}
-	
+
+	/**
+	 * When we use an expression at places where a {@link SLStatementNode statement}
+	 * is already sufficient, the return value is just discarded.
+	 */
 	@Override
-	public boolean executeBoolean(VirtualFrame virtualFrame)
-			throws UnexpectedResultException{
-		return IniTypesGen.expectBoolean(
-				this.executeGeneric(virtualFrame));
+	public void executeVoid(VirtualFrame frame) {
+		executeGeneric(frame);
 	}
-	
+
+	/*
+	 * Execute methods for specialized types. They all follow the same pattern: they
+	 * call the generic execution method and then expect a result of their return
+	 * type. Type-specialized subclasses overwrite the appropriate methods.
+	 */
+
 	@Override
-	public char executeChar(VirtualFrame virtualFrame)
-			throws UnexpectedResultException{
-		return IniTypesGen.expectCharacter(
-				this.executeGeneric(virtualFrame));
+	public byte executeByte(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectByte(this.executeGeneric(virtualFrame));
 	}
-	
+
 	@Override
-	public String executeString(VirtualFrame virtualFrame)
-			throws UnexpectedResultException{
-		return IniTypesGen.expectString(
-				this.executeGeneric(virtualFrame));
+	public int executeInteger(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectInteger(this.executeGeneric(virtualFrame));
 	}
-	
-	
+
+	@Override
+	public long executeLong(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectLong(this.executeGeneric(virtualFrame));
+	}
+
+	@Override
+	public float executeFloat(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectFloat(this.executeGeneric(virtualFrame));
+	}
+
+	@Override
+	public double executeDouble(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectDouble(this.executeGeneric(virtualFrame));
+	}
+
+	@Override
+	public boolean executeBoolean(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectBoolean(this.executeGeneric(virtualFrame));
+	}
+
+	@Override
+	public char executeChar(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectCharacter(this.executeGeneric(virtualFrame));
+	}
+
+	@Override
+	public String executeString(VirtualFrame virtualFrame) throws UnexpectedResultException {
+		return IniTypesGen.expectString(this.executeGeneric(virtualFrame));
+	}
+
 	/**
 	 * Returns the function identifier used as a key for the FrameSlots.
 	 */
 	public static String getFunctionIdentifier(String functionName, int nbParameters) {
 		return String.format("%s parameters:%d", functionName, nbParameters);
 	}
-	
+
 	@Override
 	public String getAnnotationStringValue(String... keys) {
 		if (annotations != null && !annotations.isEmpty()) {
@@ -161,15 +192,15 @@ public abstract class AstElement extends Node implements AstNode {
 	}
 
 	@Override
-	public void prettyPrint(PrintStream out){
+	public void prettyPrint(PrintStream out) {
 		out.print("Default node representation");
 	}
-	
+
 	@Override
 	public void accept(Visitor visitor) {
-		System.out.println("DEBUG : No visitor accepted, default method in AstElement"); // TODO 
+		System.out.println("DEBUG : No visitor accepted, default method in AstElement"); // TODO
 	}
-	
+
 	@Override
 	public String toString() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();

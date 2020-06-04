@@ -4,7 +4,6 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.IniLanguage;
 //import ini.eval.data.TypeInfo;
 import ini.parser.IniParser;
 
@@ -16,15 +15,18 @@ public class NumberLiteral extends AstElement implements Expression {
 	public NumberLiteral(IniParser parser, Token token, Number value) {
 		super(parser, token);
 		this.value=value;
-//		this.typeInfo = TypeInfo.getTypeInfoForInstance(value);
 		if(value instanceof Byte) {
 			this.type = parser.types.BYTE;
 		} if(value instanceof Integer) {
 			this.type = parser.types.INT;
-		} else if(value instanceof Float) {
+		} else if (value instanceof Long){
+			this.type = parser.types.LONG;
+		} else if (value instanceof Float) {
 			this.type = parser.types.FLOAT;
 		} else if(value instanceof Double) {
 			this.type = parser.types.DOUBLE;
+		} else {
+			throw new RuntimeException("No corresponding type in NumberLitteral");
 		}
 		this.nodeTypeId=AstNode.NUMBER_LITERAL;
 	}

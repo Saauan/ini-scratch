@@ -5,7 +5,6 @@ import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import ini.ast.Token;
-import ini.ast.Visitor;
 import ini.parser.IniParser;
 import ini.runtime.IniException;
 
@@ -17,40 +16,47 @@ public abstract class AddNode extends BinaryNode {
 	}
 	
     /**
-     * Specialization for primitive {@code long} values. This is the fast path of the
+     * Specialization for primitive {@code int} values. This is the fast path of the
      * arbitrary-precision arithmetic. We need to check for overflows of the addition, and switch to
-     * the {@link #add(SLBigNumber, SLBigNumber) slow path}. Therefore, we use an
-     * {@link Math#addExact(long, long) addition method that throws an exception on overflow}. The
+     * the {@link #add(long, long) slow path}. Therefore, we use an
+     * {@link Math#addExact(int, int) addition method that throws an exception on overflow}. The
      * {@code rewriteOn} attribute on the {@link Specialization} annotation automatically triggers
      * the node rewriting on the exception.
      * <p>
-     * In compiled code, {@link Math#addExact(long, long) addExact} is compiled to efficient machine
+     * In compiled code, {@link Math#addExact(int, int) addExact} is compiled to efficient machine
      * code that uses the processor's overflow flag. Therefore, this method is compiled to only two
      * machine code instructions on the fast path.
      * <p>
      * This specialization is automatically selected by the Truffle DSL if both the left and right
-     * operand are {@code long} values.
+     * operand are {@code int} values.
      */
     @Specialization(rewriteOn = ArithmeticException.class)
-    protected Number add(Number left, Number right) {
-    	return addNumbers(left, right);
+    protected int add(int left, int right) {
+    	return Math.addExact(left, right);
     }
-   
-    @TruffleBoundary
-	public static Number addNumbers(Number a, Number b) {
-	    if(a instanceof Double || b instanceof Double) {
-	        return a.doubleValue() + b.doubleValue();
-	    } else if(a instanceof Float || b instanceof Float) {
-	        return a.floatValue() + b.floatValue();
-	    } else if(a instanceof Long || b instanceof Long) {
-	        return a.longValue() + b.longValue();
-	    } else {
-	        return a.intValue() + b.intValue();
-	    }
-	}
+    
+    @Specialization
+    protected long add(long left, long right) {
+    	return Math.addExact(left, right);
+    }
+    
+    @Specialization
+    protected float add(float left, float right) {
+    	return left + right;
+    }
+    
+    @Specialization
+    protected double add(double left, double right) {
+    	return left + right;
+    }
+    
+    @Specialization
+    protected byte add(byte left, byte right) {
+    	return (byte) (left + right); // TODO check if optimal
+    }
 
     /**
-     * Specialization for String concatenation. The SL specification says that String concatenation
+     * Specialization for String concatenation. The INI specification says that String concatenation
      * works if either the left or the right operand is a String. The non-string operand is
      * converted then automatically converted to a String.
      * <p>

@@ -1,11 +1,9 @@
 package ini.ast.expression;
 
-import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.Specialization;
 
 import ini.ast.Token;
-import ini.ast.Visitor;
 import ini.parser.IniParser;
 import ini.runtime.IniException;
 
@@ -16,23 +14,30 @@ public abstract class SubNode extends BinaryNode {
 		// TODO Auto-generated constructor stub
 	}
 	
-    @Specialization
-    protected Number sub(Number left, Number right) {
-    	return subNumbers(left, right);
+	@Specialization
+    protected int sub(int left, int right) {
+    	return left - right ;
     }
-   
-    @TruffleBoundary
-	public static Number subNumbers(Number a, Number b) {
-	    if(a instanceof Double || b instanceof Double) {
-	        return a.doubleValue() - b.doubleValue();
-	    } else if(a instanceof Float || b instanceof Float) {
-	        return a.floatValue() - b.floatValue();
-	    } else if(a instanceof Long || b instanceof Long) {
-	        return a.longValue() - b.longValue();
-	    } else {
-	        return a.intValue() - b.intValue();
-	    }
-	}
+    
+    @Specialization
+    protected long sub(long left, long right) {
+    	return left - right;
+    }
+    
+    @Specialization
+    protected float sub(float left, float right) {
+    	return left - right;
+    }
+    
+    @Specialization
+    protected double sub(double left, double right) {
+    	return left - right;
+    }
+    
+    @Specialization
+    protected byte sub(byte left, byte right) {
+    	return (byte) (left - right); // TODO check if optimal
+    }
 
     @Fallback
     protected Object typeError(Object left, Object right) {

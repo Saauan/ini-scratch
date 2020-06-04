@@ -28,6 +28,11 @@ public class BooleanLiteral extends AstElement implements Expression {
 	}
 
 	@Override
+	public boolean executeBoolean(VirtualFrame virtualFrame) {
+		return value;
+	}
+	
+	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
 		return value;
 	}

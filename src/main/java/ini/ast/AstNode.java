@@ -56,7 +56,13 @@ public interface AstNode {
 	int VARIABLE = USER_TYPE + 1;
 
 	public Object executeGeneric(VirtualFrame virtualFrame);
-	public Number executeNumber(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public void executeVoid(VirtualFrame frame);
+	
+	public byte executeByte(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public int executeInteger(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public long executeLong(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public float executeFloat(VirtualFrame virtualFrame) throws UnexpectedResultException;
+	public double executeDouble(VirtualFrame virtualFrame) throws UnexpectedResultException;
 	public boolean executeBoolean(VirtualFrame virtualFrame) throws UnexpectedResultException;
 	public char executeChar(VirtualFrame virtualFrame) throws UnexpectedResultException;
 	public String executeString(VirtualFrame virtualFrame) throws UnexpectedResultException;
