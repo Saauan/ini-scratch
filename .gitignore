@@ -110,3 +110,7 @@ buildNumber.properties
 .flattened-pom.xml
 
 # End of https://www.gitignore.io/api/java,maven,eclipse
+src/main/java/ini/parser/IniParser.java
+src/main/java/ini/parser/IniScanner.java
+src/main/java/ini/parser/IniScanner.java~
+src/main/java/ini/parser/sym.java
