@@ -1,4 +1,4 @@
-package ini.ast.binary;
+package ini.ast.expression;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Fallback;
@@ -7,6 +7,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import ini.ast.Token;
 import ini.ast.Visitor;
 import ini.parser.IniParser;
+import ini.runtime.IniException;
 
 public abstract class AddNode extends BinaryNode {
 
@@ -72,7 +73,7 @@ public abstract class AddNode extends BinaryNode {
 
     @Fallback
     protected Object typeError(Object left, Object right) {
-        throw new RuntimeException(String.format("%s %s %s are not compatible for addition", this, left, right));
+    	throw IniException.typeError(this, left, right);
     }
 
 }

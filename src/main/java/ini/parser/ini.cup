@@ -9,7 +9,7 @@ import java.util.*;
 import java.io.*;
 import ini.*;
 import ini.ast.*;
-import ini.ast.binary.*;
+import ini.ast.expression.*;
 import ini.ast.Process;
 //import ini.eval.function.*;
 //import ini.eval.at.*;
