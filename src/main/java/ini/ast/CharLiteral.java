@@ -28,6 +28,11 @@ public class CharLiteral extends AstElement implements Expression {
 	public void accept(Visitor visitor) {
 		visitor.visitCharLiteral(this);
 	}
+	
+	@Override
+	public char executeChar(VirtualFrame virtualFrame) {
+		return value;
+	}
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {

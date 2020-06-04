@@ -30,6 +30,11 @@ public class StringLiteral extends AstElement implements Expression {
 	public void accept(Visitor visitor) {
 		visitor.visitStringLiteral(this);
 	}
+	
+	@Override
+	public String executeString(VirtualFrame frame) {
+		return value;
+	}
 
 	@Override
 	public String executeGeneric(VirtualFrame virtualFrame) {
