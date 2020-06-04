@@ -59,4 +59,13 @@ public class TestOperator extends IniTestCase {
 						"3.14!=3.42 : true" + nl + 
 						"\"3.14\"!=3.14 : true" + nl, out));
 	}
+	
+	public void testLessThan() {
+		testFile("ini/truffle/operator/TestLess.ini",
+				(p, out) -> assertEquals("5<6 :true" + nl + 
+						"6<5 :false" + nl + 
+						"5.0<5.1 :true" + nl + 
+						"\"abcd\"<\"abdc\" :true" + nl + 
+						"\"abdc\"<\"abcd\" :false" + nl, out));
+	}
 }
