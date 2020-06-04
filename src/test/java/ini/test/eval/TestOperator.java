@@ -27,7 +27,7 @@ public class TestOperator extends IniTestCase {
 		testFile("ini/truffle/operator/TestSub.ini",
 				(p, out) -> assertEquals("n3 = n1 - n2 = 2" + nl + "n4 = 5-3 = 2" + nl, out));
 	}
-
+	
 	public void testLogicalNot() {
 		testFile("ini/truffle/operator/TestLogicalNot.ini",
 				(p, out) -> assertEquals("!false : true" + nl + 
@@ -47,5 +47,16 @@ public class TestOperator extends IniTestCase {
 						"\"3.14\"==3.14 : false" + nl, out));
 	}
 	
+	public void testNotEquals() {
+		testFile("ini/truffle/operator/TestNotEquality.ini",
+				(p, out) -> assertEquals("5!=5 : false" + nl + 
+						"true!=true : false" + nl + 
+						"\"hey\"!=\"hey\" : false" + nl + 
+						"3.14!=3.14 : false" + nl + 
+						"5!=4 : true" + nl + 
+						"true!=false : true" + nl + 
+						"\"hey\"!=\"ho\" : true" + nl + 
+						"3.14!=3.42 : true" + nl + 
+						"\"3.14\"!=3.14 : true" + nl, out));
 	}
 }
