@@ -40,6 +40,10 @@ $ cd {ini_root_dir}
 $ mvn clean package -Dmaven.test.skip=true
 ```
 
+```console
+$ java -Xss10M -classpath target/ini.jar ini.IniMain ini/truffle/test1.ini
+```
+
 Start an INI shell (UNIX-based OS):
 
 ```console
