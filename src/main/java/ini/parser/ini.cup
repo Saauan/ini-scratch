@@ -757,17 +757,17 @@ rule ::= event_rule:r {: RESULT=r; :}
 
 event_rule ::= at_expr:at boolean_expr_opt:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(Expression)g,(Sequence)l, null);
+		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstElement)g,(Sequence)l, null);
 	:}
 	| DOLLAR LPAREN arg_list_opt:el RPAREN at_expr:at boolean_expr_opt:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(Expression)g,(Sequence)l, (List)el);
+		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstElement)g,(Sequence)l, (List)el);
 	:}
 ;
 
 basic_rule ::= guard:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)g).token(),null,(Expression)g,(Sequence)l, null);
+		RESULT = new Rule(parser,((AstNode)g).token(),null,(AstElement)g,(Sequence)l, null);
 	:}
 ;
 

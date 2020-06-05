@@ -183,7 +183,7 @@ public class Scanner implements Visitor {
 		visitAstElement(rule);
 		scan(rule.synchronizedAtsNames);
 		scan(rule.guard);
-		scan(rule.statements);
+		scan((AstElement[]) rule.statements); //FIX: dirty cast
 	}
 
 	public void visitSetConstructor(SetConstructor setConstructor) {

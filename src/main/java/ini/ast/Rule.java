@@ -2,6 +2,7 @@ package ini.ast;
 
 import java.io.PrintStream;
 import java.util.List;
+import ini.Utils;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
@@ -9,19 +10,30 @@ import ini.parser.IniParser;
 
 public class Rule extends AstElement {
 
-	public Sequence<Statement> statements;
-	public Expression guard;
-	public AtPredicate atPredicate;
-	public List<Expression> synchronizedAtsNames;
+	@Children public final AstElement[] statements;
+	@Child public AstElement guard;
+	@Child public AtPredicate atPredicate;
+	@Children public AstElement[] synchronizedAtsNames;
 
-	public Rule(IniParser parser, Token token, AtPredicate atPredicate, Expression guard,
-			Sequence<Statement> statements, List<Expression> synchronizedAtsNames) {
-		super(parser, token);
+	public Rule(IniParser parser, Token token, AtPredicate atPredicate, AstElement guard,
+			Sequence<AstElement> statements, List<Expression> synchronizedAtsNames) {
+		super(parser, token);		
 		this.atPredicate = atPredicate;
 		this.guard = guard;
-		this.statements = statements;
-		this.synchronizedAtsNames = synchronizedAtsNames;
+		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
+		if(synchronizedAtsNames != null) {
+			this.synchronizedAtsNames = synchronizedAtsNames.toArray(new AstElement[0]);
+		}
+		else {
+			this.synchronizedAtsNames = new AstElement[0];
+		}
 		this.nodeTypeId = AstNode.RULE;
+	}
+
+	public Rule(IniParser parser, Token token, Object atPredicate2, Expression g, AstElement[] l,
+			Object synchronizedAtsNames2) {
+				this.statements = null;
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -37,12 +49,8 @@ public class Rule extends AstElement {
 			guard.prettyPrint(out);
 		}
 		out.println(" {");
-		Sequence<Statement> s = statements;
-		while (s != null) {
-			out.print("    ");
-			s.get().prettyPrint(out);
-			out.println();
-			s = s.next();
+		for(int i=0; i<this.statements.length; i++ ) {
+			statements[i].prettyPrint(out);
 		}
 		out.println("  }");
 	}
@@ -65,7 +73,10 @@ public class Rule extends AstElement {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
+		final int nbStatements = this.statements.length;
+		for(int i=0; i<nbStatements; i++) {
+			statements[i].executeVoid(virtualFrame);
+		}
 		return null;
 	}
 	
