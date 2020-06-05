@@ -10,12 +10,16 @@ import com.oracle.truffle.api.nodes.RootNode;
 import ini.IniLanguage;
 
 public class IniRootNode extends RootNode {
+	
+	/** The name of the function, for printing purposes only. */
+    private final String name;
 
 //	@Children
 	private final AstElement[] bodyNodes;
 
-	public IniRootNode(IniLanguage language, AstElement[] bodyNodes, FrameDescriptor frameDescriptor) {
+	public IniRootNode(IniLanguage language, String name, AstElement[] bodyNodes, FrameDescriptor frameDescriptor) {
 		super(language, frameDescriptor);
+		this.name = name;
 		this.bodyNodes = bodyNodes;
 	}
 
@@ -36,7 +40,7 @@ public class IniRootNode extends RootNode {
 		}
 	}
 
-	public static IniRootNode create(IniLanguage lang, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
+	public static IniRootNode create(IniLanguage lang, String name, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
 			FrameDescriptor frameDescriptor) {
 		AstElement[] allNodes = new AstElement[parametersSlots.length+bodyNodes.length];
 		// Insert all parameters
@@ -47,7 +51,7 @@ public class IniRootNode extends RootNode {
 		}
 		System.arraycopy(bodyNodes, 0, allNodes,
                 parametersSlots.length, bodyNodes.length);
-		return new IniRootNode(lang, allNodes, frameDescriptor);
+		return new IniRootNode(lang, name, allNodes, frameDescriptor);
 	}
 
 	/**
@@ -60,10 +64,14 @@ public class IniRootNode extends RootNode {
 				new ReadArgumentFromContextNode(null, null, arg_index), argumentNames[arg_index]);
 	}
 
-	@Deprecated
-	public void setName(String string) {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public String getName() {
+		return name;
 	}
+
+    @Override
+    public String toString() {
+        return "root " + name;
+    }
 
 }

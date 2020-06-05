@@ -130,11 +130,12 @@ public class IniMain {
     public static Object execute(AstElement[] nodes, MaterializedFrame globalFrame) {
         IniFunction function = IniFunction.create(
         		null,
+        		"main",
         		new FrameSlot[] {},
         		nodes,
         		globalFrame.getFrameDescriptor());
         function.setLexicalScope(globalFrame);
-        ((IniRootNode) function.callTarget.getRootNode()).setName("main");
+//        ((IniRootNode) function.callTarget.getRootNode()).setName("main");
         
 
         return function.callTarget.call(globalFrame);

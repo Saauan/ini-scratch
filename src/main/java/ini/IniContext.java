@@ -57,10 +57,10 @@ public class IniContext {
 	    private static void addGlobalFunctions(IniLanguage lang, VirtualFrame virtualFrame) {
 	        FrameDescriptor frameDescriptor = virtualFrame.getFrameDescriptor();
 	        virtualFrame.setObject(frameDescriptor.addFrameSlot(AstElement.getFunctionIdentifier("print", 1)),
-	                BuiltInExecutable.createBuiltinFunction(lang, PrintFunctionFactory.getInstance(),
+	                BuiltInExecutable.createBuiltinFunction(lang, "print", PrintFunctionFactory.getInstance(),
 	                        virtualFrame));
 	        virtualFrame.setObject(frameDescriptor.addFrameSlot(AstElement.getFunctionIdentifier("println", 1)),
-	                BuiltInExecutable.createBuiltinFunction(lang, PrintlnFunctionFactory.getInstance(),
+	                BuiltInExecutable.createBuiltinFunction(lang, "println",PrintlnFunctionFactory.getInstance(),
 	                        virtualFrame));
 	    }
 	    

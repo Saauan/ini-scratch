@@ -74,11 +74,12 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	private IniFunction wrapNodesAndCreateCallTarget(AstElement[] topLevelNodes, MaterializedFrame globalFrame) {
 		IniFunction function = IniFunction.create(
         		null,
+        		"main",
         		new FrameSlot[] {},
         		topLevelNodes,
         		globalFrame.getFrameDescriptor());
         function.setLexicalScope(globalFrame);
-        ((IniRootNode) function.callTarget.getRootNode()).setName("main"); // TODO : Make a real main
+//        ((IniRootNode) function.callTarget.getRootNode()).setName("main"); // TODO : Make a real main
 		return function;
 	}
 

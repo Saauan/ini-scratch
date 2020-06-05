@@ -12,11 +12,14 @@ import ini.ast.IniRootNode;
 import ini.ast.Sequence;
 
 public class IniFunction {
+	
     public final RootCallTarget callTarget;
+    public final String name;
     private MaterializedFrame lexicalScope;
 
-    public IniFunction(RootCallTarget callTarget) {
+    public IniFunction(RootCallTarget callTarget, String name) {
         this.callTarget = callTarget;
+        this.name = name;
     }
 
     public MaterializedFrame getLexicalScope() {
@@ -27,11 +30,11 @@ public class IniFunction {
         this.lexicalScope = lexicalScope;
     }
 
-    public static IniFunction create(IniLanguage lang, FrameSlot[] parametersSlots,
+    public static IniFunction create(IniLanguage lang, String name, FrameSlot[] parametersSlots,
     		AstElement[] bodyNodes, FrameDescriptor frameDescriptor) {
         return new IniFunction(
                 Truffle.getRuntime().createCallTarget(
-                        IniRootNode.create(lang, parametersSlots, bodyNodes, frameDescriptor)));
+                        IniRootNode.create(lang, name, parametersSlots, bodyNodes, frameDescriptor)), name);
     }
     
     // e.g. MumblerFunction.create(this, new FrameSlot[] {}, nodes, context.getGlobalFrame().getFrameDescriptor())

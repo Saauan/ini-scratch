@@ -37,6 +37,7 @@ public abstract class BuiltInExecutable extends Executable {
 	
     public static IniFunction createBuiltinFunction(
             IniLanguage lang,
+            String name,
             NodeFactory<? extends BuiltInExecutable> factory,
             VirtualFrame outerFrame) {
         int argumentCount = factory.getExecutionSignature().size();
@@ -52,8 +53,8 @@ public abstract class BuiltInExecutable extends Executable {
 			throw new RuntimeException("The system variable was not found, or not the correct type");
 		}
         return new IniFunction(Truffle.getRuntime().createCallTarget(
-                new IniRootNode(lang, new AstElement[] {node},
-                        new FrameDescriptor())));
+                new IniRootNode(lang, name, new AstElement[] {node},
+                        new FrameDescriptor())), name);
     }
 	
 	@Override

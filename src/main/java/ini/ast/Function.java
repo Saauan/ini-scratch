@@ -108,6 +108,7 @@ public class Function extends Executable {
 	public IniFunction executeGeneric(VirtualFrame virtualFrame) {
 		// TODO : Find a way to pass language (first argument) to create
 		this.function = IniFunction.create(null,
+				name,
 				convertListToFrameSlotArray(parameters, virtualFrame.getFrameDescriptor()),
 				statements,
 				virtualFrame.getFrameDescriptor());
