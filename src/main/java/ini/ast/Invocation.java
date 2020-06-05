@@ -76,6 +76,7 @@ public class Invocation extends NamedElement implements Statement, Expression {
 		Object[] argumentValues = new Object[this.argumentNodes.length+1];
 		// The first element of the frame's argument is the lexical scope
 		argumentValues[0] = function.getLexicalScope();
+		assert function.getLexicalScope() != null: String.format("The lexical scope of the function %s was null", function.name);
 		for(int i=0; i<this.argumentNodes.length; i++) {
 			argumentValues[i+1] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
