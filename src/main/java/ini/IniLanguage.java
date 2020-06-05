@@ -79,7 +79,6 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
         		topLevelNodes,
         		globalFrame.getFrameDescriptor());
         function.setLexicalScope(globalFrame);
-//        ((IniRootNode) function.callTarget.getRootNode()).setName("main"); // TODO : Make a real main
 		return function;
 	}
 

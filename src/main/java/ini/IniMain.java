@@ -135,7 +135,6 @@ public class IniMain {
         		nodes,
         		globalFrame.getFrameDescriptor());
         function.setLexicalScope(globalFrame);
-//        ((IniRootNode) function.callTarget.getRootNode()).setName("main");
         
 
         return function.callTarget.call(globalFrame);
