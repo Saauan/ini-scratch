@@ -52,9 +52,11 @@ public abstract class BuiltInExecutable extends Executable {
 		} catch (FrameSlotTypeException e) {
 			throw new RuntimeException("The system variable was not found, or not the correct type");
 		}
-        return new IniFunction(Truffle.getRuntime().createCallTarget(
+		IniFunction function = new IniFunction(Truffle.getRuntime().createCallTarget(
                 new IniRootNode(lang, name, new AstElement[] {node},
                         new FrameDescriptor())), name);
+		function.setLexicalScope(outerFrame.materialize());
+        return function;
     }
 	
 	@Override
