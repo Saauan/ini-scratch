@@ -24,4 +24,19 @@ public class TestExamples extends IniTestCase {
 						+ nl + "5"
 						+ nl, out));
 	}
+	
+	public void testFunction() {
+		testFile("ini/truffle/TestFunction.ini", 
+				(p, out) -> assertEquals("I'm in the function and the argument is 5 returning 6" + nl + 
+						"The value returned is 6" + nl + 
+						"I'm in the function and the argument is 5 returning 6" + nl + 
+						"I'm in the function and the argument is 6 returning 7" + nl + 
+						"Calling the same function twice : 7" + nl + 
+						"I'm in the function and the argument is 5 returning 6" + nl + 
+						"Calling the function once within println : 6" + nl + 
+						"I'm in the function and the argument is 5 returning 6" + nl + 
+						"I'm in the function and the argument is 6 returning 7" + nl + 
+						"Calling the function twice within println : 7" + nl + 
+						"I'm the printCalling print within println : I'm the print" + nl, out));
+	}
 }
