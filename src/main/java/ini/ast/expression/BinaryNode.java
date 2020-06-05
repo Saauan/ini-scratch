@@ -1,5 +1,7 @@
 package ini.ast.expression;
 
+import java.io.PrintStream;
+
 import com.oracle.truffle.api.dsl.NodeChild;
 
 import ini.ast.AstElement;
@@ -21,5 +23,12 @@ public abstract class BinaryNode extends AstElement implements Expression {
 	public BinaryNode(IniParser parser, Token token) {
 		// TODO Auto-generated constructor stub
 	}
+	
+	@Override
+	public void prettyPrint(PrintStream out) {
+		out.print("Binary Operator");
+	}
+	
+	
 
 }

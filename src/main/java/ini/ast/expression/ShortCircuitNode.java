@@ -12,9 +12,9 @@ import ini.runtime.IniException;
 public abstract class ShortCircuitNode extends AstElement {
 
 	@Child
-	private AstElement left;
+	protected AstElement left;
 	@Child
-	private AstElement right;
+	protected AstElement right;
 
 	/**
 	 * Short circuits might be used just like a conditional statement it makes sense

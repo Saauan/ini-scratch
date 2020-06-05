@@ -191,10 +191,6 @@ public abstract class AstElement extends Node implements AstNode {
 		return token;
 	}
 
-	@Override
-	public void prettyPrint(PrintStream out) {
-		out.print("Default node representation");
-	}
 
 	@Override
 	public void accept(Visitor visitor) {

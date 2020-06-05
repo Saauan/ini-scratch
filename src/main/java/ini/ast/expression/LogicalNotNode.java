@@ -1,5 +1,7 @@
 package ini.ast.expression;
 
+import java.io.PrintStream;
+
 import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -27,5 +29,10 @@ public abstract class LogicalNotNode extends AstElement {
     protected Object typeError(Object value) {
         throw IniException.typeError(this, value);
     }
+    
+	@Override
+	public void prettyPrint(PrintStream out) {
+		out.print("! [SomeCondition]");
+	}
 
 }

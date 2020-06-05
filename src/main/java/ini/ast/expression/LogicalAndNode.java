@@ -1,5 +1,7 @@
 package ini.ast.expression;
 
+import java.io.PrintStream;
+
 import ini.ast.AstElement;
 import ini.ast.Token;
 import ini.parser.IniParser;
@@ -19,6 +21,11 @@ public final class LogicalAndNode extends ShortCircuitNode {
 	@Override
 	protected boolean execute(boolean leftValue, boolean rightValue) {
 		return leftValue && rightValue;
+	}
+	
+	@Override
+	public void prettyPrint(PrintStream out) {
+		out.print(left + "&&" + right);
 	}
 
 }
