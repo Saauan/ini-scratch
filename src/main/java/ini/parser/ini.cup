@@ -609,7 +609,7 @@ logical_expr ::= boolean_literal:e {: RESULT=e; :}
 	| expr:e1 EQUALS:op expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| expr:e1 NOTEQUALS:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstElement)e1,(AstElement)e2)); :}
 	| expr:e1 LT:op expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| expr:e1 LTE:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.LTE,(Expression)e1,(Expression)e2); :}
+	| expr:e1 LTE:op expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| expr:e1 GT:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.GT,(Expression)e1,(Expression)e2); :}
 	| expr:e1 GTE:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.GTE,(Expression)e1,(Expression)e2); :}
 	| expr:e1 MATCHES:op invocation:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MATCHES,(Expression)e1,(Expression)e2); :}
@@ -624,7 +624,7 @@ ltl_expr ::= IDENTIFIER:e {: RESULT = new Variable(parser,(Token)e,e.toString())
 	| ltl_expr:e1 EQUALS:op ltl_expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| ltl_expr:e1 NOTEQUALS:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstElement)e1,(AstElement)e2)); :}
 	| ltl_expr:e1 LT:op ltl_expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| ltl_expr:e1 LTE:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.LTE,(Expression)e1,(Expression)e2); :}
+	| ltl_expr:e1 LTE:op ltl_expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
 	| ltl_expr:e1 GT:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.GT,(Expression)e1,(Expression)e2); :}
 	| ltl_expr:e1 GTE:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.GTE,(Expression)e1,(Expression)e2); :}
 	| NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.parseDouble(e.toString())); :}

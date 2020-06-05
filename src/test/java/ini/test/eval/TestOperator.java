@@ -68,4 +68,15 @@ public class TestOperator extends IniTestCase {
 						"\"abcd\"<\"abdc\" :true" + nl + 
 						"\"abdc\"<\"abcd\" :false" + nl, out));
 	}
+	
+	public void testLowerOrEqual() {
+		testFile("ini/truffle/operator/TestLowerOrEqual.ini",
+				(p, out) -> assertEquals("5<=6 :true" + nl + 
+						"6<=5 :false" + nl + 
+						"5<=5 :true" + nl + 
+						"5.0<=5.1 :true" + nl + 
+						"5.0<=5.0 :true" + nl + 
+						"\"abcd\"<=\"abdc\" :true" + nl + 
+						"\"abcd\"<=\"abcd\" :true" + nl, out));
+	}
 }
