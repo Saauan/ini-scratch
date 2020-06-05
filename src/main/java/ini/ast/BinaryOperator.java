@@ -87,8 +87,7 @@ public class BinaryOperator extends AstElement implements Expression {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		return null;
-
+		throw new UnsupportedOperationException();
 	}
 
 	Number plus(Number n1, Number n2) {
