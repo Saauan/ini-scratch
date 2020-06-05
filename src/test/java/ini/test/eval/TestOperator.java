@@ -99,4 +99,22 @@ public class TestOperator extends IniTestCase {
 						"\"abcd\">=\"abdc\" :false" + nl + 
 						"\"abcd\">=\"abcd\" :true" + nl, out));
 	}
+	
+	public void testLogicalAnd() {
+		testFile("ini/truffle/operator/TestLogicalAnd.ini",
+				(p, out) -> assertEquals("true && true == true" + nl + 
+						"false && true == false" + nl + 
+						"true && false == false" + nl + 
+						"false && false == false" + nl + 
+						"false && printAndReturnFalse() == false" + nl, out));
+	}
+	
+	public void testLogicalOr() {
+		testFile("ini/truffle/operator/TestLogicalOr.ini",
+				(p, out) -> assertEquals("true || true == true" + nl + 
+						"false || true == true" + nl + 
+						"true || false == true" + nl + 
+						"false || false == false" + nl + 
+						"true || printAndReturnFalse() == true" + nl, out));
+	}
 }
