@@ -4,15 +4,13 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.IniLanguage;
+import ini.Utils;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
@@ -27,20 +25,9 @@ public class Function extends Executable {
 	public Function(IniParser parser, Token token, String name, List<Parameter> parameters,
 			Sequence<AstElement> statements) {
 		super(parser, token, name, parameters);
-		this.statements = convertSequenceToArray(statements);
+		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
 		this.nodeTypeId = AstNode.FUNCTION;
 		this.parameters = parameters;
-	}
-
-	// TODO : Unfold loop and compilation final
-	private static AstElement[] convertSequenceToArray(Sequence<AstElement> statements) {
-		final int nbStatements = statements.size();
-		AstElement[] res = new AstElement[nbStatements];
-		for (int i = 0; i < nbStatements; i++) {
-			res[i] = statements.get();
-			statements = statements.next();
-		}
-		return res;
 	}
 
 	/**
@@ -112,6 +99,11 @@ public class Function extends Executable {
 				convertListToFrameSlotArray(parameters, virtualFrame.getFrameDescriptor()),
 				statements,
 				virtualFrame.getFrameDescriptor());
+		
+		String identifier = getFunctionIdentifier(this.name, this.parameters.size());
+		FrameSlot functionSlot = virtualFrame.getFrameDescriptor().addFrameSlot(identifier); // stores the slot into the
+																								// FrameDescriptor
+		virtualFrame.setObject(functionSlot, this.function); // stores the function into the frame
 		// If it is the root context we set the root context to be the lexical scope
 		if(virtualFrame.getArguments().length == 0 || (virtualFrame.getArguments().length >= 1 && virtualFrame.getArguments()[0] == null)) {
 			this.function.setLexicalScope(virtualFrame.materialize());
@@ -119,12 +111,11 @@ public class Function extends Executable {
 		// Else we set the lexical scope of the calling function to be the lexical scope
 		else {
 			this.function.setLexicalScope((MaterializedFrame) virtualFrame.getArguments()[0]);
+			// If the function is created in the main, we add it to the root context
+			if (ini.Utils.isMain(virtualFrame)){
+				ini.Utils.findRootContext(virtualFrame).setObject(functionSlot, this.function);
+			}
 		}
-		
-		String identifier = getFunctionIdentifier(this.name, this.parameters.size());
-		FrameSlot functionSlot = virtualFrame.getFrameDescriptor().addFrameSlot(identifier); // stores the slot into the
-																								// FrameDescriptor
-		virtualFrame.setObject(functionSlot, this.function); // stores the function into the frame
 		return function;
 	}
 }
