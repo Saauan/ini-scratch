@@ -16,6 +16,7 @@ import ini.ast.AstElement;
 import ini.eval.function.BuiltInExecutable;
 import ini.eval.function.PrintFunctionFactory;
 import ini.eval.function.PrintlnFunctionFactory;
+import ini.eval.function.TimeFunctionFactory;
 /**
  * The run-time state of INI during execution. The context is created by the {@link IniLanguage}.
  * <p>
@@ -62,6 +63,8 @@ public class IniContext {
 	        virtualFrame.setObject(frameDescriptor.addFrameSlot(AstElement.getFunctionIdentifier("println", 1)),
 	                BuiltInExecutable.createBuiltinFunction(lang, "println",PrintlnFunctionFactory.getInstance(),
 	                        virtualFrame));
+	        virtualFrame.setObject(frameDescriptor.addFrameSlot(AstElement.getFunctionIdentifier("time", 0)),
+	        		BuiltInExecutable.createBuiltinFunction(lang, "time", TimeFunctionFactory.getInstance(), virtualFrame));
 	    }
 	    
 	    /**
