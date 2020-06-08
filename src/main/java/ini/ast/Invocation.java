@@ -98,6 +98,9 @@ public class Invocation extends NamedElement implements Statement, Expression {
 		} catch (FrameSlotTypeException e) {
 			throw new RuntimeException("FrameSlotTypeException : The slot was not an object type");
 		}
+		if (function == null){
+			throw new RuntimeException(String.format("The function %s was not found", name));
+		}
 		return function;
 	}
 	
