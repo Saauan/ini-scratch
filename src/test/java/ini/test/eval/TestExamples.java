@@ -39,4 +39,9 @@ public class TestExamples extends IniTestCase {
 						"Calling the function twice within println : 7" + nl + 
 						"I'm the printCalling print within println : I'm the print" + nl, out));
 	}
+
+	public void testRecursive() {
+		testFile("ini/truffle/TestRecursive.ini", 
+				(p, out) -> assertEquals(String.format("0%1$s1%1$s2%1$s3%1$s4%1$s5%1$s", nl), out));
+	}
 }
