@@ -21,21 +21,16 @@ import ini.runtime.IniFunction;
 /**
  * Invocations share the same name as the function or process they invoke
  * 
- * If the function is not found within the current context,
- * searchs in the root context
- * 
- * 
+ * If the function is not found within the current context, searchs in the root
+ * context
  */
 public class Invocation extends NamedElement implements Statement, Expression {
 
-	@Children public AstElement[] argumentNodes;
-	@Child protected IndirectCallNode callNode;
+	@Children
+	public AstElement[] argumentNodes;
+	@Child
+	protected IndirectCallNode callNode;
 
-//	@Deprecated
-//	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
-//		this(parser,token,name,arguments);
-//	}
-	
 	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
 		super(parser, token, name);
 		this.nodeTypeId = AstNode.INVOCATION;
@@ -65,47 +60,56 @@ public class Invocation extends NamedElement implements Statement, Expression {
 	@ExplodeLoop
 	public Object executeGeneric(VirtualFrame virtualFrame) {
 		IniFunction function = this.lookupFunction(virtualFrame, this.name, this.argumentNodes);
-        /*
-         * The number of arguments is constant for one invoke node. During compilation, the loop is
-         * unrolled and the execute methods of all arguments are inlined. This is triggered by the
-         * ExplodeLoop annotation on the method. The compiler assertion below illustrates that the
-         * array length is really constant.
-         */
-        CompilerAsserts.compilationConstant(this.argumentNodes.length);
+		/*
+		 * The number of arguments is constant for one invoke node. During compilation,
+		 * the loop is unrolled and the execute methods of all arguments are inlined.
+		 * This is triggered by the ExplodeLoop annotation on the method. The compiler
+		 * assertion below illustrates that the array length is really constant.
+		 */
+		CompilerAsserts.compilationConstant(this.argumentNodes.length);
 
-		Object[] argumentValues = new Object[this.argumentNodes.length+1];
+		Object[] argumentValues = new Object[this.argumentNodes.length + 1];
 		// The first element of the frame's argument is the lexical scope
 		argumentValues[0] = function.getLexicalScope();
-		assert function.getLexicalScope() != null: String.format("The lexical scope of the function %s was null", function.name);
-		for(int i=0; i<this.argumentNodes.length; i++) {
-			argumentValues[i+1] = this.argumentNodes[i].executeGeneric(virtualFrame);
+		assert function.getLexicalScope() != null : String.format("The lexical scope of the function %s was null",
+				function.name);
+		for (int i = 0; i < this.argumentNodes.length; i++) {
+			argumentValues[i + 1] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
-		
+
 		return call(virtualFrame, function.callTarget, argumentValues);
 	}
-	
+
 	public IniFunction lookupFunction(VirtualFrame frame, String name, AstElement[] argumentNodes) {
 		String identifier = AstElement.getFunctionIdentifier(name, argumentNodes.length);
+		IniFunction function = null;
 		FrameSlot functionSlot = frame.getFrameDescriptor().findFrameSlot(identifier);
-		IniFunction function;
-		try {
-			function = (IniFunction) frame.getObject(functionSlot);
+		if (functionSlot != null) {
+			function = retreiveFunctionFromFrame(frame, function, functionSlot);
+		} else {
 			// If the function is not in the local context
-			if(function==null) {
-				Frame globalFrame = (Frame) frame.getArguments()[0];
-				function = (IniFunction) globalFrame.getObject(functionSlot);
+			VirtualFrame rootFrame = ini.Utils.findRootContext(frame);
+			functionSlot = rootFrame.getFrameDescriptor().findFrameSlot(identifier);
+			if(functionSlot!=null) {
+				function = retreiveFunctionFromFrame(rootFrame, function, functionSlot);
 			}
-		} catch (FrameSlotTypeException e) {
-			throw new RuntimeException("FrameSlotTypeException : The slot was not an object type");
 		}
-		if (function == null){
+		if (function == null) {
 			throw new RuntimeException(String.format("The function %s was not found", name));
 		}
 		return function;
 	}
-	
-    protected Object call(VirtualFrame virtualFrame, CallTarget callTarget,
-            Object[] arguments) {
-        return this.callNode.call(callTarget, arguments);
-    }
+
+	private static IniFunction retreiveFunctionFromFrame(VirtualFrame frame, IniFunction function, FrameSlot functionSlot) {
+		try {
+			function = (IniFunction) frame.getObject(functionSlot);
+		} catch (FrameSlotTypeException e) {
+			throw new RuntimeException("FrameSlotTypeException : The slot was not an object type");
+		}
+		return function;
+	}
+
+	protected Object call(VirtualFrame virtualFrame, CallTarget callTarget, Object[] arguments) {
+		return this.callNode.call(callTarget, arguments);
+	}
 }

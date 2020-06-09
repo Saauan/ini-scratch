@@ -14,7 +14,7 @@ public class IniRootNode extends RootNode {
 	/** The name of the function, for printing purposes only. */
     private final String name;
 
-//	@Children
+	@Children
 	private final AstElement[] bodyNodes;
 
 	public IniRootNode(IniLanguage language, String name, AstElement[] bodyNodes, FrameDescriptor frameDescriptor) {

@@ -42,6 +42,17 @@ public class TestExamples extends IniTestCase {
 
 	public void testRecursive() {
 		testFile("ini/truffle/TestRecursive.ini", 
-				(p, out) -> assertEquals(String.format("0%1$s1%1$s2%1$s3%1$s4%1$s5%1$s", nl), out));
+				(p, out) -> assertEquals(String.format("0%1$s"
+						+ "1%1$s"
+						+ "2%1$s"
+						+ "3%1$s"
+						+ "4%1$s"
+						+ "5%1$s", nl), out));
+	}
+	
+	public void testMultipleArg() {
+		testFile("ini/truffle/TestMultipleArg.ini", 
+				(p, out) -> assertEquals(String.format("My argument is 5%1$s"
+						+ "My arguments are 6 and 7%1$s", nl), out));
 	}
 }

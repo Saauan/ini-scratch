@@ -48,20 +48,6 @@ public class Function extends Executable {
 		return this.function;
 	}
 
-	public IniFunction getIniFunction(VirtualFrame virtualFrame) {
-		IniFunction function = this.getFunction();
-		if (!isScopeSet()) {
-			CompilerDirectives.transferToInterpreterAndInvalidate();
-			function.setLexicalScope(virtualFrame.materialize());
-			this.scopeSet = true;
-		}
-		return function;
-	}
-
-	protected boolean isScopeSet() {
-		return this.scopeSet;
-	}
-
 	@Override
 	public void prettyPrint(PrintStream out) {
 		if (name != null) {
@@ -93,29 +79,32 @@ public class Function extends Executable {
 	 */
 	@Override
 	public IniFunction executeGeneric(VirtualFrame virtualFrame) {
+		// Each time a new function is created, a new frame descriptor is created
+		FrameDescriptor frameDescriptor = new FrameDescriptor();
+
 		// TODO : Find a way to pass language (first argument) to create
-		this.function = IniFunction.create(null,
-				name,
-				convertListToFrameSlotArray(parameters, virtualFrame.getFrameDescriptor()),
-				statements,
-				virtualFrame.getFrameDescriptor());
-		
+		IniFunction function = IniFunction.create(null, name, convertListToFrameSlotArray(parameters, frameDescriptor),
+				statements, frameDescriptor);
+		this.function = function;
+
 		String identifier = getFunctionIdentifier(this.name, this.parameters.size());
-		FrameSlot functionSlot = virtualFrame.getFrameDescriptor().addFrameSlot(identifier); // stores the slot into the
-																								// FrameDescriptor
-		virtualFrame.setObject(functionSlot, this.function); // stores the function into the frame
+		addFunctionToFrame(virtualFrame, function, identifier);
 		// If it is the root context we set the root context to be the lexical scope
-		if(virtualFrame.getArguments().length == 0 || (virtualFrame.getArguments().length >= 1 && virtualFrame.getArguments()[0] == null)) {
+		if (ini.Utils.isRootContext(virtualFrame)) {
 			this.function.setLexicalScope(virtualFrame.materialize());
 		}
-		// Else we set the lexical scope of the calling function to be the lexical scope
+		// Set the lexical scope of the function to be the lexical scope of the calling function
+		// Add the function to the root context
 		else {
+			// Note : here the lexical scope is the same as the function frame. There is a difference in code for future compatibility purposes
 			this.function.setLexicalScope((MaterializedFrame) virtualFrame.getArguments()[0]);
-			// If the function is created in the main, we add it to the root context
-			if (ini.Utils.isMain(virtualFrame)){
-				ini.Utils.findRootContext(virtualFrame).setObject(functionSlot, this.function);
-			}
+			addFunctionToFrame(ini.Utils.findRootContext(virtualFrame), function, identifier);
 		}
 		return function;
+	}
+
+	private static void addFunctionToFrame(VirtualFrame frame, IniFunction function, String identifier) {
+		FrameSlot functionSlot = frame.getFrameDescriptor().addFrameSlot(identifier);
+		frame.setObject(functionSlot, function); // stores the function into the frame
 	}
 }

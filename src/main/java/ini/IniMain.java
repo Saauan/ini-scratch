@@ -16,6 +16,7 @@ import com.martiansoftware.jsap.JSAPResult;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
 import com.oracle.truffle.api.TruffleLanguage;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.source.Source;
@@ -133,7 +134,7 @@ public class IniMain {
         		"main",
         		new FrameSlot[] {},
         		nodes,
-        		globalFrame.getFrameDescriptor());
+        		new FrameDescriptor());
         function.setLexicalScope(globalFrame);
         
 
@@ -148,6 +149,7 @@ public class IniMain {
     	}
     	return res;
     }
+
 	static void printUsage(PrintStream out, JSAP jsap) {
 		out.println("Usage: ini " + jsap.getUsage());
 		out.println();
