@@ -7,7 +7,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 //import ini.eval.data.TypeInfo;
 import ini.parser.IniParser;
 
-public class NumberLiteral extends AstElement implements Expression {
+public class NumberLiteral extends AstExpression implements Expression {
 
 	public Number value;
 	public int typeInfo;

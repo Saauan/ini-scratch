@@ -18,22 +18,25 @@ import com.oracle.truffle.api.nodes.NodeInfo;
  * When we assign a value (assignment) to something else (assignee)
  */
 @NodeInfo(shortName="=")
-public class Assignment extends AstElement implements Statement, Expression {
+@NodeChild("assignmentValue")
+public abstract class Assignment extends AstExpression implements Statement, Expression {
 
-	public VariableAccess assignee;
-	public Expression assignment;
+	// VariableAccess TODO
+	@Child public AstElement assignee;
+	// Expression TODO
+	@Child public AstElement assignment;
 	private FrameSlot slot;
 
 	@Deprecated
-	public Assignment(IniParser parser, Token token, VariableAccess assignee, Expression assignment) {
-		this(parser, token, assignee, assignment, null);
+	public Assignment(IniParser parser, Token token, VariableAccess assignee) {
+		this(parser, token, assignee, null);
 	}
 	
-	public Assignment(IniParser parser, Token token, VariableAccess assignee, Expression assignment, FrameSlot slot) {
+	public Assignment(IniParser parser, Token token, VariableAccess assignee, FrameSlot slot) {
 		super(parser, token);
-		this.assignee = assignee;
-		this.assignee.setDeclaration(true);
-		this.assignment = assignment;
+		this.assignee = (AstElement) assignee;
+//		this.assignee.setDeclaration(true); TODO
+//		this.assignment = (AstElement) assignmentNode;
 		this.nodeTypeId = AstNode.ASSIGNMENT;
 		this.slot = slot;
 	}
@@ -54,25 +57,31 @@ public class Assignment extends AstElement implements Statement, Expression {
     	throw new RuntimeException("Can't get a frameSlot from something that is not a variable (not implemented)");
     }
 	
-    // TODO : Add more specialization 
     
     /**
      * Generic write method that works for all possible types.
      */
-//    @Specialization
+    @Specialization
     protected Object write(VirtualFrame frame, Object assignmentValue) {
+    	checkSlot(frame);
         frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
 
         frame.setObject(getSlot(), assignmentValue);
         return assignmentValue;
     }
+
+	private void checkSlot(VirtualFrame frame) {
+		if(this.slot==null) {
+    		this.slot = getSlotFromFrameDescriptor(frame.getFrameDescriptor());
+    	}
+	}
     
   
 	@Override
 	public void prettyPrint(PrintStream out) {
 		assignee.prettyPrint(out);
 		out.print("=");
-		assignment.prettyPrint(out);
+//		assignment.prettyPrint(out);
 	}
 
 	@Override
@@ -80,14 +89,12 @@ public class Assignment extends AstElement implements Statement, Expression {
 		visitor.visitAssignment(this);
 	}
 
-	@Override
-	public Object executeGeneric(VirtualFrame frame) {
-    	if(this.slot==null) {
-    		this.slot = getSlotFromFrameDescriptor(frame.getFrameDescriptor());
-    	}
-		Object assignmentValue = assignment.executeGeneric(frame);
-		this.write(frame, assignmentValue);
-		return assignmentValue;
-	}
-	
+//	@Override
+//	public Object executeGeneric(VirtualFrame frame) {
+//		Object assignmentValue = assignment.executeGeneric(frame);
+//		this.write(frame, assignmentValue);
+//		return assignmentValue;
+//    	return null;
+//	}
+//	
 }

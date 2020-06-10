@@ -33,8 +33,8 @@ public class Import extends AstElement implements Comparable<Import> {
 	}
 
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
+	public void executeVoid(VirtualFrame frame) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 }

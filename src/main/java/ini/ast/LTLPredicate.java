@@ -30,9 +30,9 @@ public class LTLPredicate extends NamedElement {
 	}
 
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
+	public void executeVoid(VirtualFrame frame) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 	
 }

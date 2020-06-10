@@ -15,14 +15,14 @@ import ini.type.AstAttrib;
 import ini.type.AttrContext;
 import ini.type.Type;
 
-public abstract class Executable extends NamedElement implements Expression {
+public abstract class Executable extends AstExpression implements Expression {
 
 	public List<Parameter> parameters;
 
 //	public transient Context accessibleContext;
 	public transient AttrContext accessibleAttrContext;
-
 	public List<Executable> overloads;
+	public String name;
 
 	public void addOverload(Executable executable) {
 		if (overloads == null) {
@@ -96,7 +96,8 @@ public abstract class Executable extends NamedElement implements Expression {
 	}
 
 	public Executable(IniParser parser, Token token, String name, List<Parameter> parameters) {
-		super(parser, token, name);
+		super(parser, token);
+		this.name = name;
 		this.parameters = parameters;
 	}
 

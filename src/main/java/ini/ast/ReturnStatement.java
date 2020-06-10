@@ -17,9 +17,9 @@ import ini.runtime.IniFunction;
 @NodeInfo(shortName = "return", description = "The node implementing a return statement")
 public class ReturnStatement extends AstElement implements Statement {
 
-	@Child public AstElement valueNode;
+	@Child public AstExpression valueNode;
 	
-	public ReturnStatement(IniParser parser, Token token, AstElement expression) {
+	public ReturnStatement(IniParser parser, Token token, AstExpression expression) {
 		super(parser, token);
 		this.valueNode = expression;
 		this.nodeTypeId=AstNode.RETURN_STATEMENT;
@@ -40,13 +40,13 @@ public class ReturnStatement extends AstElement implements Statement {
 	}
 
 	@Override
-	public Object executeGeneric(VirtualFrame frame) {
+	public void executeVoid(VirtualFrame frame) {
         Object result;
         if (valueNode != null) {
             result = valueNode.executeGeneric(frame);
         } else {
             /*
-             * Return statement that was not followed by an expression, so return the SL null value.
+             * Return statement that was not followed by an expression, so return the null value.
              */
             result = null;
         }

@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class ListExpression extends AstElement implements Expression {
+public class ListExpression extends AstExpression implements Expression {
 
 	public List<Expression> elements;
 	

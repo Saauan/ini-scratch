@@ -6,7 +6,7 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class BooleanLiteral extends AstElement implements Expression {
+public class BooleanLiteral extends AstExpression implements Expression {
 
 	public boolean value;
 	

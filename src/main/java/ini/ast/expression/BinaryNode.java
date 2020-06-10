@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import com.oracle.truffle.api.dsl.NodeChild;
 
 import ini.ast.AstElement;
+import ini.ast.AstExpression;
 import ini.ast.Expression;
 import ini.ast.Token;
 import ini.parser.IniParser;
@@ -16,12 +17,12 @@ import ini.parser.IniParser;
  */
 @NodeChild("leftNode")
 @NodeChild("rightNode")
-public abstract class BinaryNode extends AstElement implements Expression {
+public abstract class BinaryNode extends AstExpression implements Expression {
 	
 	public static String symbol;
 	
 	public BinaryNode(IniParser parser, Token token) {
-		// TODO Auto-generated constructor stub
+		super(parser, token);
 	}
 	
 	@Override

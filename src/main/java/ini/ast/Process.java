@@ -221,4 +221,10 @@ public class Process extends Executable {
 		return null;
 	}
 
+	@Override
+	public void executeVoid(VirtualFrame frame) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

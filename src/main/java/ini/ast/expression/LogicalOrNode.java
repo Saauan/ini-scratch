@@ -5,13 +5,14 @@ import java.io.PrintStream;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.ast.AstElement;
+import ini.ast.AstExpression;
 import ini.ast.Token;
 import ini.parser.IniParser;
 
 @NodeInfo(shortName = "||")
 public final class LogicalOrNode extends ShortCircuitNode {
 
-	public LogicalOrNode(IniParser parser, Token token, AstElement left, AstElement right) {
+	public LogicalOrNode(IniParser parser, Token token, AstExpression left, AstExpression right) {
 		super(parser, token, left, right);
 	}
 

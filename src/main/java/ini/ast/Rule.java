@@ -13,11 +13,11 @@ import ini.parser.IniParser;
 public class Rule extends AstElement {
 
 	@Children public final AstElement[] statements;
-	@Child public AstElement guard;
+	@Child public AstExpression guard;
 	@Child public AtPredicate atPredicate;
 	@Children public AstElement[] synchronizedAtsNames;
 
-	public Rule(IniParser parser, Token token, AtPredicate atPredicate, AstElement guard,
+	public Rule(IniParser parser, Token token, AtPredicate atPredicate, AstExpression guard,
 			Sequence<AstElement> statements, List<Expression> synchronizedAtsNames) {
 		super(parser, token);		
 		this.atPredicate = atPredicate;
@@ -69,13 +69,12 @@ public class Rule extends AstElement {
 
 	@Override
 	@ExplodeLoop
-	public Object executeGeneric(VirtualFrame virtualFrame) {
+	public void executeVoid(VirtualFrame virtualFrame) {
 		final int nbStatements = this.statements.length;
 		CompilerAsserts.partialEvaluationConstant(nbStatements);
 		for(int i=0; i<nbStatements; i++) {
 			statements[i].executeVoid(virtualFrame);
 		}
-		return null;
 	}
 	
 }

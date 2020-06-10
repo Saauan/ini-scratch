@@ -447,13 +447,13 @@ type_decl ::= TIDENTIFIER:i {: RESULT = new TypeVariable(parser,(Token)i,i.toStr
 
 assignment_expr ::= var_access:v ASSIGN:a expr:e
 	{:
-		RESULT = new Assignment(parser,(Token)a,(VariableAccess)v,(Expression)e);
+		RESULT = AssignmentNodeGen.create(parser,(Token)a,(VariableAccess)v,(AstExpression)e);
 	:}
 ;
 
 identifier_assignment ::= IDENTIFIER:v ASSIGN:a expr:e 
 	{: 
-		RESULT = new Assignment(parser,(Token)a,new Variable(parser,(Token)v,v.toString()),(Expression)e);
+		RESULT = AssignmentNodeGen.create(parser,(Token)a,new Variable(parser,(Token)v,v.toString()),(AstExpression)e);
 	:}
 ;
 
@@ -471,7 +471,7 @@ var_access ::= IDENTIFIER:v {: RESULT = new Variable(parser,(Token)v,v.toString(
 ;
 
 string_expr ::= single_string:s {: RESULT=s; :}
-	| single_string:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
+	| single_string:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
 ;
 
 single_string ::= STRING:s {: RESULT=new StringLiteral(parser,(Token)s,s.toString()); :}
@@ -514,13 +514,13 @@ assignment_list_opt ::= assignment_list:l {: RESULT = l; :} | {: RESULT = new Ar
 assignment_list ::= assignment_list:l COMMA lf_opt IDENTIFIER:f ASSIGN:a expr:e 
 	{:
 		List list=(List)l;
-		list.add(new Assignment(parser,(Token)f,new Variable(parser,(Token)f,f.toString()),(Expression)e));
+		list.add(AssignmentNodeGen.create(parser,(Token)f,new Variable(parser,(Token)f,f.toString()),(AstExpression)e));
 		RESULT=list;
 	:}
 		| IDENTIFIER:f ASSIGN:a expr:e
 	{:
 		List list=new ArrayList();
-		list.add(new Assignment(parser,(Token)f,new Variable(parser,(Token)f,f.toString()),(Expression)e));
+		list.add(AssignmentNodeGen.create(parser,(Token)f,new Variable(parser,(Token)f,f.toString()),(AstExpression)e));
 		RESULT=list;
 	:}
 ;
@@ -594,46 +594,46 @@ list_concat_expr ::= expr:e1 AND:op expr:e2 {: RESULT=new BinaryOperator(parser,
 algebraic_expr ::= NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.parseDouble(e.toString())); :}
 	| INT:e {: RESULT=new NumberLiteral(parser,(Token)e,Integer.parseInt(e.toString())); :} 
 	| pre_post_op:op {: RESULT=op; :}
-	| expr:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| expr:e1 MINUS:op expr:e2 {: RESULT=SubNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
+	| expr:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 MINUS:op expr:e2 {: RESULT=SubNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
 	| MINUS:op expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.MINUS,(Expression)e); :}
-	| expr:e1 MULT:op expr:e2 {: RESULT=MulNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| expr:e1 DIV:op expr:e2 {: RESULT=DivNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
+	| expr:e1 MULT:op expr:e2 {: RESULT=MulNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 DIV:op expr:e2 {: RESULT=DivNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
 ;
 
 logical_expr ::= boolean_literal:e {: RESULT=e; :}
-	| expr:e1 ANDAND:op expr:e2 {: RESULT=new LogicalAndNode(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| expr:e1 OROR:op expr:e2 {: RESULT=new LogicalOrNode(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| NOT:op expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstElement)e); :}
+	| expr:e1 ANDAND:op expr:e2 {: RESULT=new LogicalAndNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 OROR:op expr:e2 {: RESULT=new LogicalOrNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| NOT:op expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstExpression)e); :}
 	| QUESTION:op expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.OPT,(Expression)e); :}
-	| expr:e1 EQUALS:op expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| expr:e1 NOTEQUALS:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstElement)e1,(AstElement)e2)); :}
-	| expr:e1 LT:op expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| expr:e1 LTE:op expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| expr:e1 GT:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerOrEqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2)); :}
-	| expr:e1 GTE:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerThanNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2)); :}
+	| expr:e1 EQUALS:op expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 NOTEQUALS:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstExpression)e1,(AstExpression)e2)); :}
+	| expr:e1 LT:op expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 LTE:op expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 GT:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
+	| expr:e1 GTE:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
 	| expr:e1 MATCHES:op invocation:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MATCHES,(Expression)e1,(Expression)e2); :}
 	| expr:e1 MATCHES:op constructor_match_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MATCHES,(Expression)e1,(ConstructorMatchExpression)e2); :}
 ;
 
 ltl_expr ::= IDENTIFIER:e {: RESULT = new Variable(parser,(Token)e,e.toString()); :}
     | boolean_literal:e {: RESULT=e; :}
-	| ltl_expr:e1 ANDAND:op ltl_expr:e2 {: RESULT=new LogicalAndNode(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| ltl_expr:e1 OROR:op ltl_expr:e2 {: RESULT=new LogicalOrNode(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| NOT:op ltl_expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstElement)e); :}
-	| ltl_expr:e1 EQUALS:op ltl_expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| ltl_expr:e1 NOTEQUALS:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstElement)e1,(AstElement)e2)); :}
-	| ltl_expr:e1 LT:op ltl_expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| ltl_expr:e1 LTE:op ltl_expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| ltl_expr:e1 GT:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerOrEqualNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2)); :}
-	| ltl_expr:e1 GTE:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerThanNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2)); :}
+	| ltl_expr:e1 ANDAND:op ltl_expr:e2 {: RESULT=new LogicalAndNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 OROR:op ltl_expr:e2 {: RESULT=new LogicalOrNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| NOT:op ltl_expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstExpression)e); :}
+	| ltl_expr:e1 EQUALS:op ltl_expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 NOTEQUALS:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstExpression)e1,(AstExpression)e2)); :}
+	| ltl_expr:e1 LT:op ltl_expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 LTE:op ltl_expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 GT:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
+	| ltl_expr:e1 GTE:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
 	| NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.parseDouble(e.toString())); :}
 	| INT:e {: RESULT=new NumberLiteral(parser,(Token)e,Integer.parseInt(e.toString())); :} 
-	| ltl_expr:e1 PLUS:op ltl_expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| ltl_expr:e1 MINUS:op ltl_expr:e2 {: RESULT=SubNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
+	| ltl_expr:e1 PLUS:op ltl_expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 MINUS:op ltl_expr:e2 {: RESULT=SubNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
 	| MINUS:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.MINUS,(Expression)e); :}
-	| ltl_expr:e1 MULT:op ltl_expr:e2 {: RESULT=MulNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
-	| ltl_expr:e1 DIV:op ltl_expr:e2 {: RESULT=DivNodeGen.create(parser,(Token)op,(AstElement)e1,(AstElement)e2); :}
+	| ltl_expr:e1 MULT:op ltl_expr:e2 {: RESULT=MulNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 DIV:op ltl_expr:e2 {: RESULT=DivNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
 	| ltl_expr:e1 IMPLIES:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.IMPLIES,(Expression)e1,(Expression)e2); :}
 	| ALWAYS:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.ALWAYS,(Expression)e); :}
 	| EVENTUALLY:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.EVENTUALLY,(Expression)e); :}
@@ -757,23 +757,23 @@ rule ::= event_rule:r {: RESULT=r; :}
 
 event_rule ::= at_expr:at boolean_expr_opt:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstElement)g,(Sequence)l, null);
+		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstExpression)g,(Sequence)l, null);
 	:}
 	| DOLLAR LPAREN arg_list_opt:el RPAREN at_expr:at boolean_expr_opt:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstElement)g,(Sequence)l, (List)el);
+		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstExpression)g,(Sequence)l, (List)el);
 	:}
 ;
 
 basic_rule ::= guard:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)g).token(),null,(AstElement)g,(Sequence)l, null);
+		RESULT = new Rule(parser,((AstNode)g).token(),null,(AstExpression)g,(Sequence)l, null);
 	:}
 ;
 
 boolean_expr_opt ::= ANDAND expr:e {: RESULT = e; :} | ;
 
-ret_statement ::= RETURN:r expr:e {: RESULT = new ReturnStatement(parser,(Token)r,(AstElement)e); :}
+ret_statement ::= RETURN:r expr:e {: RESULT = new ReturnStatement(parser,(Token)r,(AstExpression)e); :}
 	| RETURN:r {: RESULT = new ReturnStatement(parser,(Token)r,null); :}
 ;
 

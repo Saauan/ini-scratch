@@ -6,7 +6,7 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class StringLiteral extends AstElement implements Expression {
+public class StringLiteral extends AstExpression implements Expression {
 
 	public String value;
 

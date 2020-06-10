@@ -14,10 +14,11 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 /**
  * When executed, returns the value of the variable (value access)
  */
-public class Variable extends NamedElement implements VariableAccess {
+public class Variable extends AstExpression implements VariableAccess {
 
 	private boolean declaration = false;
 	private FrameSlot slot;
+	public String name;
 
 	/**
 	 * If this variable is an access to a global channel declaration, it will
@@ -32,7 +33,8 @@ public class Variable extends NamedElement implements VariableAccess {
 	}
 	
 	public Variable(IniParser parser, Token token, String name, FrameSlot slot) {
-		super(parser, token, name);
+		super(parser, token);
+		this.name = name;
 		this.nodeTypeId = AstNode.VARIABLE;
 		this.slot = slot;
 	}
@@ -70,8 +72,11 @@ public class Variable extends NamedElement implements VariableAccess {
             frame.setObject(getSlot(), result);
             return result;
         }
-
-        return FrameUtil.getObjectSafe(frame, getSlot());
+        Object readObject = FrameUtil.getObjectSafe(frame, getSlot());
+        if (readObject == null) {
+        	System.out.println(String.format("Warning : %s value is null", this.name)); // TODO remove eventually
+        }
+        return readObject;
     }
 
 	public final void setDeclaration(boolean declaration) {

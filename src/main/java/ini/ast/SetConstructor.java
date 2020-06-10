@@ -7,12 +7,14 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 import ini.parser.IniParser;
 
-public class SetConstructor extends NamedElement implements Expression {
+public class SetConstructor extends AstExpression implements Expression {
 
 	public List<Assignment> fieldAssignments;
+	public String name;
 
 	public SetConstructor(IniParser parser, Token token, String name, List<Assignment> fieldAssignments) {
-		super(parser, token, name);
+		super(parser, token);
+		this.name = name;
 		this.fieldAssignments = fieldAssignments;
 		this.nodeTypeId = AstNode.SET_CONSTRUCTOR;
 	}
@@ -20,7 +22,8 @@ public class SetConstructor extends NamedElement implements Expression {
 	public Expression getFieldExpression(String fieldName) {
 		for (Assignment a : fieldAssignments) {
 			if (fieldName.equals(a.assignee.toString())) {
-				return a.assignment;
+				return null;
+//			    return a.assignment; // TODO 
 			}
 		}
 		return null;

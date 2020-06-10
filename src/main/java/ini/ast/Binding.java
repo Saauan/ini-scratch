@@ -123,9 +123,10 @@ public class Binding extends NamedElement {
 		// TODO Auto-generated method stub
 		
 	}
+
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
+	public void executeVoid(VirtualFrame frame) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 }

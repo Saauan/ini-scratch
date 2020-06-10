@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 import ini.parser.IniParser;
 
-public class ConditionalExpression extends AstElement implements Expression {
+public class ConditionalExpression extends AstExpression implements Expression {
 	public Expression condition;
 	public Expression trueExpression;
 	public Expression falseExpression;

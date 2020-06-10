@@ -6,7 +6,7 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class SetDeclaration extends AstElement implements Expression {
+public class SetDeclaration extends AstExpression implements Expression {
 
 	public Expression lowerBound;
 	public Expression upperBound;

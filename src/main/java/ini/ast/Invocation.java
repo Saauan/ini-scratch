@@ -24,17 +24,19 @@ import ini.runtime.IniFunction;
  * If the function is not found within the current context, searchs in the root
  * context
  */
-public class Invocation extends NamedElement implements Statement, Expression {
+public class Invocation extends AstExpression implements Statement, Expression {
 
 	@Children
-	public AstElement[] argumentNodes;
+	public AstExpression[] argumentNodes;
 	@Child
 	protected IndirectCallNode callNode;
+	public String name;
 
 	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
-		super(parser, token, name);
+		super(parser, token);
+		this.name = name;
 		this.nodeTypeId = AstNode.INVOCATION;
-		this.argumentNodes = arguments.toArray(new AstElement[0]);
+		this.argumentNodes = arguments.toArray(new AstExpression[0]);
 		this.callNode = Truffle.getRuntime().createIndirectCallNode();
 	}
 

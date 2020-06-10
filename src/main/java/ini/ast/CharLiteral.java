@@ -8,7 +8,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 @NodeInfo(shortName="char")
-public class CharLiteral extends AstElement implements Expression {
+public class CharLiteral extends AstExpression implements Expression {
 
 	public char value;
 
@@ -38,5 +38,6 @@ public class CharLiteral extends AstElement implements Expression {
 	public Object executeGeneric(VirtualFrame virtualFrame) {
 		return value;
 	}
+
 	
 }

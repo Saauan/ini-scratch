@@ -45,9 +45,9 @@ public class ConstructorMatchExpression extends NamedElement implements Expressi
 	}
 
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
+	public void executeVoid(VirtualFrame frame) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 }

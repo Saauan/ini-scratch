@@ -84,12 +84,7 @@ public class BinaryOperator extends AstElement implements Expression {
 	public void accept(Visitor visitor) {
 		visitor.visitBinaryOperator(this);
 	}
-
-	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
-		throw new UnsupportedOperationException();
-	}
-
+	
 	Number plus(Number n1, Number n2) {
 		if (n1 instanceof Byte && n1 instanceof Byte) {
 			return n1.byteValue() + n2.byteValue();
@@ -128,5 +123,11 @@ public class BinaryOperator extends AstElement implements Expression {
 			return -n.intValue();
 		}
 		return -n.doubleValue();
+	}
+
+	@Override
+	public void executeVoid(VirtualFrame frame) {
+		throw new UnsupportedOperationException();
+		
 	}
 }

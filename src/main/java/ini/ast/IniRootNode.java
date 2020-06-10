@@ -32,9 +32,15 @@ public class IniRootNode extends RootNode {
 		int i;
 		try {
 			for (i = 0; i < nbNodes-1; i++) {
-				s[i].executeGeneric(frame);
+				s[i].executeVoid(frame);
 			}
-			return s[i].executeGeneric(frame);
+			if(s[i] instanceof AstExpression) {
+				return ((AstExpression) s[i]).executeGeneric(frame);
+			}
+			else {
+				s[i].executeVoid(frame);
+				return null;
+			}
 		} catch(ReturnException e) {
 			return e.getResult();
 		}
@@ -62,9 +68,11 @@ public class IniRootNode extends RootNode {
 	 * writes it in the frame
 	 */
 	private static Assignment createAssignment(FrameSlot[] argumentNames, int arg_index) {
-		return new Assignment(null, null,
+		return AssignmentNodeGen.create(null,
+				null,
 				new Variable(null, null, argumentNames[arg_index].toString(), argumentNames[arg_index]),
-				new ReadArgumentFromContextNode(null, null, arg_index), argumentNames[arg_index]);
+				argumentNames[arg_index],
+				new ReadArgumentFromContextNode(null, null, arg_index));
 	}
 
 	@Override

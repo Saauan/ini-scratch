@@ -6,7 +6,7 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class UnaryOperator extends AstElement implements Expression, Statement {
+public class UnaryOperator extends AstExpression implements Expression, Statement {
 
 	public enum Kind {
 		MINUS, NOT, OPT, PRE_INC, POST_INC, PRE_DEC, POST_DEC, ALWAYS, EVENTUALLY
@@ -70,8 +70,7 @@ public class UnaryOperator extends AstElement implements Expression, Statement {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 	
 }

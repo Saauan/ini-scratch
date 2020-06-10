@@ -5,16 +5,17 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.profiles.ConditionProfile;
 
 import ini.ast.AstElement;
+import ini.ast.AstExpression;
 import ini.ast.Token;
 import ini.parser.IniParser;
 import ini.runtime.IniException;
 
-public abstract class ShortCircuitNode extends AstElement {
+public abstract class ShortCircuitNode extends AstExpression {
 
 	@Child
-	protected AstElement left;
+	protected AstExpression left;
 	@Child
-	protected AstElement right;
+	protected AstExpression right;
 
 	/**
 	 * Short circuits might be used just like a conditional statement it makes sense
@@ -22,7 +23,7 @@ public abstract class ShortCircuitNode extends AstElement {
 	 */
 	private final ConditionProfile evaluateRightProfile = ConditionProfile.createCountingProfile();
 
-	public ShortCircuitNode(IniParser parser, Token token, AstElement left, AstElement right) {
+	public ShortCircuitNode(IniParser parser, Token token, AstExpression left, AstExpression right) {
 		super(parser, token);
 		this.left = left;
 		this.right = right;

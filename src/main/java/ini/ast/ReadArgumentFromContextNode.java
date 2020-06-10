@@ -13,7 +13,7 @@ import ini.parser.IniParser;
  * 
  *
  */
-public class ReadArgumentFromContextNode extends AstElement implements Expression {
+public class ReadArgumentFromContextNode extends AstExpression implements Expression {
 	
 	public final int argumentIndex;
 

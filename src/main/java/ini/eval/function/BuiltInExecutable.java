@@ -11,9 +11,9 @@ import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import ini.IniContext;
-import ini.IniEnv;
 import ini.IniLanguage;
 import ini.ast.AstElement;
+import ini.ast.AstExpression;
 import ini.ast.Executable;
 import ini.ast.IniRootNode;
 import ini.ast.Parameter;
@@ -22,7 +22,7 @@ import ini.ast.Visitor;
 import ini.runtime.IniFunction;
 
 @GenerateNodeFactory()
-@NodeChild(value = "arguments", type = AstElement[].class)
+@NodeChild(value = "arguments", type = AstExpression[].class)
 public abstract class BuiltInExecutable extends Executable {
 	
 	public static String defaultName;
@@ -41,7 +41,7 @@ public abstract class BuiltInExecutable extends Executable {
             NodeFactory<? extends BuiltInExecutable> factory,
             VirtualFrame outerFrame) {
         int argumentCount = factory.getExecutionSignature().size();
-        AstElement[] argumentNodes = new AstElement[argumentCount];
+        AstExpression[] argumentNodes = new AstExpression[argumentCount];
         for (int i=0; i<argumentCount; i++) {
             argumentNodes[i] = new ReadArgumentFromContextNode(null, null, i);
         }

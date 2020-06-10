@@ -1,17 +1,15 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-import ini.runtime.IniException;
-
 import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
-import com.oracle.truffle.api.profiles.ConditionProfile;
 import com.oracle.truffle.api.profiles.LoopConditionProfile;
+
+import ini.parser.IniParser;
+import ini.runtime.IniException;
 
 @NodeInfo(shortName="case")
 public class CaseStatement extends AstElement implements Statement {
@@ -54,17 +52,7 @@ public class CaseStatement extends AstElement implements Statement {
 	}
 
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
-		for (Rule caseRule : cases) {
-			try {
-				if (caseRule.guard != null && caseRule.guard.executeBoolean(virtualFrame)) {
-					caseRule.executeVoid(virtualFrame);
-					return null;
-				}
-			} catch (UnexpectedResultException e) {
-				throw IniException.typeError(this, caseRule);
-			}
-		}
+	public void executeVoid(VirtualFrame virtualFrame) {
 		
 		final int nbCases = cases.length;
 		boolean foundRule = false;
@@ -89,7 +77,8 @@ public class CaseStatement extends AstElement implements Statement {
 				defaultStatements[i].executeVoid(virtualFrame);
 			}
 		}
-		return null;
 	}
+
+
 	
 }
