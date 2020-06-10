@@ -43,7 +43,8 @@ public class IniRootNode extends RootNode {
 	public static IniRootNode create(IniLanguage lang, String name, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
 			FrameDescriptor frameDescriptor) {
 		AstElement[] allNodes = new AstElement[parametersSlots.length+bodyNodes.length];
-		// Insert all parameters
+		
+		// If there are parameters, create Assignments to read the argument passed in the function and write them to local variables
 		if(parametersSlots.length>0) {
 			for (int arg_index = 0; arg_index < parametersSlots.length; arg_index++) {
 				allNodes[arg_index] = createAssignment(parametersSlots, arg_index);

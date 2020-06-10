@@ -8,7 +8,11 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 import ini.parser.IniParser;
 
-// Reads argument and then write it
+/**
+ * Reads an argument from the frame's argument at a specific index and returns it
+ * 
+ *
+ */
 public class ReadArgumentFromContextNode extends AstElement implements Expression {
 	
 	public final int argumentIndex;
@@ -20,22 +24,18 @@ public class ReadArgumentFromContextNode extends AstElement implements Expressio
 
 	@Override
 	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void prettyPrint(PrintStream out) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
         if (!this.isArgumentIndexInRange(virtualFrame, this.argumentIndex)) {
-            throw new IllegalArgumentException("Not enough arguments passed");
+            throw new IllegalArgumentException("Not enough arguments passed in the frame");
         }
-        return this.getArgument(virtualFrame, this.argumentIndex);
+        return this.getArgumentAtIndex(virtualFrame, this.argumentIndex);
 	}
 
     protected boolean isArgumentIndexInRange(VirtualFrame virtualFrame,
@@ -43,17 +43,7 @@ public class ReadArgumentFromContextNode extends AstElement implements Expressio
         return (index + 1) < virtualFrame.getArguments().length;
     }
 
-    protected Object getArgument(VirtualFrame virtualFrame, int index) {
+    protected Object getArgumentAtIndex(VirtualFrame virtualFrame, int index) {
         return virtualFrame.getArguments()[index + 1];
     }
-
-    protected static MaterializedFrame getLexicalScope(Frame frame) {
-        Object[] args = frame.getArguments();
-        if (args.length > 0) {
-            return (MaterializedFrame) frame.getArguments()[0];
-        } else {
-            return null;
-        }
-    }
-	
 }
