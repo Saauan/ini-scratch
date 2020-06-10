@@ -2,12 +2,14 @@ package ini.ast.expression;
 
 import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.ast.Token;
 import ini.parser.IniParser;
 import ini.runtime.IniException;
 
 //TODO use comparable interface ?
+@NodeInfo(shortName = "<")
 public abstract class LowerThanNode extends BinaryNode {
 
 	public LowerThanNode(IniParser parser, Token token) {

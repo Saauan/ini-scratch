@@ -2,10 +2,13 @@ package ini.ast.expression;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.nodes.NodeInfo;
+
 import ini.ast.AstElement;
 import ini.ast.Token;
 import ini.parser.IniParser;
 
+@NodeInfo(shortName = "||")
 public final class LogicalOrNode extends ShortCircuitNode {
 
 	public LogicalOrNode(IniParser parser, Token token, AstElement left, AstElement right) {
