@@ -3,11 +3,13 @@ package ini.ast;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.Utils;
@@ -34,10 +36,12 @@ public class Function extends Executable {
 	 * Converts a list of Parameters to an array of frame slots. The identifier of
 	 * the slot is the parameter name
 	 */
+	@ExplodeLoop
 	private static FrameSlot[] convertListToFrameSlotArray(List<Parameter> parameters,
 			FrameDescriptor frameDescriptor) {
 		FrameSlot[] result = new FrameSlot[parameters.size()];
-		int nbParam = parameters.size();
+		final int nbParam = parameters.size();
+		CompilerAsserts.partialEvaluationConstant(nbParam);
 		for (int i = 0; i < nbParam; i++) {
 			result[i] = frameDescriptor.addFrameSlot(parameters.get(i).name);
 		}

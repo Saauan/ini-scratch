@@ -66,14 +66,15 @@ public class Invocation extends NamedElement implements Statement, Expression {
 		 * This is triggered by the ExplodeLoop annotation on the method. The compiler
 		 * assertion below illustrates that the array length is really constant.
 		 */
-		CompilerAsserts.compilationConstant(this.argumentNodes.length);
+		final int nbArguments = this.argumentNodes.length;
+		CompilerAsserts.partialEvaluationConstant(nbArguments);
 
-		Object[] argumentValues = new Object[this.argumentNodes.length + 1];
+		Object[] argumentValues = new Object[nbArguments + 1];
 		// The first element of the frame's argument is the lexical scope
 		argumentValues[0] = function.getLexicalScope();
 		assert function.getLexicalScope() != null : String.format("The lexical scope of the function %s was null",
 				function.name);
-		for (int i = 0; i < this.argumentNodes.length; i++) {
+		for (int i = 0; i < nbArguments; i++) {
 			argumentValues[i + 1] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
 

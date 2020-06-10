@@ -27,8 +27,8 @@ public class IniRootNode extends RootNode {
 	@ExplodeLoop
 	public Object execute(VirtualFrame frame) {
 		AstElement[] s = this.bodyNodes;
-		int nbNodes = s.length;
-		CompilerAsserts.compilationConstant(nbNodes);
+		final int nbNodes = s.length;
+		CompilerAsserts.partialEvaluationConstant(nbNodes);
 		int i;
 		try {
 			for (i = 0; i < nbNodes-1; i++) {
@@ -40,18 +40,20 @@ public class IniRootNode extends RootNode {
 		}
 	}
 
+	@ExplodeLoop
 	public static IniRootNode create(IniLanguage lang, String name, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
 			FrameDescriptor frameDescriptor) {
-		AstElement[] allNodes = new AstElement[parametersSlots.length+bodyNodes.length];
-		
+		final int nbParams = parametersSlots.length;
+		CompilerAsserts.partialEvaluationConstant(nbParams);
+		AstElement[] allNodes = new AstElement[nbParams+bodyNodes.length];
 		// If there are parameters, create Assignments to read the argument passed in the function and write them to local variables
-		if(parametersSlots.length>0) {
-			for (int arg_index = 0; arg_index < parametersSlots.length; arg_index++) {
+		if(nbParams>0) {
+			for (int arg_index = 0; arg_index < nbParams; arg_index++) {
 				allNodes[arg_index] = createAssignment(parametersSlots, arg_index);
 			}
 		}
 		System.arraycopy(bodyNodes, 0, allNodes,
-                parametersSlots.length, bodyNodes.length);
+                nbParams, bodyNodes.length);
 		return new IniRootNode(lang, name, allNodes, frameDescriptor);
 	}
 

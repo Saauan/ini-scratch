@@ -4,7 +4,9 @@ import java.io.PrintStream;
 import java.util.List;
 import ini.Utils;
 
+import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import ini.parser.IniParser;
 
@@ -28,12 +30,6 @@ public class Rule extends AstElement {
 			this.synchronizedAtsNames = new AstElement[0];
 		}
 		this.nodeTypeId = AstNode.RULE;
-	}
-
-	public Rule(IniParser parser, Token token, Object atPredicate2, Expression g, AstElement[] l,
-			Object synchronizedAtsNames2) {
-				this.statements = null;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -72,8 +68,10 @@ public class Rule extends AstElement {
 	}
 
 	@Override
+	@ExplodeLoop
 	public Object executeGeneric(VirtualFrame virtualFrame) {
 		final int nbStatements = this.statements.length;
+		CompilerAsserts.partialEvaluationConstant(nbStatements);
 		for(int i=0; i<nbStatements; i++) {
 			statements[i].executeVoid(virtualFrame);
 		}
