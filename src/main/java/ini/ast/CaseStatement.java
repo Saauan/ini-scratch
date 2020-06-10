@@ -9,11 +9,16 @@ import java.util.List;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
+import com.oracle.truffle.api.profiles.ConditionProfile;
+import com.oracle.truffle.api.profiles.LoopConditionProfile;
 
 @NodeInfo(shortName="case")
 public class CaseStatement extends AstElement implements Statement {
+	
 	@Children public Rule[] cases;
 	@Children public AstElement[] defaultStatements;
+	
+	private final LoopConditionProfile condition = LoopConditionProfile.createCountingProfile();
 
 	public CaseStatement(IniParser parser, Token token, List<Rule> cases, Sequence<AstElement> defaultStatements) {
 		super(parser, token);
@@ -59,10 +64,29 @@ public class CaseStatement extends AstElement implements Statement {
 				throw IniException.typeError(this, caseRule);
 			}
 		}
-		// No caseRule was executed, executing the default statements
-		final int nbStatements = this.defaultStatements.length;
-		for(int i=0; i<nbStatements; i++) {
-			defaultStatements[i].executeVoid(virtualFrame);
+		
+		final int nbCases = cases.length;
+		boolean foundRule = false;
+		Rule currentRule;
+		for(int i=0; condition.profile(i<nbCases && !foundRule); i++) {
+			currentRule = cases[i];
+			if (currentRule.guard != null) {
+				try {
+					if (currentRule.guard.executeBoolean(virtualFrame)) {
+						currentRule.executeVoid(virtualFrame);
+						foundRule = true;
+					}
+				} catch (UnexpectedResultException e) {
+					throw IniException.typeError(this, currentRule);
+				}
+			}
+		}
+		if(!foundRule) {
+			// No caseRule was executed, executing the default statements
+			final int nbStatements = this.defaultStatements.length;
+			for(int i=0; i<nbStatements; i++) {
+				defaultStatements[i].executeVoid(virtualFrame);
+			}
 		}
 		return null;
 	}
