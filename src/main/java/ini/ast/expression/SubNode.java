@@ -16,9 +16,9 @@ public abstract class SubNode extends BinaryNode {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Specialization
+	@Specialization(rewriteOn = ArithmeticException.class)
     protected int sub(int left, int right) {
-    	return left - right ;
+    	return Math.subtractExact(left,right) ;
     }
     
     @Specialization

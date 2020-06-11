@@ -17,6 +17,11 @@ public class TestOperator extends IniTestCase {
 		testFile("ini/truffle/operator/TestMul.ini",
 				(p, out) -> assertEquals("n3 = n1 * n2 = 15" + nl + "n4 = 5*3 = 15" + nl, out));
 	}
+	
+	public void testMulOverflow() {
+		testFile("ini/examples/calculus/fac_func.ini",
+				(p, out) -> assertEquals("Fac(20)=2432902008176640000" + nl, out));
+	}
 
 	public void testDiv() {
 		testFile("ini/truffle/operator/TestDiv.ini",

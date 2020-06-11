@@ -16,9 +16,9 @@ public abstract class MulNode extends BinaryNode {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Specialization
+	@Specialization(rewriteOn = ArithmeticException.class)
     protected int mul(int left, int right) {
-    	return left * right ;
+    	return Math.multiplyExact(left,right) ;
     }
     
     @Specialization
