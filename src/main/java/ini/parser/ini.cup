@@ -365,13 +365,13 @@ basic_rule_list ::= basic_rule_list:l lf basic_rule:r
 var_list ::= var_list:l COMMA IDENTIFIER:i
 	{:
 		List list=(List)l;
-		list.add(new Variable(parser,(Token)i,i.toString()));
+		list.add(VariableNodeGen.create(parser,(Token)i,i.toString()));
 		RESULT=list;
 	:}
 		| IDENTIFIER:i
 	{:
 		List l=new ArrayList();
-		l.add(new Variable(parser,(Token)i,i.toString()));
+		l.add(VariableNodeGen.create(parser,(Token)i,i.toString()));
 		RESULT=l;
 	:}
 ;
@@ -453,7 +453,7 @@ assignment_expr ::= var_access:v ASSIGN:a expr:e
 
 identifier_assignment ::= IDENTIFIER:v ASSIGN:a expr:e 
 	{: 
-		RESULT = AssignmentNodeGen.create(parser,(Token)a,new Variable(parser,(Token)v,v.toString()),(AstExpression)e);
+		RESULT = AssignmentNodeGen.create(parser,(Token)a,VariableNodeGen.create(parser,(Token)v,v.toString()),(AstExpression)e);
 	:}
 ;
 
@@ -464,7 +464,7 @@ boolean_literal ::= TRUE:e {: RESULT=new BooleanLiteral(parser,(Token)e,true); :
 	| FALSE:e {: RESULT=new BooleanLiteral(parser,(Token)e,false); :}
 ;
 
-var_access ::= IDENTIFIER:v {: RESULT = new Variable(parser,(Token)v,v.toString()); :}
+var_access ::= IDENTIFIER:v {: RESULT = VariableNodeGen.create(parser,(Token)v,v.toString()); :}
 	| expr:v LSPAREN:t expr:e RSPAREN {: RESULT = new ArrayAccess(parser,(Token)t,(Expression)v,(Expression)e); :}
 	| expr:v LSPAREN:t expr:min DOTDOT expr:max RSPAREN {: RESULT = new SubArrayAccess(parser,(Token)t,(Expression)v,(Expression)min,(Expression)max); :}
 	| expr:v DOT:t IDENTIFIER:i {: RESULT = new FieldAccess(parser,(Token)t,(Expression)v,i.toString()); :}
@@ -514,13 +514,13 @@ assignment_list_opt ::= assignment_list:l {: RESULT = l; :} | {: RESULT = new Ar
 assignment_list ::= assignment_list:l COMMA lf_opt IDENTIFIER:f ASSIGN:a expr:e 
 	{:
 		List list=(List)l;
-		list.add(AssignmentNodeGen.create(parser,(Token)f,new Variable(parser,(Token)f,f.toString()),(AstExpression)e));
+		list.add(AssignmentNodeGen.create(parser,(Token)f,VariableNodeGen.create(parser,(Token)f,f.toString()),(AstExpression)e));
 		RESULT=list;
 	:}
 		| IDENTIFIER:f ASSIGN:a expr:e
 	{:
 		List list=new ArrayList();
-		list.add(AssignmentNodeGen.create(parser,(Token)f,new Variable(parser,(Token)f,f.toString()),(AstExpression)e));
+		list.add(AssignmentNodeGen.create(parser,(Token)f,VariableNodeGen.create(parser,(Token)f,f.toString()),(AstExpression)e));
 		RESULT=list;
 	:}
 ;
@@ -616,7 +616,7 @@ logical_expr ::= boolean_literal:e {: RESULT=e; :}
 	| expr:e1 MATCHES:op constructor_match_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MATCHES,(Expression)e1,(ConstructorMatchExpression)e2); :}
 ;
 
-ltl_expr ::= IDENTIFIER:e {: RESULT = new Variable(parser,(Token)e,e.toString()); :}
+ltl_expr ::= IDENTIFIER:e {: RESULT = VariableNodeGen.create(parser,(Token)e,e.toString()); :}
     | boolean_literal:e {: RESULT=e; :}
 	| ltl_expr:e1 ANDAND:op ltl_expr:e2 {: RESULT=new LogicalAndNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
 	| ltl_expr:e1 OROR:op ltl_expr:e2 {: RESULT=new LogicalOrNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}

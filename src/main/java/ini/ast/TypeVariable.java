@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import com.oracle.truffle.api.frame.VirtualFrame;
+
 import ini.parser.IniParser;
 import ini.type.AstAttrib;
 import ini.type.Type;
@@ -19,12 +21,12 @@ public class TypeVariable extends Variable {
 	public Collection<String> fields;
 	public boolean parameter = false;
 
-	public static TypeVariable create(String name, Collection<String> fields, TypeVariable... dependentTypes) {
-		TypeVariable t = new TypeVariable(null, null, name);
-		t.fields = fields;
-		t.typeParameters = new ArrayList<>(Arrays.asList(dependentTypes));
-		return t;
-	}
+//	public static TypeVariable create(String name, Collection<String> fields, TypeVariable... dependentTypes) {
+//		TypeVariable t = new TypeVariable(null, null, name);
+//		t.fields = fields;
+//		t.typeParameters = new ArrayList<>(Arrays.asList(dependentTypes));
+//		return t;
+//	}
 	
 	public TypeVariable(IniParser parser, Token token, String name) {
 		super(parser, token, name);
@@ -121,5 +123,11 @@ public class TypeVariable extends Variable {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitTypeVariable(this);;
+	}
+
+	@Override
+	public Object executeGeneric(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

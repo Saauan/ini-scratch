@@ -28,7 +28,6 @@ public class IniRootNode extends RootNode {
 	public Object execute(VirtualFrame frame) {
 		AstElement[] s = this.bodyNodes;
 		final int nbNodes = s.length;
-		CompilerAsserts.partialEvaluationConstant(nbNodes);
 		int i;
 		try {
 			for (i = 0; i < nbNodes-1; i++) {
@@ -70,7 +69,7 @@ public class IniRootNode extends RootNode {
 	private static Assignment createAssignment(FrameSlot[] argumentNames, int arg_index) {
 		return AssignmentNodeGen.create(null,
 				null,
-				new Variable(null, null, argumentNames[arg_index].toString(), argumentNames[arg_index]),
+				VariableNodeGen.create(null, null, argumentNames[arg_index].getIdentifier().toString(), argumentNames[arg_index]),
 				argumentNames[arg_index],
 				new ReadArgumentFromContextNode(null, null, arg_index));
 	}
