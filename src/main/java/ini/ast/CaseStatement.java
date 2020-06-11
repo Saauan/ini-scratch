@@ -22,7 +22,7 @@ public class CaseStatement extends AstElement implements Statement {
 	public CaseStatement(IniParser parser, Token token, List<Rule> cases, Sequence<AstElement> defaultStatements) {
 		super(parser, token);
 		this.cases = cases.toArray(new Rule[0]);
-		this.defaultStatements = (AstElement[]) ini.Utils.convertSequenceToArray(defaultStatements);
+		this.defaultStatements = defaultStatements != null ? (AstElement[]) ini.Utils.convertSequenceToArray(defaultStatements) : null;
 		this.nodeTypeId = AstNode.CASE_STATEMENT;
 	}
 
@@ -70,7 +70,7 @@ public class CaseStatement extends AstElement implements Statement {
 				}
 			}
 		}
-		if(!foundRule) {
+		if(!foundRule && this.defaultStatements != null) {
 			// No caseRule was executed, executing the default statements
 			final int nbStatements = this.defaultStatements.length;
 			for(int i=0; i<nbStatements; i++) {
