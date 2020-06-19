@@ -32,7 +32,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger("ini");
 
-	public static final String VERSION = "pre-alpha 2";
+	public static final String VERSION = "pre-alpha 2-truffle";
 	
 	public static final String ID = "INI";
 	public static final String MIME_TYPE = "application/x-ini";
@@ -66,8 +66,8 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		}
 		AstElement[] topLevelNodes = parser.topLevels.toArray(new AstElement[0]);
 		MaterializedFrame globalFrame = getCurrentContext().getGlobalFrame();
-		IniFunction function = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
-        return function.callTarget;
+		IniFunction main = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
+        return main.callTarget;
     }
 
     

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ini.IniContext;
+import ini.IniLanguage;
 import ini.IniMain;
 import ini.ast.AstElement;
 import ini.parser.IniParser;
@@ -32,7 +33,7 @@ public abstract class IniTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		IniMain.LOGGER.info("=====================================================");
+		IniLanguage.LOGGER.info("=====================================================");
 		//outputStream = new ByteArrayOutputStream();
 		//out = new PrintStream(outputStream);
 		//System.setOut(out);
