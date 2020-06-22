@@ -12,8 +12,7 @@ public abstract class TimeFunction extends BuiltInExecutable {
 	
 	public static String defaultName = "time";
 	
-	public TimeFunction(IniEnv env, String[] parameterNames) {
-		super(parameterNames);
+	public TimeFunction() {
 	}
 
     @Specialization

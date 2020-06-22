@@ -27,12 +27,8 @@ public abstract class BuiltInExecutable extends Executable {
 	
 	public static String defaultName;
 	
-	public BuiltInExecutable(String... parameterNames) {
+	public BuiltInExecutable() {
 		super(null, null, defaultName, null);
-		parameters = new ArrayList<Parameter>();
-		for (String parameterName : parameterNames) {
-			parameters.add(new Parameter(null, null, parameterName));
-		}
 	}
 	
     public static IniFunction createBuiltinFunction(

@@ -12,6 +12,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+import ini.IniLanguage;
 import ini.Utils;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
@@ -91,24 +92,22 @@ public class Function extends Executable {
 				statements, frameDescriptor);
 		this.function = function;
 
-		String identifier = getFunctionIdentifier(this.name, this.parameters.size());
-		addFunctionToFrame(virtualFrame, function, identifier);
 		// If it is the root context we set the root context to be the lexical scope
 		if (ini.Utils.isRootContext(virtualFrame)) {
 			this.function.setLexicalScope(virtualFrame.materialize());
 		}
 		// Set the lexical scope of the function to be the lexical scope of the calling function
-		// Add the function to the root context
 		else {
-			// Note : here the lexical scope is the same as the function frame. There is a difference in code for future compatibility purposes
+			// Note : here the lexical scope is the same as the function frame.
 			this.function.setLexicalScope((MaterializedFrame) virtualFrame.getArguments()[0]);
-			addFunctionToFrame(ini.Utils.findRootContext(virtualFrame), function, identifier);
 		}
+		
+		registerFunction(function, getFunctionIdentifier(this.name, this.parameters.size()));
 		return function;
 	}
 
-	private static void addFunctionToFrame(VirtualFrame frame, IniFunction function, String identifier) {
-		FrameSlot functionSlot = frame.getFrameDescriptor().addFrameSlot(identifier);
-		frame.setObject(functionSlot, function); // stores the function into the frame
+
+	private void registerFunction(IniFunction function, String functionId) {
+		lookupContextReference(IniLanguage.class).get().getFunctionRegistry().register(functionId, function);
 	}
 }

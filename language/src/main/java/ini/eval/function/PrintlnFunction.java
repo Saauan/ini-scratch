@@ -3,77 +3,76 @@ package ini.eval.function;
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.dsl.CachedContext;
 import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.IniEnv;
+import ini.IniContext;
+import ini.IniLanguage;
 
 @NodeInfo(shortName = "println")
 @GenerateNodeFactory()
 public abstract class PrintlnFunction extends BuiltInExecutable {
 	
 	public static String defaultName = "println";
-
-	private static PrintStream out;
 	
-	public PrintlnFunction(IniEnv env, String[] parameterNames) {
-		super(parameterNames);
-		out = env.out;
+	public PrintlnFunction() {
 	}
 	
+
     @Specialization
-    public Number println(Number value) {
-        doPrintln(value);
+    public Number println(Number value, @CachedContext(IniLanguage.class) IniContext context) {
+        doPrintln(context.getOut(), value);
         return value;
     }
     
     @TruffleBoundary
-    private static void doPrintln(Number value) {
+    private static void doPrintln(PrintStream out, Number value) {
     	out.println(value);
     }
 
     @Specialization
-    public boolean println(boolean value) {
-        doPrintln(value);
+    public boolean println(boolean value, @CachedContext(IniLanguage.class) IniContext context) {
+        doPrintln(context.getOut(), value);
         return value;
     }
     
     @TruffleBoundary
-    private static void doPrintln(boolean value) {
+    private static void doPrintln(PrintStream out, boolean value) {
     	out.println(value);
     }
     
     @Specialization
-    public char println(char value) {
-        doPrintln(value);
+    public String println(String value, @CachedContext(IniLanguage.class) IniContext context) {
+        doPrintln(context.getOut(), value);
         return value;
     }
     
     @TruffleBoundary
-    private static void doPrintln(char value) {
+    private static void doPrintln(PrintStream out, String value) {
     	out.println(value);
     }
     
     @Specialization
-    public String println(String value) {
-        doPrintln(value);
+    public char println(char value, @CachedContext(IniLanguage.class) IniContext context) {
+        doPrintln(context.getOut(), value);
         return value;
     }
     
     @TruffleBoundary
-    private static void doPrintln(String value) {
+    private static void doPrintln(PrintStream out, char value) {
     	out.println(value);
     }
 
     @Specialization
-    public Object println(Object value) {
-        doPrintln(value);
+    public Object println(Object value, @CachedContext(IniLanguage.class) IniContext context) {
+        doPrintln(context.getOut(), value);
         return value;
     }
     
     @TruffleBoundary
-    private static void doPrintln(Object value) {
+    private static void doPrintln(PrintStream out, Object value) {
     	out.println(value);
     }
 }

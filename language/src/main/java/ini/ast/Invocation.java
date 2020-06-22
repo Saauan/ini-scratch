@@ -8,13 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.Truffle;
-import com.oracle.truffle.api.frame.Frame;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.IndirectCallNode;
 
+import ini.IniLanguage;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
@@ -61,7 +61,10 @@ public class Invocation extends AstExpression implements Statement, Expression {
 	@Override
 	@ExplodeLoop
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		IniFunction function = this.lookupFunction(virtualFrame, this.name, this.argumentNodes);
+		IniFunction function = this.lookupFunction(getFunctionIdentifier(this.name, this.argumentNodes.length));
+		if (function == null) {
+			throw new RuntimeException(String.format("The function %s was not found", this.name));
+		}
 		/*
 		 * The number of arguments is constant for one invoke node. During compilation,
 		 * the loop is unrolled and the execute methods of all arguments are inlined.
@@ -83,32 +86,9 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		return call(virtualFrame, function.callTarget, argumentValues);
 	}
 
-	public IniFunction lookupFunction(VirtualFrame frame, String name, AstElement[] argumentNodes) {
-		String identifier = AstElement.getFunctionIdentifier(name, argumentNodes.length);
+	public IniFunction lookupFunction(String functionId) {
 		IniFunction function = null;
-		FrameSlot functionSlot = frame.getFrameDescriptor().findFrameSlot(identifier);
-		if (functionSlot != null) {
-			function = retreiveFunctionFromFrame(frame, function, functionSlot);
-		} else {
-			// If the function is not in the local context
-			VirtualFrame rootFrame = ini.Utils.findRootContext(frame);
-			functionSlot = rootFrame.getFrameDescriptor().findFrameSlot(identifier);
-			if(functionSlot!=null) {
-				function = retreiveFunctionFromFrame(rootFrame, function, functionSlot);
-			}
-		}
-		if (function == null) {
-			throw new RuntimeException(String.format("The function %s was not found", name));
-		}
-		return function;
-	}
-
-	private static IniFunction retreiveFunctionFromFrame(VirtualFrame frame, IniFunction function, FrameSlot functionSlot) {
-		try {
-			function = (IniFunction) frame.getObject(functionSlot);
-		} catch (FrameSlotTypeException e) {
-			throw new RuntimeException("FrameSlotTypeException : The slot was not an object type");
-		}
+		function = lookupContextReference(IniLanguage.class).get().getFunctionRegistry().lookup(functionId);
 		return function;
 	}
 
