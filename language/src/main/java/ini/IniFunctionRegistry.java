@@ -34,12 +34,6 @@ public final class IniFunctionRegistry {
 		IniFunction result = functionMap.get(name);
 		return result;
 	}
-
-	public IniFunction register(String name, RootCallTarget callTarget) {
-		IniFunction function = new IniFunction(callTarget, name);
-		this.functionMap.put(name, function);
-		return function;
-	}
 	
 	public IniFunction register(String name, IniFunction function) {
 		this.functionMap.put(name, function);
