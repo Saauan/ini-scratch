@@ -1,0 +1,39 @@
+== Arithmetic ==
+10
+11.0
+heyo
+0
+0.0
+25
+25.0
+1
+1.0
+== Equality ==
+true
+false
+false
+true
+== Inequality ==
+false
+true
+true
+true
+true
+false
+false
+false
+true
+true
+false
+false
+== Logic ==
+true
+false
+false
+false
+true
+true
+false
+true
+false
+true

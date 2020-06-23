@@ -1,0 +1,11 @@
+I'm in the function and the argument is 5 returning 6
+The value returned is 6
+I'm in the function and the argument is 5 returning 6
+I'm in the function and the argument is 6 returning 7
+Calling the same function twice : 7
+I'm in the function and the argument is 5 returning 6
+Calling the function once within println : 6
+I'm in the function and the argument is 5 returning 6
+I'm in the function and the argument is 6 returning 7
+Calling the function twice within println : 7
+I'm the printCalling print within println : I'm the print
