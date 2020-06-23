@@ -7,13 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
+import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.Truffle;
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.IndirectCallNode;
 
+import ini.IniContext;
 import ini.IniLanguage;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
@@ -31,6 +32,14 @@ public class Invocation extends AstExpression implements Statement, Expression {
 	@Child
 	protected IndirectCallNode callNode;
 	public String name;
+	
+    /**
+     * The resolved function. During parsing (in the constructor of this node), we do not have the
+     * {@link IniContext} available yet, so the lookup can only be done at {@link #executeGeneric
+     * first execution}. The {@link CompilationFinal} annotation ensures that the function can still
+     * be constant folded during compilation.
+     */
+	@CompilationFinal private IniFunction cachedFunction;
 
 	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
 		super(parser, token);
@@ -61,10 +70,16 @@ public class Invocation extends AstExpression implements Statement, Expression {
 	@Override
 	@ExplodeLoop
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		IniFunction function = this.lookupFunction(getFunctionIdentifier(this.name, this.argumentNodes.length));
-		if (function == null) {
-			throw new RuntimeException(String.format("The function %s was not found", this.name));
+		if (cachedFunction == null) {
+			/* We are about to change a @CompilationFinal field. */
+			CompilerDirectives.transferToInterpreterAndInvalidate();
+			/* First execution of the node: lookup the function in the function registry. */
+			cachedFunction = this.lookupFunction(getFunctionIdentifier(this.name, this.argumentNodes.length));
+			if (cachedFunction == null) {
+				throw new RuntimeException(String.format("The function %s was not found", this.name));
+			}
 		}
+
 		/*
 		 * The number of arguments is constant for one invoke node. During compilation,
 		 * the loop is unrolled and the execute methods of all arguments are inlined.
@@ -76,14 +91,14 @@ public class Invocation extends AstExpression implements Statement, Expression {
 
 		Object[] argumentValues = new Object[nbArguments + 1];
 		// The first element of the frame's argument is the lexical scope
-		argumentValues[0] = function.getLexicalScope();
-		assert function.getLexicalScope() != null : String.format("The lexical scope of the function %s was null",
-				function.name);
+		argumentValues[0] = cachedFunction.getLexicalScope();
+		assert cachedFunction.getLexicalScope() != null : String.format("The lexical scope of the function %s was null",
+				cachedFunction.name);
 		for (int i = 0; i < nbArguments; i++) {
 			argumentValues[i + 1] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
 
-		return call(virtualFrame, function.callTarget, argumentValues);
+		return call(virtualFrame, cachedFunction.callTarget, argumentValues);
 	}
 
 	public IniFunction lookupFunction(String functionId) {
