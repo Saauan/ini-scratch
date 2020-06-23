@@ -38,7 +38,7 @@ public class Function extends Executable {
 	 * the slot is the parameter name
 	 */
 	@ExplodeLoop
-	private static FrameSlot[] convertListToFrameSlotArray(List<Parameter> parameters,
+	private static FrameSlot[] convertListOfParametersToArrayOfFrameSlot(List<Parameter> parameters,
 			FrameDescriptor frameDescriptor) {
 		FrameSlot[] result = new FrameSlot[parameters.size()];
 		final int nbParam = parameters.size();
@@ -76,36 +76,43 @@ public class Function extends Executable {
 		visitor.visitFunction(this);
 	}
 
+
 	/**
-	 * Stores the function in the frame using a slot created with the function name
-	 * and the number of arguments
-	 * 
-	 * @return the slot in which the function is stored
+	 * Creates an IniFunction, registers it, and returns it.
 	 */
 	@Override
 	public IniFunction executeGeneric(VirtualFrame virtualFrame) {
-		// Each time a new function is created, a new frame descriptor is created
+		IniFunction function = executeWithoutRegister(virtualFrame);
+		
+		registerFunction(function, getFunctionIdentifier(this.name, this.parameters.size()));
+		return function;
+	}
+	
+	/**
+	 * Creates an IniFunction with a new FrameDescriptor, a lexical scope and returns it
+	 */
+	public IniFunction executeWithoutRegister(VirtualFrame virtualFrame) {
+		/* Each time a new function is created, a new frame descriptor is created */
 		FrameDescriptor frameDescriptor = new FrameDescriptor();
+		IniFunction function = IniFunction.create(
+				lookupContextReference(IniLanguage.class).get().getLang(),
+				name,
+				convertListOfParametersToArrayOfFrameSlot(parameters, frameDescriptor),
+				statements,
+				frameDescriptor);
 
-		// TODO : Find a way to pass language (first argument) to create
-		IniFunction function = IniFunction.create(null, name, convertListToFrameSlotArray(parameters, frameDescriptor),
-				statements, frameDescriptor);
 		this.function = function;
 
 		// If it is the root context we set the root context to be the lexical scope
 		if (ini.Utils.isRootContext(virtualFrame)) {
 			this.function.setLexicalScope(virtualFrame.materialize());
 		}
-		// Set the lexical scope of the function to be the lexical scope of the calling function
+		// Otherwise, Set the lexical scope of the function to be the lexical scope of the calling function
 		else {
-			// Note : here the lexical scope is the same as the function frame.
 			this.function.setLexicalScope((MaterializedFrame) virtualFrame.getArguments()[0]);
 		}
-		
-		registerFunction(function, getFunctionIdentifier(this.name, this.parameters.size()));
-		return function;
+		return this.function;
 	}
-
 
 	private void registerFunction(IniFunction function, String functionId) {
 		lookupContextReference(IniLanguage.class).get().getFunctionRegistry().register(functionId, function);

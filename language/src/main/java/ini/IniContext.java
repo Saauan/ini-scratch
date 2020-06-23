@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.Truffle;
+import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -104,6 +105,10 @@ public class IniContext {
 	
 	public PrintStream getOut() {
 		return out;
+	}
+
+	public IniLanguage getLang() {
+		return lang;
 	}
 
 	/**

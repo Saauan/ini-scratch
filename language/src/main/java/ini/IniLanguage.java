@@ -18,6 +18,7 @@ import com.oracle.truffle.api.source.Source;
 import ini.ast.AstElement;
 import ini.ast.AstNode;
 import ini.ast.Executable;
+import ini.ast.Function;
 import ini.ast.IniRootNode;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
@@ -66,7 +67,12 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		}
 		AstElement[] topLevelNodes = parser.topLevels.toArray(new AstElement[0]);
 		MaterializedFrame globalFrame = getCurrentContext().getGlobalFrame();
-		IniFunction main = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
+		
+		IniFunction main = getMainExecutable(parser, globalFrame);
+		if(main == null) {
+			main = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
+		}				
+
         return main.callTarget;
     }
 
@@ -87,14 +93,20 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		// TODO Auto-generated method stub
 		return false;
 	}
-	public static Executable getMainExecutable(IniParser parser) {
-		Executable main = null;
+	
+	public static IniFunction getMainExecutable(IniParser parser, MaterializedFrame globalFrame) {
+		Function mainDefinition = null;
 		for (AstNode topLevel : parser.topLevels) {
-			if ((topLevel instanceof Executable) && "main".equals(((Executable) topLevel).name)) {
-				main = (Executable) topLevel;
+			if ((topLevel instanceof Function) && "main".equals(((Function) topLevel).name)) {
+				mainDefinition = (Function) topLevel;
 			}
 		}
-		return main;
+		IniFunction mainFunction = null;
+		if(mainDefinition != null) {
+			mainFunction = mainDefinition.executeWithoutRegister(globalFrame);
+		}
+		
+		return mainFunction;
 	}
 
 	public static void parseConfiguration(IniParser parser) {
