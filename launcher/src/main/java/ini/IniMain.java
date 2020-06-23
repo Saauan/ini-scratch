@@ -85,13 +85,13 @@ public class IniMain {
     	
     	try { 
     		Value result = context.eval(source);
-    		if (context.getBindings(ID).getMember("main") == null) {
-    			err.println("No function main() in INI source file");
-    			return 1;
-    		}
-    		if(!result.isNull()) {
-    			out.println(result.toString());
-    		}
+//    		if (context.getBindings(ID).getMember("main") == null) {
+//    			err.println("No function main() in INI source file");
+//    			return 1;
+//    		}
+//    		if(!result.isNull()) {
+//    			out.println("result : " + result.toString());
+//    		}
     		return 0;
         } catch (PolyglotException ex) {
             if (ex.isInternalError()) {
