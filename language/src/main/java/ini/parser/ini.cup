@@ -73,7 +73,7 @@ parser code {:
       scanner.setFileName(fileName);
       IniParser parser= new IniParser(scanner);
       if(env==null) {
-      	env = new IniEnv(System.in, System.out);
+      	env = new IniEnv();
       }
       parser.env = env;
       if(parent != null) {
@@ -92,7 +92,7 @@ parser code {:
       scanner.setFileName("<none>");
       IniParser parser= new IniParser(scanner);
       if(env==null) {
-      	env = new IniEnv(System.in, System.out);
+      	env = new IniEnv();
       }
       parser.env = env;
       if(parent != null) {

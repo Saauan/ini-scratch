@@ -1,6 +1,7 @@
 package ini;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 //import ini.broker.CoreBrokerClient;
@@ -14,9 +15,7 @@ public class IniEnv {
 	
 	
 	
-	public IniEnv(InputStream in, PrintStream out) {
-		this.in = in;
-		this.out = out;
+	public IniEnv() {
 	}
 
 	/**
@@ -43,9 +42,6 @@ public class IniEnv {
 	 * The INI instance's node name. 
 	 */
 	public String node = "main";
-	
-    public InputStream in;
-    public PrintStream out;
 
 	/**
 	 * Gets the configuration that corresponds to the currently active environment.

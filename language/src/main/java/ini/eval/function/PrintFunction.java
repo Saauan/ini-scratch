@@ -1,6 +1,6 @@
 package ini.eval.function;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.CachedContext;
@@ -27,7 +27,7 @@ public abstract class PrintFunction extends BuiltInExecutable {
     }
     
     @TruffleBoundary
-    private static void doPrint(PrintStream out, Number value) {
+    private static void doPrint(PrintWriter out, Number value) {
     	out.print(value);
     }
 
@@ -38,7 +38,7 @@ public abstract class PrintFunction extends BuiltInExecutable {
     }
     
     @TruffleBoundary
-    private static void doPrint(PrintStream out, boolean value) {
+    private static void doPrint(PrintWriter out, boolean value) {
     	out.print(value);
     }
     
@@ -49,8 +49,9 @@ public abstract class PrintFunction extends BuiltInExecutable {
     }
     
     @TruffleBoundary
-    private static void doPrint(PrintStream out, String value) {
+    private static void doPrint(PrintWriter out, String value) {
     	out.print(value);
+    	out.flush();
     }
     
     @Specialization
@@ -60,7 +61,7 @@ public abstract class PrintFunction extends BuiltInExecutable {
     }
     
     @TruffleBoundary
-    private static void doPrint(PrintStream out, char value) {
+    private static void doPrint(PrintWriter out, char value) {
     	out.print(value);
     }
 
@@ -71,7 +72,7 @@ public abstract class PrintFunction extends BuiltInExecutable {
     }
     
     @TruffleBoundary
-    private static void doPrint(PrintStream out, Object value) {
+    private static void doPrint(PrintWriter out, Object value) {
     	out.print(value);
     }
 }

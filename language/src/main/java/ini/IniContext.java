@@ -41,41 +41,29 @@ public class IniContext {
 
 	private final IniFunctionRegistry functionRegistry;
 	private final InputStream in;
-	private final PrintStream out;
+	private final PrintWriter out;
 
-	@Deprecated
-	public IniContext() {
-		this(null);
-	}
-
-	public IniContext(IniLanguage lang) {
-		this(lang, System.in, System.out);
-	}
-
-	public IniContext(IniLanguage lang, InputStream in, PrintStream out) {
+	public IniContext(IniLanguage lang, TruffleLanguage.Env env) {
 		this.globalFrameDescriptor = new FrameDescriptor();
-		this.in = in;
-		this.out = out;
+		this.in = env.in();
+		this.out = new PrintWriter(env.out(), true);
 		this.lang = lang;
 		this.functionRegistry = new IniFunctionRegistry(lang);
-		this.globalFrame = this.initGlobalFrame(lang, in, out);
-		
-		
+		this.globalFrame = this.initGlobalFrame(lang);
 	}
 	
 
-	private MaterializedFrame initGlobalFrame(IniLanguage lang, InputStream in, PrintStream out) {
+	private MaterializedFrame initGlobalFrame(IniLanguage lang) {
 		VirtualFrame frame = Truffle.getRuntime().createVirtualFrame(null, this.globalFrameDescriptor);
-		addSystemVariable(frame, in, out);
-		installBuiltins();
+		addSystemVariable(frame);
 		return frame.materialize();
 	}
 
 	/**
 	 * The system variable is an IniEnv object
 	 */
-	private static void addSystemVariable(VirtualFrame virtualFrame, InputStream in, PrintStream out) {
-		IniEnv env = new IniEnv(in, out);
+	private static void addSystemVariable(VirtualFrame virtualFrame) {
+		IniEnv env = new IniEnv();
 		virtualFrame.setObject(getSystemVariableSlot(virtualFrame.getFrameDescriptor()), env);
 	}
 
@@ -103,7 +91,7 @@ public class IniContext {
 		return in;
 	}
 	
-	public PrintStream getOut() {
+	public PrintWriter getOut() {
 		return out;
 	}
 
