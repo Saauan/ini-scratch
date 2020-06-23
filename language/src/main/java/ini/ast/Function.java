@@ -38,7 +38,7 @@ public class Function extends Executable {
 	 * the slot is the parameter name
 	 */
 	@ExplodeLoop
-	private static FrameSlot[] convertListOfParametersToArrayOfFrameSlot(List<Parameter> parameters,
+	public static FrameSlot[] convertListOfParametersToArrayOfFrameSlot(List<Parameter> parameters,
 			FrameDescriptor frameDescriptor) {
 		FrameSlot[] result = new FrameSlot[parameters.size()];
 		final int nbParam = parameters.size();
