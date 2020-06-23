@@ -68,11 +68,8 @@ public class Rule extends AstElement {
 	}
 
 	@Override
-	@ExplodeLoop
 	public void executeVoid(VirtualFrame virtualFrame) {
-		final int nbStatements = this.statements.length;
-		CompilerAsserts.partialEvaluationConstant(nbStatements);
-		for(int i=0; i<nbStatements; i++) {
+		for(int i=0; i<statements.length; i++) {
 			statements[i].executeVoid(virtualFrame);
 		}
 	}

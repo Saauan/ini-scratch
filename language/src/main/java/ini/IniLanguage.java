@@ -11,6 +11,8 @@ import com.google.gson.Gson;
 import com.martiansoftware.jsap.JSAP;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.TruffleLanguage;
+import com.oracle.truffle.api.frame.Frame;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.source.Source;
@@ -94,7 +96,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		return false;
 	}
 	
-	public static IniFunction getMainExecutable(IniParser parser, MaterializedFrame globalFrame) {
+	public IniFunction getMainExecutable(IniParser parser, MaterializedFrame globalFrame) {
 		Function mainDefinition = null;
 		for (AstNode topLevel : parser.topLevels) {
 			if ((topLevel instanceof Function) && "main".equals(((Function) topLevel).name)) {
@@ -103,10 +105,32 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		}
 		IniFunction mainFunction = null;
 		if(mainDefinition != null) {
-			mainFunction = mainDefinition.executeWithoutRegister(globalFrame);
+			mainFunction = createMainFunction(mainDefinition, getCurrentContext());
 		}
 		
 		return mainFunction;
+	}
+	
+	public IniFunction createMainFunction(Function mainDefinition, IniContext context) {
+		/* Each time a new function is created, a new frame descriptor is created */
+		FrameDescriptor frameDescriptor = new FrameDescriptor();
+		IniFunction function = IniFunction.create(
+				this,
+				"main",
+				Function.convertListOfParametersToArrayOfFrameSlot(mainDefinition.parameters, frameDescriptor),
+				mainDefinition.statements,
+				frameDescriptor);
+
+		MaterializedFrame frame = context.getGlobalFrame();
+		// If it is the root context we set the root context to be the lexical scope
+		if (ini.Utils.isRootContext(frame)) {
+			function.setLexicalScope(frame.materialize());
+		}
+		// Otherwise, Set the lexical scope of the function to be the lexical scope of the calling function
+		else {
+			function.setLexicalScope((MaterializedFrame) frame.getArguments()[0]);
+		}
+		return function;
 	}
 
 	public static void parseConfiguration(IniParser parser) {

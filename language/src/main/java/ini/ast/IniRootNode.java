@@ -38,7 +38,7 @@ public class IniRootNode extends RootNode {
 			}
 			else {
 				s[i].executeVoid(frame);
-				return null;
+				return 0;
 			}
 		} catch(ReturnException e) {
 			return e.getResult();

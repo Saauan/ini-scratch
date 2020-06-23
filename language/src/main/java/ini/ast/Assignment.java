@@ -2,6 +2,7 @@ package ini.ast;
 
 import java.io.PrintStream;
 
+import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -9,6 +10,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
@@ -62,6 +64,7 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
     
     protected FrameSlot getSlotFromFrameDescriptor(FrameDescriptor frameDescriptor) {
     	if (assignee instanceof Variable) {
+    		CompilerDirectives.transferToInterpreter();
     		return frameDescriptor.findOrAddFrameSlot(((Variable) assignee).name);
     	}
     	throw new RuntimeException("Can't get a frameSlot from something that is not a variable (not implemented)");

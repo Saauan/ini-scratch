@@ -52,8 +52,8 @@ public class CaseStatement extends AstElement implements Statement {
 	}
 
 	@Override
-	public void executeVoid(VirtualFrame virtualFrame) {
-		
+	public void executeVoid(VirtualFrame frame) {
+		frame.materialize();
 		final int nbCases = cases.length;
 		boolean foundRule = false;
 		Rule currentRule;
@@ -61,8 +61,8 @@ public class CaseStatement extends AstElement implements Statement {
 			currentRule = cases[i];
 			if (currentRule.guard != null) {
 				try {
-					if (currentRule.guard.executeBoolean(virtualFrame)) {
-						currentRule.executeVoid(virtualFrame);
+					if (currentRule.guard.executeBoolean(frame)) {
+						currentRule.executeVoid(frame);
 						foundRule = true;
 					}
 				} catch (UnexpectedResultException e) {
@@ -74,7 +74,7 @@ public class CaseStatement extends AstElement implements Statement {
 			// No caseRule was executed, executing the default statements
 			final int nbStatements = this.defaultStatements.length;
 			for(int i=0; i<nbStatements; i++) {
-				defaultStatements[i].executeVoid(virtualFrame);
+				defaultStatements[i].executeVoid(frame);
 			}
 		}
 	}

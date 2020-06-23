@@ -82,16 +82,6 @@ public class Function extends Executable {
 	 */
 	@Override
 	public IniFunction executeGeneric(VirtualFrame virtualFrame) {
-		IniFunction function = executeWithoutRegister(virtualFrame);
-		
-		registerFunction(function, getFunctionIdentifier(this.name, this.parameters.size()));
-		return function;
-	}
-	
-	/**
-	 * Creates an IniFunction with a new FrameDescriptor, a lexical scope and returns it
-	 */
-	public IniFunction executeWithoutRegister(VirtualFrame virtualFrame) {
 		/* Each time a new function is created, a new frame descriptor is created */
 		FrameDescriptor frameDescriptor = new FrameDescriptor();
 		IniFunction function = IniFunction.create(
@@ -111,7 +101,9 @@ public class Function extends Executable {
 		else {
 			this.function.setLexicalScope((MaterializedFrame) virtualFrame.getArguments()[0]);
 		}
-		return this.function;
+		
+		registerFunction(function, getFunctionIdentifier(this.name, this.parameters.size()));
+		return function;
 	}
 
 	private void registerFunction(IniFunction function, String functionId) {
