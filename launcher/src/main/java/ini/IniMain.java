@@ -75,13 +75,17 @@ public class IniMain {
     private static int executeSource(org.graalvm.polyglot.Source source, InputStream in, PrintStream out, Map<String, String> options) {
     	Context context;
     	PrintStream err = System.err;
+        boolean isQuiet = options.containsKey("quiet");
+        options.remove("quiet");
     	try {
     		context = Context.newBuilder(ID).in(in).out(out).options(options).build();
     	} catch (IllegalArgumentException e) {
     		err.println(e.getMessage());
     		return 1;
-    	}
-    	out.println("== running on " + context.getEngine());
+        }
+        if(!isQuiet){
+            out.println("== running on " + context.getEngine());
+        }
     	
     	try { 
     		Value result = context.eval(source);

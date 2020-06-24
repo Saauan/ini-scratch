@@ -4,7 +4,6 @@ VERSION="20.0.0"
 
 MAIN_CLASS="ini.IniMain"
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd -P)"
-echo $SCRIPT_HOME
 
 function extractGraalVMVersion() {
     local -r releasePath="${1:?Path to relese file is a required parameter}"
@@ -72,6 +71,8 @@ if [[ "$GRAALVM_VERSION" != "" ]]; then
             JAVA_ARGS+=("-Xdebug" "-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=y") ;;
         -dump)
             JAVA_ARGS+=("-Dgraal.Dump=Truffle:1" "-Dgraal.TruffleBackgroundCompilation=false" "-Dgraal.TraceTruffleCompilation=true" "-Dgraal.TraceTruffleCompilationDetails=true") ;;
+        -stat)
+            JAVA_ARGS+=("-Dgraal.TruffleCompilationStatistics=true" "-Dgraal.TruffleCompilationExceptionsAreFatal=true" "-Dgraal.TruffleBackgroundCompilation=true") ;;
         -disassemble)
             JAVA_ARGS+=("-XX:CompileCommand=print,*OptimizedCallTarget.callRoot" "-XX:CompileCommand=exclude,*OptimizedCallTarget.callRoot" "-Dgraal.TruffleBackgroundCompilation=false" "-Dgraal.TraceTruffleCompilation=true" "-Dgraal.TraceTruffleCompilationDetails=true") ;;
         -J*)
