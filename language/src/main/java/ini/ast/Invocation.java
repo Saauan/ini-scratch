@@ -5,14 +5,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
-import com.oracle.truffle.api.nodes.IndirectCallNode;
 
 import ini.IniContext;
 import ini.IniLanguage;
@@ -29,8 +28,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 
 	@Children
 	public AstExpression[] argumentNodes;
-	@Child
-	protected IndirectCallNode callNode;
+	@Child protected DirectCallNode callNode;
 	public String name;
 	
     /**
@@ -46,7 +44,6 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		this.name = name;
 		this.nodeTypeId = AstNode.INVOCATION;
 		this.argumentNodes = arguments.toArray(new AstExpression[0]);
-		this.callNode = Truffle.getRuntime().createIndirectCallNode();
 	}
 
 	@Override
@@ -97,17 +94,24 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		for (int i = 0; i < nbArguments; i++) {
 			argumentValues[i + 1] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
+		
+		if (this.callNode == null) {
+			CompilerDirectives.transferToInterpreterAndInvalidate();
+			this.callNode = this.insert(Truffle.getRuntime().createDirectCallNode(cachedFunction.callTarget));
+		}
+		
+		if (cachedFunction.callTarget != this.callNode.getCallTarget()) {
+			CompilerDirectives.transferToInterpreterAndInvalidate();
+			throw new UnsupportedOperationException("need to implement a proper inline cache.");
+		}
+		
 
-		return call(virtualFrame, cachedFunction.callTarget, argumentValues);
+		return this.callNode.call(argumentValues);
 	}
 
 	public IniFunction lookupFunction(String functionId) {
 		IniFunction function = null;
 		function = lookupContextReference(IniLanguage.class).get().getFunctionRegistry().lookup(functionId);
 		return function;
-	}
-
-	protected Object call(VirtualFrame virtualFrame, CallTarget callTarget, Object[] arguments) {
-		return this.callNode.call(callTarget, arguments);
 	}
 }
