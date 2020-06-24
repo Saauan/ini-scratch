@@ -1,7 +1,6 @@
 package ini;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import com.oracle.truffle.api.Truffle;
@@ -161,7 +160,6 @@ public class IniContext {
 		 */
 		IniRootNode rootNode = new IniRootNode(lang, name, builtinBodyNodeArray, new FrameDescriptor());
 		IniFunction function = new IniFunction(Truffle.getRuntime().createCallTarget(rootNode), name);
-		function.setLexicalScope(frame);
 
 		/* Register the builtin function in our function registry. */
 		getFunctionRegistry().register(functionId, function);

@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.martiansoftware.jsap.JSAP;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.frame.Frame;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.MaterializedFrame;
@@ -19,9 +18,7 @@ import com.oracle.truffle.api.source.Source;
 
 import ini.ast.AstElement;
 import ini.ast.AstNode;
-import ini.ast.Executable;
 import ini.ast.Function;
-import ini.ast.IniRootNode;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
@@ -86,7 +83,6 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
         		new FrameSlot[] {},
         		topLevelNodes,
         		globalFrame.getFrameDescriptor());
-        function.setLexicalScope(globalFrame);
 		return function;
 	}
 
@@ -120,16 +116,6 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 				Function.convertListOfParametersToArrayOfFrameSlot(mainDefinition.parameters, frameDescriptor),
 				mainDefinition.statements,
 				frameDescriptor);
-
-		MaterializedFrame frame = context.getGlobalFrame();
-		// If it is the root context we set the root context to be the lexical scope
-		if (ini.Utils.isRootContext(frame)) {
-			function.setLexicalScope(frame.materialize());
-		}
-		// Otherwise, Set the lexical scope of the function to be the lexical scope of the calling function
-		else {
-			function.setLexicalScope((MaterializedFrame) frame.getArguments()[0]);
-		}
 		return function;
 	}
 

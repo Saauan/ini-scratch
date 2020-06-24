@@ -40,10 +40,10 @@ public class ReadArgumentFromContextNode extends AstExpression implements Expres
 
     protected boolean isArgumentIndexInRange(VirtualFrame virtualFrame,
             int index) {
-        return (index + 1) < virtualFrame.getArguments().length;
+        return (index) < virtualFrame.getArguments().length;
     }
 
     protected Object getArgumentAtIndex(VirtualFrame virtualFrame, int index) {
-        return virtualFrame.getArguments()[index + 1];
+        return virtualFrame.getArguments()[index];
     }
 }

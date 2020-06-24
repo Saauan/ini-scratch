@@ -4,10 +4,8 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.CompilerAsserts;
-import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
@@ -92,15 +90,6 @@ public class Function extends Executable {
 				frameDescriptor);
 
 		this.function = function;
-
-		// If it is the root context we set the root context to be the lexical scope
-		if (ini.Utils.isRootContext(virtualFrame)) {
-			this.function.setLexicalScope(virtualFrame.materialize());
-		}
-		// Otherwise, Set the lexical scope of the function to be the lexical scope of the calling function
-		else {
-			this.function.setLexicalScope((MaterializedFrame) virtualFrame.getArguments()[0]);
-		}
 		
 		registerFunction(function, getFunctionIdentifier(this.name, this.parameters.size()));
 		return function;

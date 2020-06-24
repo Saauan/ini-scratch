@@ -86,13 +86,9 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		final int nbArguments = this.argumentNodes.length;
 		CompilerAsserts.partialEvaluationConstant(nbArguments);
 
-		Object[] argumentValues = new Object[nbArguments + 1];
-		// The first element of the frame's argument is the lexical scope
-		argumentValues[0] = cachedFunction.getLexicalScope();
-		assert cachedFunction.getLexicalScope() != null : String.format("The lexical scope of the function %s was null",
-				cachedFunction.name);
+		Object[] argumentValues = new Object[nbArguments];
 		for (int i = 0; i < nbArguments; i++) {
-			argumentValues[i + 1] = this.argumentNodes[i].executeGeneric(virtualFrame);
+			argumentValues[i] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
 		
 		if (this.callNode == null) {
