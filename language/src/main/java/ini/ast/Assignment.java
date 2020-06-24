@@ -3,6 +3,7 @@ package ini.ast;
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -27,7 +28,8 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
 	@Child public AstElement assignee;
 	// Expression TODO
 	@Child public AstElement assignment;
-	private FrameSlot slot;
+	
+	@CompilationFinal private FrameSlot slot;
 
 	@Deprecated
 	public Assignment(IniParser parser, Token token, VariableAccess assignee) {
@@ -53,6 +55,7 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
     
     protected FrameSlot getSlotSafe(VirtualFrame frame) {
     	if(this.slot == null) {
+    		CompilerDirectives.transferToInterpreterAndInvalidate();
     		initializeSlot(frame);
     	}
     	return this.slot;

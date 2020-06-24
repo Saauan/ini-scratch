@@ -3,6 +3,7 @@ package ini.ast;
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -17,7 +18,7 @@ import ini.parser.IniParser;
 public abstract class Variable extends AstExpression implements VariableAccess {
 
 	private boolean declaration = false;
-	private FrameSlot slot;
+	@CompilationFinal private FrameSlot slot;
 	public String name;
 
 	/**
@@ -47,6 +48,7 @@ public abstract class Variable extends AstExpression implements VariableAccess {
      * Returns the descriptor of the accessed local variable. */
     protected FrameSlot getSlotSafe(VirtualFrame frame) {
     	if(this.slot == null) {
+    		CompilerDirectives.transferToInterpreterAndInvalidate();
     		initializeSlot(frame);
     	}
     	return this.slot;
