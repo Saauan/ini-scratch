@@ -15,6 +15,8 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import ini.IniContext;
 import ini.IniLanguage;
+import ini.ast.call.DispatchNode;
+import ini.ast.call.UninitializedDispatchNode;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
@@ -29,6 +31,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 	@Children
 	public AstExpression[] argumentNodes;
 	@Child protected DirectCallNode callNode;
+	@Child public DispatchNode dispatchNode;
 	public String name;
 	
     /**
@@ -44,6 +47,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		this.name = name;
 		this.nodeTypeId = AstNode.INVOCATION;
 		this.argumentNodes = arguments.toArray(new AstExpression[0]);
+		this.dispatchNode = new UninitializedDispatchNode();
 	}
 
 	@Override
@@ -91,18 +95,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 			argumentValues[i] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
 		
-		if (this.callNode == null) {
-			CompilerDirectives.transferToInterpreterAndInvalidate();
-			this.callNode = this.insert(Truffle.getRuntime().createDirectCallNode(cachedFunction.callTarget));
-		}
-		
-		if (cachedFunction.callTarget != this.callNode.getCallTarget()) {
-			CompilerDirectives.transferToInterpreterAndInvalidate();
-			throw new UnsupportedOperationException("need to implement a proper inline cache.");
-		}
-		
-
-		return this.callNode.call(argumentValues);
+		return this.dispatchNode.executeDispatch(virtualFrame, cachedFunction.callTarget, argumentValues);
 	}
 
 	public IniFunction lookupFunction(String functionId) {
