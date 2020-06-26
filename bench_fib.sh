@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 TTIME=0
-NB_RUNS=20
+NB_RUNS=40
 RUN_INI_SCRIPT="./run_ini.sh language/ini/truffle/bench/fibonacci_only_last.ini"
 for (( i=0; i<NB_RUNS; i++ ))
 do
