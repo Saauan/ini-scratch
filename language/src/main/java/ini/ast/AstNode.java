@@ -1,8 +1,5 @@
 package ini.ast;
 
-//import ini.eval.function.BoundExecutable;
-import ini.type.Type;
-
 import java.io.PrintStream;
 
 import com.google.gson.Gson;
@@ -14,7 +11,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 public interface AstNode {
 
@@ -57,25 +53,15 @@ public interface AstNode {
 
 	public void executeVoid(VirtualFrame frame);
 	
-
-	
 	void accept(Visitor visitor);
 	
 	void prettyPrint(PrintStream out);
-
-	int nodeTypeId();
-
-	Token token();
-
-	Type getType();
-
-	void setType(Type type);
 	
-	String getAnnotationStringValue(String... keys);
-
-	Number getAnnotationNumberValue(String... keys);
-
-	<T extends AstNode> T getAnnotationNode(String... keys);
+//	String getAnnotationStringValue(String... keys);
+//
+//	Number getAnnotationNumberValue(String... keys);
+//
+//	<T extends AstNode> T getAnnotationNode(String... keys);
 
 	public static Class<?> getClass(int nodeTypeId) {
 		switch (nodeTypeId) {
@@ -115,8 +101,6 @@ public interface AstNode {
 			return Invocation.class;
 		case AstNode.LIST_EXPRESSION:
 			return ListExpression.class;
-		case AstNode.NUMBER_LITERAL:
-			return NumberLiteral.class;
 		case AstNode.PARAMETER:
 			return Parameter.class;
 		case AstNode.PROCESS:

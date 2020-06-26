@@ -7,13 +7,6 @@ import java.util.Map;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-//import ini.broker.ChannelConfiguration;
-//import ini.eval.data.Data;
-//import ini.eval.data.RawData;
-import ini.parser.IniParser;
-import ini.parser.Types;
-import ini.type.Type;
-
 public class ChannelDeclaration extends NamedElement {
 
 	private static long localId = 1;
@@ -36,26 +29,26 @@ public class ChannelDeclaration extends NamedElement {
 	public Integer size;
 	private transient Map<Integer, ChannelDeclaration> components;
 
-	public ChannelDeclaration(IniParser parser, Token token, String name, TypeVariable typeVariable,
+	public ChannelDeclaration(String name, TypeVariable typeVariable,
 			Visibility visibility, boolean indexed, List<Expression> annotations) {
-		super(parser, token, name);
-		if (name == null) {
-			throw new RuntimeException("channel name cannot be null");
-		}
-		if (typeVariable == null) {
-			this.typeVariable = new TypeVariable(parser, token, "Any");
-		} else {
-			this.typeVariable = typeVariable;
-		}
-		this.visibility = visibility == null ? Visibility.LOCAL : visibility;
-		this.indexed = indexed;
-		this.annotations = annotations;
-		this.size = (Integer) getAnnotationNumberValue("capacity", "size");
-		this.mappedName = getAnnotationStringValue("name");
-		if (this.mappedName == null) {
-			this.mappedName = name;
-		}
-		this.nodeTypeId = AstNode.CHANNEL;
+		super(name);
+//		if (name == null) {
+//			throw new RuntimeException("channel name cannot be null");
+//		}
+//		if (typeVariable == null) {
+//			this.typeVariable = new TypeVariable(parser, token, "Any");
+//		} else {
+//			this.typeVariable = typeVariable;
+//		}
+//		this.visibility = visibility == null ? Visibility.LOCAL : visibility;
+//		this.indexed = indexed;
+//		this.annotations = annotations;
+//		this.size = (Integer) getAnnotationNumberValue("capacity", "size");
+//		this.mappedName = getAnnotationStringValue("name");
+//		if (this.mappedName == null) {
+//			this.mappedName = name;
+//		}
+//		this.nodeTypeId = AstNode.CHANNEL;
 	}
 
 	@Override
@@ -70,19 +63,19 @@ public class ChannelDeclaration extends NamedElement {
 		}
 	}
 
-	@Override
-	public Type getType() {
-		if (this.type != null) {
-			return this.type;
-		}
-		Type t = parser.types.createDependentType(Types.CHANNEL_TYPE_NAME, typeVariable.getType());
-		if (indexed) {
-			this.type = parser.types.createArrayType(t);
-		} else {
-			this.type = t;
-		}
-		return this.type;
-	}
+//	@Override
+//	public Type getType() {
+//		if (this.type != null) {
+//			return this.type;
+//		}
+//		Type t = parser.types.createDependentType(Types.CHANNEL_TYPE_NAME, typeVariable.getType());
+//		if (indexed) {
+//			this.type = parser.types.createArrayType(t);
+//		} else {
+//			this.type = t;
+//		}
+//		return this.type;
+//	}
 
 	public ChannelDeclaration getComponent(int i) {
 		if (!indexed) {
@@ -92,7 +85,7 @@ public class ChannelDeclaration extends NamedElement {
 			components = new HashMap<Integer, ChannelDeclaration>();
 		}
 		if (!components.containsKey(i)) {
-			components.put(i, new ChannelDeclaration(parser, token, mappedName + i, typeVariable, visibility, false,
+			components.put(i, new ChannelDeclaration(mappedName + i, typeVariable, visibility, false,
 					annotations));
 		}
 		return components.get(i);

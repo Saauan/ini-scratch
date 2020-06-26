@@ -25,14 +25,15 @@ public class TypingError {
 
 	@Override
 	public String toString() {
-		return level.name()
-				+ ": "
-				+ message
-				+ (origin != null ? " at '"
-						+ origin.toString()
-						+ "'"
-						+ (origin.token() != null ? " "
-								+ origin.token().getLocation() : "") : "");
+//		return level.name()
+//				+ ": "
+//				+ message
+//				+ (origin != null ? " at '"
+//						+ origin.toString()
+//						+ "'"
+//						+ (origin.token() != null ? " "
+//								+ origin.token().getLocation() : "") : "");
+		return "";
 	}
 
 }

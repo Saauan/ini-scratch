@@ -215,37 +215,37 @@ program_elt ::= import_decl:e {: RESULT=e; :}
 
 import_decl ::= IMPORT:itoken STRING:filePath
 	{:
-		Import i = new Import(parser, (Token)itoken, filePath.toString());
+		Import i = new Import(filePath.toString());
 		RESULT = i;
 	:}
 ;
 
 binding ::= DECLARE:d IDENTIFIER:name lambda_opt LPAREN:ft type_list_opt:types RPAREN IMPLIES type:rtype annotations_opt:a
 	{:
-		Binding b = new Binding(parser, (Token)d, name.toString(), (List)null, (List)types, (TypeVariable)rtype, (List)a);
+		Binding b = new Binding(name.toString(), (List)null, (List)types, (TypeVariable)rtype, (List)a);
 		//parser.parsedBindingList.add(b);
 		RESULT = b;
 	:} 
 	| DECLARE:d LPAREN type_decl_list_opt:typedecls lambda_opt  RPAREN IDENTIFIER:name LPAREN:ft type_list_opt:types RPAREN IMPLIES type:rtype annotations_opt:a
 	{:
-		Binding b = new Binding(parser, (Token)d, name.toString(), (List)typedecls, (List)types, (TypeVariable)rtype, (List)a);
+		Binding b = new Binding(name.toString(), (List)typedecls, (List)types, (TypeVariable)rtype, (List)a);
 		RESULT = b;
 	:}
 ;
 
 channel_decl ::= CHANNEL:d visibility:v IDENTIFIER:name LPAREN type_opt:t RPAREN annotations_opt:a
 	{:
-		RESULT = new ChannelDeclaration(parser, (Token)d, name.toString(), (TypeVariable)t, (ChannelDeclaration.Visibility)v, false, (List)a);
+		RESULT = new ChannelDeclaration(name.toString(), (TypeVariable)t, (ChannelDeclaration.Visibility)v, false, (List)a);
 	:}
 	| CHANNEL:d visibility:v IDENTIFIER:name LSPAREN RSPAREN LPAREN type_opt:t RPAREN annotations_opt:a
 	{:
-		RESULT = new ChannelDeclaration(parser, (Token)d, name.toString(), (TypeVariable)t, (ChannelDeclaration.Visibility)v, true, (List)a);
+		RESULT = new ChannelDeclaration(name.toString(), (TypeVariable)t, (ChannelDeclaration.Visibility)v, true, (List)a);
 	:}
 ;
 
 predicate_decl ::= PREDICATE:d IDENTIFIER:name ltl_expr:expression END
 	{:
-		RESULT = new LTLPredicate(parser, (Token)d, name.toString(), (AstNode)expression);
+		RESULT = new LTLPredicate(name.toString(), (AstNode)expression);
 	:}
 ;
 
@@ -263,7 +263,7 @@ at_binding_conf_type ::=
 
 at_binding ::= DECLARE:d AT IDENTIFIER:name at_binding_conf_type:ct LPAREN:ft type_list_opt:rt RPAREN IMPLIES STRING:className
 	{:
-		AtBinding b = new AtBinding(parser, (Token)d, name.toString(), (List)ct, (List) rt, className.toString());
+		AtBinding b = new AtBinding(name.toString(), (List)ct, (List) rt, className.toString());
 		//parser.parsedAtBindingList.add(b);
 		RESULT = b;
 	:}
@@ -271,12 +271,12 @@ at_binding ::= DECLARE:d AT IDENTIFIER:name at_binding_conf_type:ct LPAREN:ft ty
 
 function ::= FUNCTION:def IDENTIFIER:name LPAREN param_list_opt:vars RPAREN LCPAREN statement_list_opt:statements RCPAREN
 	{:
-		Function f = new Function(parser, (Token)def, name.toString(), (List)vars, (Sequence)statements);
+		Function f = new Function(name.toString(), (List)vars, (Sequence)statements);
 		RESULT = f;
 	:} 
 	| PROCESS:def IDENTIFIER:name LPAREN param_list_opt:vars RPAREN LCPAREN rule_list_opt:rules RCPAREN
 	{:
-		Process p = new Process(parser, (Token)def, name.toString(), (List)vars, (List)rules);
+		Process p = new Process(name.toString(), (List)vars, (List)rules);
 		RESULT = p;
 	:}
 ;
@@ -301,11 +301,11 @@ param_list ::= param_list:l COMMA param:p
 
 param ::= IDENTIFIER:i ASSIGN:a expr:e 
 	{:
-		RESULT = new Parameter(parser,(Token)i,i.toString(),(Expression)e);
+		RESULT = new Parameter(i.toString(),(Expression)e);
 	:}
 	| IDENTIFIER:i 
 	{:
-		RESULT = new Parameter(parser,(Token)i,i.toString());
+		RESULT = new Parameter(i.toString());
 	:}
 ;
 
@@ -365,13 +365,13 @@ basic_rule_list ::= basic_rule_list:l lf basic_rule:r
 var_list ::= var_list:l COMMA IDENTIFIER:i
 	{:
 		List list=(List)l;
-		list.add(VariableNodeGen.create(parser,(Token)i,i.toString()));
+		list.add(VariableNodeGen.create(i.toString()));
 		RESULT=list;
 	:}
 		| IDENTIFIER:i
 	{:
 		List l=new ArrayList();
-		l.add(VariableNodeGen.create(parser,(Token)i,i.toString()));
+		l.add(VariableNodeGen.create(i.toString()));
 		RESULT=l;
 	:}
 ;
@@ -394,22 +394,22 @@ type_list ::= type_list:l COMMA type:t
 
 type_opt ::= type:t {: RESULT = t; :} | ; 
 
-type ::= TIDENTIFIER:i {: RESULT = new TypeVariable(parser,(Token)i,i.toString()); :}
+type ::= TIDENTIFIER:i {: RESULT = new TypeVariable(i.toString()); :}
 	| TIDENTIFIER:i LPAREN type_list:types RPAREN {:
-		TypeVariable tv = new TypeVariable(parser,(Token)i,i.toString()); 
+		TypeVariable tv = new TypeVariable(i.toString()); 
 		tv.typeParameters = (List)types;
 		RESULT = tv;
 	:}
-	| type:t MULT {: RESULT = new TypeVariable(parser,((TypeVariable)t).token,(TypeVariable)t); :}
+	| type:t MULT {: RESULT = new TypeVariable((TypeVariable)t); :}
 	| LPAREN type_list:types RPAREN IMPLIES:token type:t {: 
-		TypeVariable ft = new TypeVariable(parser,(Token)token,"function");
+		TypeVariable ft = new TypeVariable("function");
 		ft.typeParameters = new ArrayList(); 
 		ft.typeParameters.add((TypeVariable)t);
 		ft.typeParameters.addAll((List)types);
 		RESULT = ft;
 	:}
 	| type:type IMPLIES:token type:t {: 
-		TypeVariable ft = new TypeVariable(parser,(Token)token,"function");
+		TypeVariable ft = new TypeVariable("function");
 		ft.typeParameters = new ArrayList(); 
 		ft.typeParameters.add((TypeVariable)t);
 		ft.typeParameters.add((TypeVariable)type);
@@ -435,10 +435,10 @@ type_decl_list ::= type_decl_list:l COMMA type_decl:t
 	:}
 ;
 
-type_decl ::= TIDENTIFIER:i {: RESULT = new TypeVariable(parser,(Token)i,i.toString()); :}
+type_decl ::= TIDENTIFIER:i {: RESULT = new TypeVariable(i.toString()); :}
 	| TIDENTIFIER:i LT TIDENTIFIER:s {: 
-		TypeVariable tv = new TypeVariable(parser,(Token)i,i.toString());
-		TypeVariable sv = new TypeVariable(parser,(Token)s,s.toString());
+		TypeVariable tv = new TypeVariable(i.toString());
+		TypeVariable sv = new TypeVariable(s.toString());
 		tv.superType = sv;
 		RESULT = tv;
 	:}
@@ -447,65 +447,65 @@ type_decl ::= TIDENTIFIER:i {: RESULT = new TypeVariable(parser,(Token)i,i.toStr
 
 assignment_expr ::= var_access:v ASSIGN:a expr:e
 	{:
-		RESULT = AssignmentNodeGen.create(parser,(Token)a,(VariableAccess)v,(AstExpression)e);
+		RESULT = AssignmentNodeGen.create((VariableAccess)v,(AstExpression)e);
 	:}
 ;
 
 identifier_assignment ::= IDENTIFIER:v ASSIGN:a expr:e 
 	{: 
-		RESULT = AssignmentNodeGen.create(parser,(Token)a,VariableNodeGen.create(parser,(Token)v,v.toString()),(AstExpression)e);
+		RESULT = AssignmentNodeGen.create(VariableNodeGen.create(v.toString()),(AstExpression)e);
 	:}
 ;
 
-set_var_access ::= TIDENTIFIER:v {: RESULT = new TypeVariable(parser,(Token)v,v.toString()); :}
+set_var_access ::= TIDENTIFIER:v {: RESULT = new TypeVariable(v.toString()); :}
 ;
 
-boolean_literal ::= TRUE:e {: RESULT=new BooleanLiteral(parser,(Token)e,true); :}
-	| FALSE:e {: RESULT=new BooleanLiteral(parser,(Token)e,false); :}
+boolean_literal ::= TRUE:e {: RESULT=new BooleanLiteral(true); :}
+	| FALSE:e {: RESULT=new BooleanLiteral(false); :}
 ;
 
-var_access ::= IDENTIFIER:v {: RESULT = VariableNodeGen.create(parser,(Token)v,v.toString()); :}
-	| expr:v LSPAREN:t expr:e RSPAREN {: RESULT = new ArrayAccess(parser,(Token)t,(Expression)v,(Expression)e); :}
-	| expr:v LSPAREN:t expr:min DOTDOT expr:max RSPAREN {: RESULT = new SubArrayAccess(parser,(Token)t,(Expression)v,(Expression)min,(Expression)max); :}
-	| expr:v DOT:t IDENTIFIER:i {: RESULT = new FieldAccess(parser,(Token)t,(Expression)v,i.toString()); :}
+var_access ::= IDENTIFIER:v {: RESULT = VariableNodeGen.create(v.toString()); :}
+	| expr:v LSPAREN:t expr:e RSPAREN {: RESULT = new ArrayAccess((Expression)v,(Expression)e); :}
+	| expr:v LSPAREN:t expr:min DOTDOT expr:max RSPAREN {: RESULT = new SubArrayAccess((Expression)v,(Expression)min,(Expression)max); :}
+	| expr:v DOT:t IDENTIFIER:i {: RESULT = new FieldAccess((Expression)v,i.toString()); :}
 ;
 
 string_expr ::= single_string:s {: RESULT=s; :}
-	| single_string:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| single_string:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
 ;
 
-single_string ::= STRING:s {: RESULT=new StringLiteral(parser,(Token)s,s.toString()); :}
+single_string ::= STRING:s {: RESULT=new StringLiteral(s.toString()); :}
 ;
 
 list_expr ::= LSPAREN:l expr:lb DOTDOT expr:ub RSPAREN:r {:
-		RESULT = new SetDeclaration(parser,(Token)l,(Expression)lb,(Expression)ub);
+		RESULT = new SetDeclaration((Expression)lb,(Expression)ub);
 	:}
 	| LSPAREN:open arg_list_opt:l lf_opt RSPAREN:close
 	{:
-		RESULT = new ListExpression(parser,(Token)open,(List)l);
+		RESULT = new ListExpression((List)l);
 	:}
 ;
 
 constructor_expr ::= TIDENTIFIER:s LSPAREN lf_opt assignment_list_opt:l lf_opt RSPAREN
 	{:
-		RESULT = new SetConstructor(parser,(Token)s,s.toString(),(List)l);
+		RESULT = new SetConstructor(s.toString(),(List)l);
 	:}
 	| TIDENTIFIER:s
 	{:
-		RESULT = new SetConstructor(parser,(Token)s,s.toString(),null);
+		RESULT = new SetConstructor(s.toString(),null);
 	:}	
 	| LSPAREN:c assignment_list:l RSPAREN
 	{:
-		RESULT = new SetConstructor(parser,(Token)c,null,(List)l);
+		RESULT = new SetConstructor(null,(List)l);
 	:}
 ;
 
 constructor_match_expr ::= TIDENTIFIER:s LSPAREN field_match_expr_list_opt:l RSPAREN 
 	{:
-		RESULT = new ConstructorMatchExpression(parser,(Token)s,s.toString(),(List)l);	
+		RESULT = new ConstructorMatchExpression(s.toString(),(List)l);	
 	:} | type:t
 	{:
-		RESULT = new ConstructorMatchExpression(parser,(TypeVariable)t);	
+		RESULT = new ConstructorMatchExpression((TypeVariable)t);	
 	:}
 ;
 
@@ -514,13 +514,13 @@ assignment_list_opt ::= assignment_list:l {: RESULT = l; :} | {: RESULT = new Ar
 assignment_list ::= assignment_list:l COMMA lf_opt IDENTIFIER:f ASSIGN:a expr:e 
 	{:
 		List list=(List)l;
-		list.add(AssignmentNodeGen.create(parser,(Token)f,VariableNodeGen.create(parser,(Token)f,f.toString()),(AstExpression)e));
+		list.add(AssignmentNodeGen.create(VariableNodeGen.create(f.toString()),(AstExpression)e));
 		RESULT=list;
 	:}
 		| IDENTIFIER:f ASSIGN:a expr:e
 	{:
 		List list=new ArrayList();
-		list.add(AssignmentNodeGen.create(parser,(Token)f,VariableNodeGen.create(parser,(Token)f,f.toString()),(AstExpression)e));
+		list.add(AssignmentNodeGen.create(VariableNodeGen.create(f.toString()),(AstExpression)e));
 		RESULT=list;
 	:}
 ;
@@ -539,10 +539,10 @@ statement ::= top_level_statement:e {: RESULT = e; :}
 
 expr ::= var_access:e {: RESULT=e; :}
 	//| assignment_expr:e {: RESULT=e; :}
-    | THIS:t {: RESULT = new ThisLiteral(parser,(Token)t); :}
+    | THIS:t {: RESULT = new ThisLiteral(); :}
 	| invocation:e {: RESULT=e; :}
 	| dot_invocation:e {: RESULT=e; :}
-	| CHAR:c {: RESULT = new CharLiteral(parser,(Token)c,c.toString().charAt(0)); :}
+	| CHAR:c {: RESULT = new CharLiteral(c.toString().charAt(0)); :}
 	| algebraic_expr:e {: RESULT=e; :}
 	| logical_expr:e {: RESULT=e; :}
 	| string_expr:e {: RESULT=e; :}
@@ -556,105 +556,105 @@ expr ::= var_access:e {: RESULT=e; :}
 ;
 
 conditional_expr ::= expr:c QUESTION:q expr:t COL expr:f {:
-		RESULT = new ConditionalExpression(parser, (Token)q, (Expression)c, (Expression)t, (Expression)f);
+		RESULT = new ConditionalExpression((Expression)c, (Expression)t, (Expression)f);
 	:}
 ;
 
 // TODO: the LAMBDA symbol is produced by the lexer with a look-ahead. The parser should disambiguate itself for better perfs.
 lambda_expr ::= LAMBDA LPAREN param_list_opt:vars RPAREN IMPLIES:def LCPAREN statement_list_opt:statements RCPAREN {:
-		RESULT = new Function(parser, (Token)def, null, (List)vars, (Sequence)statements);	
+		RESULT = new Function(null, (List)vars, (Sequence)statements);	
 	:} 
 	| LAMBDA param_list_opt:vars IMPLIES:def LCPAREN statement_list_opt:statements RCPAREN {:
-		RESULT = new Function(parser, (Token)def, null, (List)vars, (Sequence)statements);	
+		RESULT = new Function(null, (List)vars, (Sequence)statements);	
 	:} 
 	| LAMBDA LPAREN param_list_opt:vars RPAREN IMPLIES:def expr:s {:
-		Function f = new Function(parser, (Token)def, null, (List)vars, new Sequence(s));
+		Function f = new Function(null, (List)vars, new Sequence(s));
 		f.oneExpressionLambda = true;
 		RESULT = f;
 	:}
 	| LAMBDA param_list_opt:vars IMPLIES:def expr:s {:
-		Function f = new Function(parser, (Token)def, null, (List)vars, new Sequence(s));	
+		Function f = new Function(null, (List)vars, new Sequence(s));	
 		f.oneExpressionLambda = true;
 		RESULT = f;
 	:}
 	| LAMBDA LPAREN param_list_opt:vars RPAREN SWING_RIGHT_ARROW:def LCPAREN rule_list_opt:rules RCPAREN {:
-		RESULT = new Process(parser, (Token)def, null, (List)vars, (List)rules);	
+		RESULT = new Process(null, (List)vars, (List)rules);	
 	:} 
 ;
 
-/*list_concat_expr ::= list_concat_expr:e1 AND:op var_access:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
-	| list_concat_expr:e1 AND:op invocation:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
-	| list_expr:e1 AND:op list_concat_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
+/*list_concat_expr ::= list_concat_expr:e1 AND:op var_access:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
+	| list_concat_expr:e1 AND:op invocation:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
+	| list_expr:e1 AND:op list_concat_expr:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
 ;*/	
 
-list_concat_expr ::= expr:e1 AND:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
-//	| var_access:e1 AND:op expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
+list_concat_expr ::= expr:e1 AND:op expr:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
+//	| var_access:e1 AND:op expr:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.CONCAT,(Expression)e1,(Expression)e2); :}
 ;
 
-algebraic_expr ::= NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.parseDouble(e.toString())); :}
-	| INT:e {: RESULT=new NumberLiteral(parser,(Token)e,Integer.parseInt(e.toString())); :} 
+algebraic_expr ::= NUM:e {: RESULT=new NumberLiteral(Double.parseDouble(e.toString())); :}
+	| INT:e {: RESULT=new NumberLiteral(Integer.parseInt(e.toString())); :} 
 	| pre_post_op:op {: RESULT=op; :}
-	| expr:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| expr:e1 MINUS:op expr:e2 {: RESULT=SubNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| MINUS:op expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.MINUS,(Expression)e); :}
-	| expr:e1 MULT:op expr:e2 {: RESULT=MulNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| expr:e1 DIV:op expr:e2 {: RESULT=DivNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 PLUS:op expr:e2 {: RESULT=AddNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 MINUS:op expr:e2 {: RESULT=SubNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| MINUS:op expr:e {: RESULT=new UnaryOperator(UnaryOperator.Kind.MINUS,(Expression)e); :}
+	| expr:e1 MULT:op expr:e2 {: RESULT=MulNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 DIV:op expr:e2 {: RESULT=DivNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
 ;
 
 logical_expr ::= boolean_literal:e {: RESULT=e; :}
-	| expr:e1 ANDAND:op expr:e2 {: RESULT=new LogicalAndNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| expr:e1 OROR:op expr:e2 {: RESULT=new LogicalOrNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| NOT:op expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstExpression)e); :}
-	| QUESTION:op expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.OPT,(Expression)e); :}
-	| expr:e1 EQUALS:op expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| expr:e1 NOTEQUALS:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstExpression)e1,(AstExpression)e2)); :}
-	| expr:e1 LT:op expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| expr:e1 LTE:op expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| expr:e1 GT:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
-	| expr:e1 GTE:op expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
-	| expr:e1 MATCHES:op invocation:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MATCHES,(Expression)e1,(Expression)e2); :}
-	| expr:e1 MATCHES:op constructor_match_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.MATCHES,(Expression)e1,(ConstructorMatchExpression)e2); :}
+	| expr:e1 ANDAND:op expr:e2 {: RESULT=new LogicalAndNode((AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 OROR:op expr:e2 {: RESULT=new LogicalOrNode((AstExpression)e1,(AstExpression)e2); :}
+	| NOT:op expr:e {: RESULT=LogicalNotNodeGen.create((AstExpression)e); :}
+	| QUESTION:op expr:e {: RESULT=new UnaryOperator(UnaryOperator.Kind.OPT,(Expression)e); :}
+	| expr:e1 EQUALS:op expr:e2 {: RESULT=EqualNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 NOTEQUALS:op expr:e2 {: RESULT=LogicalNotNodeGen.create(EqualNodeGen.create((AstExpression)e1,(AstExpression)e2)); :}
+	| expr:e1 LT:op expr:e2 {: RESULT=LowerThanNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 LTE:op expr:e2 {: RESULT=LowerOrEqualNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| expr:e1 GT:op expr:e2 {: RESULT=LogicalNotNodeGen.create(LowerOrEqualNodeGen.create((AstExpression)e1,(AstExpression)e2)); :}
+	| expr:e1 GTE:op expr:e2 {: RESULT=LogicalNotNodeGen.create(LowerThanNodeGen.create((AstExpression)e1,(AstExpression)e2)); :}
+	| expr:e1 MATCHES:op invocation:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.MATCHES,(Expression)e1,(Expression)e2); :}
+	| expr:e1 MATCHES:op constructor_match_expr:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.MATCHES,(Expression)e1,(ConstructorMatchExpression)e2); :}
 ;
 
-ltl_expr ::= IDENTIFIER:e {: RESULT = VariableNodeGen.create(parser,(Token)e,e.toString()); :}
+ltl_expr ::= IDENTIFIER:e {: RESULT = VariableNodeGen.create(e.toString()); :}
     | boolean_literal:e {: RESULT=e; :}
-	| ltl_expr:e1 ANDAND:op ltl_expr:e2 {: RESULT=new LogicalAndNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| ltl_expr:e1 OROR:op ltl_expr:e2 {: RESULT=new LogicalOrNode(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| NOT:op ltl_expr:e {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,(AstExpression)e); :}
-	| ltl_expr:e1 EQUALS:op ltl_expr:e2 {: RESULT=EqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| ltl_expr:e1 NOTEQUALS:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,EqualNodeGen.create(parser,null,(AstExpression)e1,(AstExpression)e2)); :}
-	| ltl_expr:e1 LT:op ltl_expr:e2 {: RESULT=LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| ltl_expr:e1 LTE:op ltl_expr:e2 {: RESULT=LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| ltl_expr:e1 GT:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerOrEqualNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
-	| ltl_expr:e1 GTE:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(parser,(Token)op,LowerThanNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2)); :}
-	| NUM:e {: RESULT=new NumberLiteral(parser,(Token)e,Double.parseDouble(e.toString())); :}
-	| INT:e {: RESULT=new NumberLiteral(parser,(Token)e,Integer.parseInt(e.toString())); :} 
-	| ltl_expr:e1 PLUS:op ltl_expr:e2 {: RESULT=AddNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| ltl_expr:e1 MINUS:op ltl_expr:e2 {: RESULT=SubNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| MINUS:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.MINUS,(Expression)e); :}
-	| ltl_expr:e1 MULT:op ltl_expr:e2 {: RESULT=MulNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| ltl_expr:e1 DIV:op ltl_expr:e2 {: RESULT=DivNodeGen.create(parser,(Token)op,(AstExpression)e1,(AstExpression)e2); :}
-	| ltl_expr:e1 IMPLIES:op ltl_expr:e2 {: RESULT=new BinaryOperator(parser,(Token)op,BinaryOperator.Kind.IMPLIES,(Expression)e1,(Expression)e2); :}
-	| ALWAYS:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.ALWAYS,(Expression)e); :}
-	| EVENTUALLY:op ltl_expr:e {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.EVENTUALLY,(Expression)e); :}
+	| ltl_expr:e1 ANDAND:op ltl_expr:e2 {: RESULT=new LogicalAndNode((AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 OROR:op ltl_expr:e2 {: RESULT=new LogicalOrNode((AstExpression)e1,(AstExpression)e2); :}
+	| NOT:op ltl_expr:e {: RESULT=LogicalNotNodeGen.create((AstExpression)e); :}
+	| ltl_expr:e1 EQUALS:op ltl_expr:e2 {: RESULT=EqualNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 NOTEQUALS:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(EqualNodeGen.create((AstExpression)e1,(AstExpression)e2)); :}
+	| ltl_expr:e1 LT:op ltl_expr:e2 {: RESULT=LowerThanNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 LTE:op ltl_expr:e2 {: RESULT=LowerOrEqualNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 GT:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(LowerOrEqualNodeGen.create((AstExpression)e1,(AstExpression)e2)); :}
+	| ltl_expr:e1 GTE:op ltl_expr:e2 {: RESULT=LogicalNotNodeGen.create(LowerThanNodeGen.create((AstExpression)e1,(AstExpression)e2)); :}
+	| NUM:e {: RESULT=new NumberLiteral(Double.parseDouble(e.toString())); :}
+	| INT:e {: RESULT=new NumberLiteral(Integer.parseInt(e.toString())); :} 
+	| ltl_expr:e1 PLUS:op ltl_expr:e2 {: RESULT=AddNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 MINUS:op ltl_expr:e2 {: RESULT=SubNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| MINUS:op ltl_expr:e {: RESULT=new UnaryOperator(UnaryOperator.Kind.MINUS,(Expression)e); :}
+	| ltl_expr:e1 MULT:op ltl_expr:e2 {: RESULT=MulNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 DIV:op ltl_expr:e2 {: RESULT=DivNodeGen.create((AstExpression)e1,(AstExpression)e2); :}
+	| ltl_expr:e1 IMPLIES:op ltl_expr:e2 {: RESULT=new BinaryOperator(BinaryOperator.Kind.IMPLIES,(Expression)e1,(Expression)e2); :}
+	| ALWAYS:op ltl_expr:e {: RESULT=new UnaryOperator(UnaryOperator.Kind.ALWAYS,(Expression)e); :}
+	| EVENTUALLY:op ltl_expr:e {: RESULT=new UnaryOperator(UnaryOperator.Kind.EVENTUALLY,(Expression)e); :}
 	| LPAREN ltl_expr:e RPAREN {: RESULT=e; :}
 ;
 
 case_expr ::= CASE:c LCPAREN basic_rule_list_opt:l DEFAULT LCPAREN statement_list_opt:s RCPAREN lf_opt RCPAREN 
 	{:
-		RESULT = new CaseStatement(parser,(Token)c, (List)l,(Sequence)s); 
+		RESULT = new CaseStatement((List)l,(Sequence)s); 
 	:}
 	| CASE:c LCPAREN basic_rule_list_opt:l RCPAREN 
 	{:
-		RESULT = new CaseStatement(parser,(Token)c, (List)l,null); 
+		RESULT = new CaseStatement((List)l,null); 
 	:}
 	| CASE:c basic_rule:r 
 	{:
-		RESULT = new CaseStatement(parser,(Token)c,(List<Rule>)(List)Arrays.asList(r),null); 
+		RESULT = new CaseStatement((List<Rule>)(List)Arrays.asList(r),null); 
 	:}
 	| CASE:c basic_rule:r ELSE LCPAREN statement_list_opt:s RCPAREN
 	{:
-		RESULT = new CaseStatement(parser,(Token)c,(List<Rule>)(List)Arrays.asList(r),(Sequence)s); 
+		RESULT = new CaseStatement((List<Rule>)(List)Arrays.asList(r),(Sequence)s); 
 	:}
 ;
 
@@ -687,21 +687,21 @@ annotations_opt ::= COL LSPAREN identifier_assignment_list:l RSPAREN
 
 at_expr ::= IDENTIFIER:id ASSIGN AT:at IDENTIFIER:name LPAREN arg_list_opt:rp RPAREN annotations_opt:a
 {: 
-	RESULT = new AtPredicate(parser,(Token)at,name.toString(),(List)a,(List)rp, id.toString());
+	RESULT = new AtPredicate(name.toString(),(List)a,(List)rp, id.toString());
 :}
 | AT:at IDENTIFIER:name LPAREN arg_list_opt:rp RPAREN annotations_opt:a
 {: 
-	RESULT = new AtPredicate(parser,(Token)at,name.toString(),(List)a,(List)rp, null);
+	RESULT = new AtPredicate(name.toString(),(List)a,(List)rp, null);
 :}
 ;
 
-pre_post_op ::= var_access:e PLUSPLUS:op {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.POST_INC,(Expression)e); :}
-	| var_access:e MINUSMINUS:op {: RESULT=new UnaryOperator(parser,(Token)op,UnaryOperator.Kind.POST_DEC,(Expression)e); :}
+pre_post_op ::= var_access:e PLUSPLUS:op {: RESULT=new UnaryOperator(UnaryOperator.Kind.POST_INC,(Expression)e); :}
+	| var_access:e MINUSMINUS:op {: RESULT=new UnaryOperator(UnaryOperator.Kind.POST_DEC,(Expression)e); :}
 ;
 
 invocation ::= IDENTIFIER:i LPAREN arg_list_opt:l RPAREN annotations_opt:a
 	{:
-		Invocation inv = new Invocation(parser,(Token)i,i.toString(),(List)l);
+		Invocation inv = new Invocation(i.toString(),(List)l);
 		inv.annotations = (List)a;
 		RESULT = inv;
 	:}
@@ -711,7 +711,7 @@ dot_invocation ::= expr:target INVDOT IDENTIFIER:i LPAREN arg_list_opt:l RPAREN 
 	{:
 		List args = (List)l;
 		args.add(0, target);
-		Invocation inv = new Invocation(parser,(Token)i,i.toString(),args);
+		Invocation inv = new Invocation(i.toString(),args);
 		inv.annotations = (List)a;
 		RESULT = inv;
 	:}
@@ -757,24 +757,24 @@ rule ::= event_rule:r {: RESULT=r; :}
 
 event_rule ::= at_expr:at boolean_expr_opt:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstExpression)g,(Sequence)l, null);
+		RESULT = new Rule((AtPredicate)at,(AstExpression)g,(Sequence)l, null);
 	:}
 	| DOLLAR LPAREN arg_list_opt:el RPAREN at_expr:at boolean_expr_opt:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)at).token(),(AtPredicate)at,(AstExpression)g,(Sequence)l, (List)el);
+		RESULT = new Rule((AtPredicate)at,(AstExpression)g,(Sequence)l, (List)el);
 	:}
 ;
 
 basic_rule ::= guard:g LCPAREN statement_list_opt:l RCPAREN
 	{:
-		RESULT = new Rule(parser,((AstNode)g).token(),null,(AstExpression)g,(Sequence)l, null);
+		RESULT = new Rule(null,(AstExpression)g,(Sequence)l, null);
 	:}
 ;
 
 boolean_expr_opt ::= ANDAND expr:e {: RESULT = e; :} | ;
 
-ret_statement ::= RETURN:r expr:e {: RESULT = new ReturnStatement(parser,(Token)r,(AstExpression)e); :}
-	| RETURN:r {: RESULT = new ReturnStatement(parser,(Token)r,null); :}
+ret_statement ::= RETURN:r expr:e {: RESULT = new ReturnStatement((AstExpression)e); :}
+	| RETURN:r {: RESULT = new ReturnStatement(null); :}
 ;
 
 guard ::= expr:e {: RESULT=e; :}
@@ -783,27 +783,27 @@ guard ::= expr:e {: RESULT=e; :}
 
 set_logical_expr ::= var_list:l OF:of list_expr:s TUBE logical_expr:e
 	{:
-		RESULT = new SetExpression(parser,(Token)of,(List)l,(Expression)s,(Expression)e);
+		RESULT = new SetExpression((List)l,(Expression)s,(Expression)e);
 	:}
 	| var_list:l OF:of set_var_access:s TUBE logical_expr:e
 	{:
-		RESULT = new SetExpression(parser,(Token)of,(List)l,(Expression)s,(Expression)e);
+		RESULT = new SetExpression((List)l,(Expression)s,(Expression)e);
 	:}	
 	| var_list:l OF:of var_access:s TUBE logical_expr:e
 	{:
-		RESULT = new SetExpression(parser,(Token)of,(List)l,(Expression)s,(Expression)e);
+		RESULT = new SetExpression((List)l,(Expression)s,(Expression)e);
 	:}	
 ;
 
 usertype ::= TYPE:t TIDENTIFIER:i ASSIGN constructor_list:l lf_opt END
 	{:
-		UserType type = new UserType(parser,(Token)t,i.toString(),(List)l);
+		UserType type = new UserType(i.toString(),(List)l);
 		// parser.parsedTypes.add(type);
 		RESULT = type;
 	:}
 	| TYPE:t type_decl_list_opt:typedecls END
 	{:
-		Binding b = new Binding(parser, (Token)t, (String)null, (List)typedecls, (List)null, (TypeVariable)null, (List)null);
+		Binding b = new Binding((String)null, (List)typedecls, (List)null, (TypeVariable)null, (List)null);
 		RESULT = b;
 	:}
 ;
@@ -824,11 +824,11 @@ constructor_list ::= constructor_list:l lf_opt TUBE constructor_or_type:c
 
 constructor ::= TIDENTIFIER:i LSPAREN field_list_opt:l RSPAREN 
 	{:
-		RESULT = new Constructor(parser,(Token)i,i.toString(),(List)l);
+		RESULT = new Constructor(i.toString(),(List)l);
 	:}
 	| LSPAREN:i field_list_opt: l RSPAREN
 	{:
-		RESULT = new Constructor(parser,(Token)i,null,(List)l);
+		RESULT = new Constructor(null,(List)l);
 	:}
 ;
 
@@ -838,14 +838,14 @@ constructor_or_type ::= constructor:c
 	:}
 	| TIDENTIFIER:i 
 	{:
-		RESULT = new Constructor(parser,(Token)i,i.toString(),null);
+		RESULT = new Constructor(i.toString(),null);
 	:}
 ;
 
 list_constructor ::= constructor_or_type:c {: RESULT = c; :}
 	| list_constructor:c MULT:m 
 	{: 
-		RESULT = new Constructor(parser,(Token)m,(Constructor)c);
+		RESULT = new Constructor((Constructor)c);
 	:}
 ;
 
@@ -869,6 +869,6 @@ field_list ::= field_list:l COMMA field:f
 
 field ::= IDENTIFIER:i COL list_constructor:c 
 	{:
-		RESULT = new Field(parser,(Token)i,i.toString(),(Constructor)c);
+		RESULT = new Field(i.toString(),(Constructor)c);
 	:}
 ;

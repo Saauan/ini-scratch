@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -11,11 +9,10 @@ public class SetDeclaration extends AstExpression implements Expression {
 	public Expression lowerBound;
 	public Expression upperBound;
 	
-	public SetDeclaration(IniParser parser, Token token, Expression lowerBound, Expression upperBound) {
-		super(parser, token);
+	public SetDeclaration(Expression lowerBound, Expression upperBound) {
+		super();
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-		this.nodeTypeId=AstNode.SET_DECLARATION;
 	}
 
 	@Override

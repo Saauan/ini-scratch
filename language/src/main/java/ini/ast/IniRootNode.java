@@ -67,11 +67,10 @@ public class IniRootNode extends RootNode {
 	 * writes it in the frame
 	 */
 	private static Assignment createAssignment(FrameSlot[] argumentNames, int arg_index) {
-		return AssignmentNodeGen.create(null,
-				null,
-				VariableNodeGen.create(null, null, argumentNames[arg_index].getIdentifier().toString(), argumentNames[arg_index]),
+		return AssignmentNodeGen.create(
+				VariableNodeGen.create(argumentNames[arg_index].getIdentifier().toString(), argumentNames[arg_index]),
 				argumentNames[arg_index],
-				new ReadArgumentFromContextNode(null, null, arg_index));
+				new ReadArgumentFromContextNode(arg_index));
 	}
 
 	@Override

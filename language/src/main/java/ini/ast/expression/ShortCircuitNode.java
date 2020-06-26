@@ -4,10 +4,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.profiles.ConditionProfile;
 
-import ini.ast.AstElement;
 import ini.ast.AstExpression;
-import ini.ast.Token;
-import ini.parser.IniParser;
 import ini.runtime.IniException;
 
 public abstract class ShortCircuitNode extends AstExpression {
@@ -23,8 +20,7 @@ public abstract class ShortCircuitNode extends AstExpression {
 	 */
 	private final ConditionProfile evaluateRightProfile = ConditionProfile.createCountingProfile();
 
-	public ShortCircuitNode(IniParser parser, Token token, AstExpression left, AstExpression right) {
-		super(parser, token);
+	public ShortCircuitNode(AstExpression left, AstExpression right) {
 		this.left = left;
 		this.right = right;
 	}

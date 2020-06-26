@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 import java.util.List;
 
@@ -13,15 +11,14 @@ public class SetExpression extends AstExpression implements Expression {
 	public Expression set;
 	public Expression expression;
 	
-	public SetExpression(IniParser parser, Token token, List<Variable> variables, Expression set, Expression expression) {
-		super(parser, token);
+	public SetExpression(List<Variable> variables, Expression set, Expression expression) {
+		super();
 		this.variables = variables;
 		for(Variable v : variables) {
 			v.setDeclaration(true);
 		}
 		this.set = set;
 		this.expression = expression;
-		this.nodeTypeId=AstNode.SET_EXPRESSION;
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public abstract class BuiltInExecutable extends Executable {
 	public static String defaultName;
 	
 	public BuiltInExecutable() {
-		super(null, null, defaultName, null);
+		super(defaultName, null);
 	}
 	
 	@Override

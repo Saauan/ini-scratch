@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -10,8 +8,8 @@ public class Field extends NamedElement {
 
 	public Constructor constructor;
 	
-	public Field(IniParser parser, Token token, String name, Constructor constructor) {
-		super(parser, token, name);
+	public Field(String name, Constructor constructor) {
+		super(name);
 		this.constructor = constructor;
 	}
 

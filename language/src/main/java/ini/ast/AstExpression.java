@@ -6,12 +6,11 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import ini.IniTypesGen;
-import ini.parser.IniParser;
 
 public abstract class AstExpression extends AstElement {
 
-	public AstExpression(IniParser parser, Token token) {
-		super(parser, token);
+	public AstExpression() {
+		super();
 	}
 
 	@Override

@@ -4,9 +4,6 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.oracle.truffle.api.nodes.UnexpectedResultException;
-
-import ini.parser.IniParser;
 
 @NodeInfo(description = "An operator that takes two arguments")
 public class BinaryOperator extends AstElement implements Expression {
@@ -19,12 +16,11 @@ public class BinaryOperator extends AstElement implements Expression {
 	public Expression left;
 	public Expression right;
 
-	public BinaryOperator(IniParser parser, Token token, Kind kind, Expression left, Expression right) {
-		super(parser, token);
+	public BinaryOperator(Kind kind, Expression left, Expression right) {
+		super();
 		this.kind = kind;
 		this.left = left;
 		this.right = right;
-		this.nodeTypeId = AstNode.BINARY_OPERATOR;
 	}
 
 	@Override

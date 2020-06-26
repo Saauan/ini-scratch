@@ -4,11 +4,8 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.dsl.NodeChild;
 
-import ini.ast.AstElement;
 import ini.ast.AstExpression;
 import ini.ast.Expression;
-import ini.ast.Token;
-import ini.parser.IniParser;
 
 /**
  * Utility base class for operations that take two arguments (per convention called "left" and
@@ -21,8 +18,8 @@ public abstract class BinaryNode extends AstExpression implements Expression {
 	
 	public static String symbol;
 	
-	public BinaryNode(IniParser parser, Token token) {
-		super(parser, token);
+	public BinaryNode() {
+		super();
 	}
 	
 	@Override

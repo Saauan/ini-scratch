@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
-import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
@@ -17,7 +16,6 @@ import ini.IniContext;
 import ini.IniLanguage;
 import ini.ast.call.DispatchNode;
 import ini.ast.call.UninitializedDispatchNode;
-import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
 /**
@@ -42,10 +40,9 @@ public class Invocation extends AstExpression implements Statement, Expression {
      */
 	@CompilationFinal private IniFunction cachedFunction;
 
-	public Invocation(IniParser parser, Token token, String name, List<Expression> arguments) {
-		super(parser, token);
+	public Invocation(String name, List<Expression> arguments) {
+		super();
 		this.name = name;
-		this.nodeTypeId = AstNode.INVOCATION;
 		this.argumentNodes = arguments.toArray(new AstExpression[0]);
 		this.dispatchNode = new UninitializedDispatchNode();
 	}

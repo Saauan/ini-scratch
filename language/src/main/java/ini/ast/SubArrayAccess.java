@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -12,13 +10,12 @@ public class SubArrayAccess extends AstElement {
 	public Expression minExpression;
 	public Expression maxExpression;
 
-	public SubArrayAccess(IniParser parser, Token token, Expression targetExpression, Expression minExpression,
+	public SubArrayAccess(Expression targetExpression, Expression minExpression,
 			Expression maxExpression) {
-		super(parser, token);
+		super();
 		this.targetExpression = targetExpression;
 		this.minExpression = minExpression;
 		this.maxExpression = maxExpression;
-		this.nodeTypeId = AstNode.SUB_ARRAY_ACCESS;
 	}
 
 	@Override

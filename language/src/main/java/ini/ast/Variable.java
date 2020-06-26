@@ -29,14 +29,13 @@ public abstract class Variable extends AstExpression implements VariableAccess {
 	public ChannelDeclaration channelLiteral;
 
 	@Deprecated
-	public Variable(IniParser parser, Token token, String name) {
-		this(parser, token, name, null);
+	public Variable(String name) {
+		this(name, null);
 	}
 	
-	public Variable(IniParser parser, Token token, String name, FrameSlot slot) {
-		super(parser, token);
+	public Variable(String name, FrameSlot slot) {
+		super();
 		this.name = name;
-		this.nodeTypeId = AstNode.VARIABLE;
 		this.slot = slot;
 	}
 	

@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -10,14 +8,13 @@ public class Parameter extends NamedElement {
 
 	public Expression defaultValue;
 	
-	public Parameter(IniParser parser, Token token, String name, Expression defaultValue) {
-		super(parser, token, name);
+	public Parameter(String name, Expression defaultValue) {
+		super(name);
 		this.defaultValue = defaultValue;
-		this.nodeTypeId = AstNode.PARAMETER;
 	}
 
-	public Parameter(IniParser parser, Token token, String name) {
-		this(parser,token,name,null);
+	public Parameter(String name) {
+		this(name,null);
 	}
 	
 	@Override

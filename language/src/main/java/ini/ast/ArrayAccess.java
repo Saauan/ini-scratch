@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -11,11 +9,10 @@ public class ArrayAccess extends AstElement implements VariableAccess {
 	public Expression targetExpression;
 	public Expression indexExpression;
 
-	public ArrayAccess(IniParser parser, Token token, Expression targetExpression, Expression indexExpression) {
-		super(parser, token);
+	public ArrayAccess(Expression targetExpression, Expression indexExpression) {
+		super();
 		this.targetExpression = targetExpression;
 		this.indexExpression = indexExpression;
-		this.nodeTypeId = AstNode.ARRAY_ACCESS;
 	}
 
 	@Override

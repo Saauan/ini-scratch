@@ -5,7 +5,6 @@ import java.io.PrintStream;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 /**
  * Implementation of the SL return statement. We need to unwind an unknown number of interpreter
@@ -19,10 +18,9 @@ public class ReturnStatement extends AstElement implements Statement {
 
 	@Child public AstExpression valueNode;
 	
-	public ReturnStatement(IniParser parser, Token token, AstExpression expression) {
-		super(parser, token);
+	public ReturnStatement(AstExpression expression) {
+		super();
 		this.valueNode = expression;
-		this.nodeTypeId=AstNode.RETURN_STATEMENT;
 	}
 
 	@Override

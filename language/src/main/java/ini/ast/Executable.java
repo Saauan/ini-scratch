@@ -23,6 +23,12 @@ public abstract class Executable extends AstExpression implements Expression {
 	public transient AttrContext accessibleAttrContext;
 	public List<Executable> overloads;
 	public String name;
+	
+	public Executable(String name, List<Parameter> parameters) {
+		super();
+		this.name = name;
+		this.parameters = parameters;
+	}
 
 	public void addOverload(Executable executable) {
 		if (overloads == null) {
@@ -95,24 +101,18 @@ public abstract class Executable extends AstExpression implements Expression {
 		throw new RuntimeException("cannot find matching overload for invocation " + invocation);
 	}
 
-	public Executable(IniParser parser, Token token, String name, List<Parameter> parameters) {
-		super(parser, token);
-		this.name = name;
-		this.parameters = parameters;
-	}
-
 	protected final void setDefaultValue(int parameterIndex, Expression expression) {
 		parameters.get(parameterIndex).defaultValue = expression;
 	}
 
 
-	protected final Type getParameterType(int index) {
-		return getType().getTypeParameters().get(index);
-	}
-
-	protected final Type getReturnType() {
-		return getType().getReturnType();
-	}
+//	protected final Type getParameterType(int index) {
+//		return getType().getTypeParameters().get(index);
+//	}
+//
+//	protected final Type getReturnType() {
+//		return getType().getReturnType();
+//	}
 
 	@Override
 	public void prettyPrint(PrintStream out) {
@@ -133,31 +133,31 @@ public abstract class Executable extends AstExpression implements Expression {
 		}
 	}
 
-	public final Type getType() {
-		if (this.type == null) {
-			this.type = parser.types.createFunctionalType(parser.types.createType());
-			for (int i = 0; i < parameters.size(); i++) {
-				this.type.addTypeParameter(new Type(parser.types));
-			}
-		}
-		return this.type;
-	}
+//	public final Type getType() {
+//		if (this.type == null) {
+//			this.type = parser.types.createFunctionalType(parser.types.createType());
+//			for (int i = 0; i < parameters.size(); i++) {
+//				this.type.addTypeParameter(new Type(parser.types));
+//			}
+//		}
+//		return this.type;
+//	}
 
-	public Type getFunctionalType(AstAttrib attrib, Invocation invocation) {
-		Type functionalType = new Type(parser.types, "function");
-		if (name != null && name.equals("main")) {
-			if (parameters != null && parameters.size() == 1) {
-				functionalType
-						.addTypeParameter(parser.types.getDependentType("Map", parser.types.INT, parser.types.STRING));
-			}
-			functionalType.setReturnType(parser.types.VOID);
-		} else {
-			functionalType.setReturnType(new Type(parser.types));
-		}
-		for (int i = 0; i < parameters.size(); i++) {
-			functionalType.addTypeParameter(new Type(parser.types));
-		}
-		return functionalType;
-	}
+//	public Type getFunctionalType(AstAttrib attrib, Invocation invocation) {
+//		Type functionalType = new Type(parser.types, "function");
+//		if (name != null && name.equals("main")) {
+//			if (parameters != null && parameters.size() == 1) {
+//				functionalType
+//						.addTypeParameter(parser.types.getDependentType("Map", parser.types.INT, parser.types.STRING));
+//			}
+//			functionalType.setReturnType(parser.types.VOID);
+//		} else {
+//			functionalType.setReturnType(new Type(parser.types));
+//		}
+//		for (int i = 0; i < parameters.size(); i++) {
+//			functionalType.addTypeParameter(new Type(parser.types));
+//		}
+//		return functionalType;
+//	}
 
 }

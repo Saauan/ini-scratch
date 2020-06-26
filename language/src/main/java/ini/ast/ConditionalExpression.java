@@ -4,19 +4,16 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.parser.IniParser;
-
 public class ConditionalExpression extends AstExpression implements Expression {
 	public Expression condition;
 	public Expression trueExpression;
 	public Expression falseExpression;
 
-	public ConditionalExpression(IniParser parser, Token token, Expression condition, Expression trueExpression, Expression falseExpression) {
-		super(parser, token);
+	public ConditionalExpression(Expression condition, Expression trueExpression, Expression falseExpression) {
+		super();
 		this.condition = condition;
 		this.trueExpression = trueExpression;
 		this.falseExpression = falseExpression;
-		this.nodeTypeId = AstNode.CONDITIONAL;
 	}
 
 	@Override

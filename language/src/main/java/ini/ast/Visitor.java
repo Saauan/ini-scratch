@@ -46,8 +46,6 @@ public interface Visitor {
 
 	void visitListExpression(ListExpression listExpression);
 
-	void visitNumberLiteral(NumberLiteral numberLiteral);
-
 	void visitParameter(Parameter parameter);
 
 	void visitLTLPredicate(LTLPredicate predicate);

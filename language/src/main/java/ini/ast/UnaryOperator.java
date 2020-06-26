@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -16,11 +14,10 @@ public class UnaryOperator extends AstExpression implements Expression, Statemen
 	public Expression operand;
 	public boolean expanded = false;
 
-	public UnaryOperator(IniParser parser, Token token, Kind kind, Expression operand) {
-		super(parser, token);
+	public UnaryOperator(Kind kind, Expression operand) {
+		super();
 		this.kind = kind;
 		this.operand = operand;
-		this.nodeTypeId = AstNode.UNARY_OPERATOR;
 	}
 
 	@Override

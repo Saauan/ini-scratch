@@ -5,18 +5,15 @@ import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.parser.IniParser;
-
 public class SetConstructor extends AstExpression implements Expression {
 
 	public List<Assignment> fieldAssignments;
 	public String name;
 
-	public SetConstructor(IniParser parser, Token token, String name, List<Assignment> fieldAssignments) {
-		super(parser, token);
+	public SetConstructor(String name, List<Assignment> fieldAssignments) {
+		super();
 		this.name = name;
 		this.fieldAssignments = fieldAssignments;
-		this.nodeTypeId = AstNode.SET_CONSTRUCTOR;
 	}
 
 	public Expression getFieldExpression(String fieldName) {

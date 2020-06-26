@@ -12,11 +12,9 @@ public class CharLiteral extends AstExpression implements Expression {
 
 	public char value;
 
-	public CharLiteral(IniParser parser, Token token, char value) {
-		super(parser, token);
+	public CharLiteral(char value) {
+		super();
 		this.value = value;
-		this.type = parser.types.CHAR;
-		this.nodeTypeId = AstNode.CHAR_LITERAL;
 	}
 
 	@Override

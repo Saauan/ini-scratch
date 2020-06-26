@@ -1,9 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-import ini.type.AstAttrib;
-import ini.type.Type;
-
 import java.io.PrintStream;
 import java.util.List;
 
@@ -26,9 +22,9 @@ public class Binding extends NamedElement {
 //		FIELD, METHOD, CONSTRUCTOR
 //	}
 //
-	public Binding(IniParser parser, Token token, String name, List<TypeVariable> typeParameters,
+	public Binding(String name, List<TypeVariable> typeParameters,
 			List<TypeVariable> parameterTypes, TypeVariable returnType, List<Expression> annotations) {
-		super(parser, token, name);
+		super(name);
 		this.annotations = annotations;
 		this.parameterTypes = parameterTypes;
 		this.typeParameters = typeParameters;
@@ -41,12 +37,11 @@ public class Binding extends NamedElement {
 				returnType.context = typeParameters;
 			}
 		}
-		this.className = getAnnotationStringValue("class");
-		this.member = getAnnotationStringValue("target");
+//		this.className = getAnnotationStringValue("class");
+//		this.member = getAnnotationStringValue("target");
 		if (member != null) {
 			this.memberName = this.member.split("\\(")[0];
 		}
-		this.nodeTypeId = AstNode.BINDING;
 	}
 //
 //	@Override

@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,11 +16,11 @@ public class UserType extends NamedElement {
 	public Map<String, Constructor> constructorMap = new HashMap<String, Constructor>();
 	public TypeVariable simpleType;
 
-	public UserType(IniParser parser, Token token, String name, List<Constructor> constructors) {
-		super(parser, token, name);
+	public UserType(String name, List<Constructor> constructors) {
+		super(name);
 
 		if (this.name == null) {
-			this.name = "_T" + parser.nextUserTypeIndex();
+//			this.name = "_T" + parser.nextUserTypeIndex();
 		}
 
 		this.constructors = constructors;
@@ -36,11 +34,10 @@ public class UserType extends NamedElement {
 			}
 			constructorMap.put(constructor.name, constructor);
 			constructor.userType = this;
-			parser.types.register(constructor);
+//			parser.types.register(constructor);
 		}
-		parser.types.userTypes.add(this);
-		parser.types.userTypeMap.put(this.name, this);
-		this.nodeTypeId = AstNode.USER_TYPE;
+//		parser.types.userTypes.add(this);
+//		parser.types.userTypeMap.put(this.name, this);
 	}
 
 	/*public UserType(IniParser parser, Token token, TypeVariable typeVariable) {

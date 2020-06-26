@@ -4,16 +4,13 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.ast.AstElement;
 import ini.ast.AstExpression;
-import ini.ast.Token;
-import ini.parser.IniParser;
 
 @NodeInfo(shortName = "&&")
 public final class LogicalAndNode extends ShortCircuitNode {
 
-	public LogicalAndNode(IniParser parser, Token token, AstExpression left, AstExpression right) {
-		super(parser, token, left, right);
+	public LogicalAndNode(AstExpression left, AstExpression right) {
+		super(left, right);
 	}
 
 	@Override

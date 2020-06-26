@@ -10,10 +10,9 @@ public class LTLPredicate extends NamedElement {
 
 	public AstNode expression;
 
-	public LTLPredicate(IniParser parser, Token token, String name, AstNode expression) {
-		super(parser, token, name);
+	public LTLPredicate(String name, AstNode expression) {
+		super(name);
 		this.expression = expression;
-		this.nodeTypeId = AstNode.PREDICATE;
 	}
 
 	@Override

@@ -140,7 +140,7 @@ public class IniContext {
 		final int argumentCount = factory.getExecutionSignature().size();
 		AstExpression[] argumentNodes = new AstExpression[argumentCount];
 		for (int i = 0; i < argumentCount; i++) {
-			argumentNodes[i] = new ReadArgumentFromContextNode(null, null, i);
+			argumentNodes[i] = new ReadArgumentFromContextNode(i);
 		}
 		/* Instantiate the builtin node. This node performs the actual functionality. */
 		/*

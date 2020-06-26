@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.parser.IniParser;
 import ini.type.AstAttrib;
 import ini.type.Type;
 
@@ -21,28 +20,25 @@ public class TypeVariable extends Variable {
 	public Collection<String> fields;
 	public boolean parameter = false;
 
-//	public static TypeVariable create(String name, Collection<String> fields, TypeVariable... dependentTypes) {
-//		TypeVariable t = new TypeVariable(null, null, name);
-//		t.fields = fields;
-//		t.typeParameters = new ArrayList<>(Arrays.asList(dependentTypes));
-//		return t;
-//	}
+	public static TypeVariable create(String name, Collection<String> fields, TypeVariable... dependentTypes) {
+		TypeVariable t = new TypeVariable(name);
+		t.fields = fields;
+		t.typeParameters = new ArrayList<>(Arrays.asList(dependentTypes));
+		return t;
+	}
 	
-	public TypeVariable(IniParser parser, Token token, String name) {
-		super(parser, token, name);
-		nodeTypeId = TYPE_VARIABLE;
+	public TypeVariable(String name) {
+		super(name);
 	}
 
-	public TypeVariable(IniParser parser, Token token, String name, boolean parameter) {
-		super(parser, token, name);
+	public TypeVariable(String name, boolean parameter) {
+		super(name);
 		this.parameter = parameter;
-		nodeTypeId = TYPE_VARIABLE;
 	}
 
-	public TypeVariable(IniParser parser, Token token, TypeVariable component) {
-		super(parser, token, null);
+	public TypeVariable(TypeVariable component) {
+		super(null);
 		this.component = component;
-		nodeTypeId = TYPE_VARIABLE;
 	}
 
 	public boolean isList() {
@@ -72,49 +68,51 @@ public class TypeVariable extends Variable {
 	}
 
 	public Type getType() {
-		if (type != null) {
-			return type;
-		}
-		if (parameter) {
-			type = parser.types.createType();
-			if (superType != null) {
-				type.superType = parser.types.getSimpleType(superType.name);
-			}
-		} else {
-			if (isList()) {
-				type = parser.types.getListOf(component.getType());
-			} else {
-				Type t = lookupTypeVariable(name);
-				if (t == null) {
-					if (typeParameters == null || typeParameters.isEmpty()) {
-						type = parser.types.getSimpleType(name);
-					} else {
-						type = parser.types.createType(name);
-						type.variable = false;
-					}
-					if (this.superType != null) {
-						type.superType = this.superType.getType();
-					}
-				} else {
-					type = t;
-				}
-			}
-			if (typeParameters != null) {
-				for (TypeVariable v : typeParameters) {
-					type.addTypeParameter(v.getType());
-				}
-			}
-		}
-		return type;
+//		if (type != null) {
+//			return type;
+//		}
+//		if (parameter) {
+//			type = parser.types.createType();
+//			if (superType != null) {
+//				type.superType = parser.types.getSimpleType(superType.name);
+//			}
+//		} else {
+//			if (isList()) {
+//				type = parser.types.getListOf(component.getType());
+//			} else {
+//				Type t = lookupTypeVariable(name);
+//				if (t == null) {
+//					if (typeParameters == null || typeParameters.isEmpty()) {
+//						type = parser.types.getSimpleType(name);
+//					} else {
+//						type = parser.types.createType(name);
+//						type.variable = false;
+//					}
+//					if (this.superType != null) {
+//						type.superType = this.superType.getType();
+//					}
+//				} else {
+//					type = t;
+//				}
+//			}
+//			if (typeParameters != null) {
+//				for (TypeVariable v : typeParameters) {
+//					type.addTypeParameter(v.getType());
+//				}
+//			}
+//		}
+//		return type;
+		return null;
 	}
 
-//	public boolean isTypeRegistered(AstAttrib attrib) {
+	public boolean isTypeRegistered(AstAttrib attrib) {
 //		if (component != null) {
 //			return component.isTypeRegistered(attrib);
 //		} else {
 //			return attrib.parser.types.isRegistered(name);
 //		}
-//	}
+		return false;
+	}
 
 	public boolean isParameter() {
 		return parameter;

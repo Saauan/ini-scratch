@@ -8,7 +8,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.profiles.LoopConditionProfile;
 
-import ini.parser.IniParser;
 import ini.runtime.IniException;
 
 @NodeInfo(shortName="case")
@@ -19,11 +18,9 @@ public class CaseStatement extends AstElement implements Statement {
 	
 	private final LoopConditionProfile condition = LoopConditionProfile.createCountingProfile();
 
-	public CaseStatement(IniParser parser, Token token, List<Rule> cases, Sequence<AstElement> defaultStatements) {
-		super(parser, token);
+	public CaseStatement(List<Rule> cases, Sequence<AstElement> defaultStatements) {
 		this.cases = cases.toArray(new Rule[0]);
 		this.defaultStatements = defaultStatements != null ? (AstElement[]) ini.Utils.convertSequenceToArray(defaultStatements) : null;
-		this.nodeTypeId = AstNode.CASE_STATEMENT;
 	}
 
 	@Override

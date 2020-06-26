@@ -2,20 +2,9 @@ package ini.ast;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
-
-//import ini.eval.Context;
-//import ini.eval.IniEval;
-//import ini.eval.IniEval.ReturnException;
-//import ini.eval.at.At;
-//import ini.eval.data.Data;
-//import ini.eval.data.RawData;
-import ini.parser.IniParser;
 
 public class Process extends Executable {
 
@@ -26,8 +15,8 @@ public class Process extends Executable {
 	public List<Rule> readyRules = new ArrayList<Rule>();
 	public List<Rule> errorRules = new ArrayList<Rule>();
 
-	public Process(IniParser parser, Token token, String name, List<Parameter> parameters, List<Rule> rules) {
-		super(parser, token, name, parameters);
+	public Process(String name, List<Parameter> parameters, List<Rule> rules) {
+		super(name, parameters);
 		this.rules = rules;
 		for (Rule r : new ArrayList<Rule>(rules)) {
 			if (r.atPredicate != null) {
@@ -54,7 +43,6 @@ public class Process extends Executable {
 				}
 			}
 		}
-		this.nodeTypeId = AstNode.PROCESS;
 	}
 
 	@Override

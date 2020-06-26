@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 import java.util.List;
 
@@ -17,9 +15,9 @@ public class AtPredicate extends NamedElement {
 	public Kind kind = null;
 	public String identifier;
 
-	public AtPredicate(IniParser parser, Token token, String name, List<Expression> configurationArguments,
+	public AtPredicate(String name, List<Expression> configurationArguments,
 			List<Expression> runtimeArguments, String identifier) {
-		super(parser, token, name);
+		super(name);
 		this.identifier = identifier;
 		this.annotations = configurationArguments;
 		this.outParameters = runtimeArguments;
@@ -60,7 +58,6 @@ public class AtPredicate extends NamedElement {
 		if (kind == null) {
 			kind = Kind.USER_DEFINED;
 		}
-		this.nodeTypeId = AT_PREDICATE;
 	}
 
 	@Override

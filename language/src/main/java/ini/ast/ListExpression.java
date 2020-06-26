@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 import java.util.List;
 
@@ -11,10 +9,9 @@ public class ListExpression extends AstExpression implements Expression {
 
 	public List<Expression> elements;
 	
-	public ListExpression(IniParser parser, Token token, List<Expression> elements) {
-		super(parser, token);
+	public ListExpression(List<Expression> elements) {
+		super();
 		this.elements = elements;
-		nodeTypeId=LIST_EXPRESSION;
 	}
 
 	@Override

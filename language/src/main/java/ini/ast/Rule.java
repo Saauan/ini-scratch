@@ -2,13 +2,10 @@ package ini.ast;
 
 import java.io.PrintStream;
 import java.util.List;
-import ini.Utils;
 
-import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.ExplodeLoop;
 
-import ini.parser.IniParser;
+import ini.Utils;
 
 public class Rule extends AstElement {
 
@@ -17,9 +14,9 @@ public class Rule extends AstElement {
 	@Child public AtPredicate atPredicate;
 	@Children public AstElement[] synchronizedAtsNames;
 
-	public Rule(IniParser parser, Token token, AtPredicate atPredicate, AstExpression guard,
+	public Rule(AtPredicate atPredicate, AstExpression guard,
 			Sequence<AstElement> statements, List<Expression> synchronizedAtsNames) {
-		super(parser, token);		
+		super();		
 		this.atPredicate = atPredicate;
 		this.guard = guard;
 		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
@@ -29,7 +26,6 @@ public class Rule extends AstElement {
 		else {
 			this.synchronizedAtsNames = new AstElement[0];
 		}
-		this.nodeTypeId = AstNode.RULE;
 	}
 
 	@Override

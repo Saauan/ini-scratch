@@ -8,16 +8,13 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.ast.AstExpression;
-import ini.ast.Token;
-import ini.parser.IniParser;
 import ini.runtime.IniException;
 
 @NodeChild("valueNode")
 @NodeInfo(shortName = "!")
 public abstract class LogicalNotNode extends AstExpression {
 
-	public LogicalNotNode(IniParser parser, Token token) {
-		super(parser, token);
+	public LogicalNotNode() {
 	}
 	
 	@Specialization

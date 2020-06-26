@@ -12,7 +12,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.IniLanguage;
 import ini.Utils;
-import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
 @NodeInfo(shortName = "function", description = "builds and contain a IniFunction")
@@ -21,13 +20,11 @@ public class Function extends Executable {
 	private IniFunction function;
 	public AstElement[] statements;
 	public boolean oneExpressionLambda = false;
-	private boolean scopeSet = false;
 
-	public Function(IniParser parser, Token token, String name, List<Parameter> parameters,
+	public Function(String name, List<Parameter> parameters,
 			Sequence<AstElement> statements) {
-		super(parser, token, name, parameters);
+		super(name, parameters);
 		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
-		this.nodeTypeId = AstNode.FUNCTION;
 		this.parameters = parameters;
 	}
 

@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+
+import ini.parser.IniParser;
 
 public class Constructor extends NamedElement {
 
@@ -18,9 +18,9 @@ public class Constructor extends NamedElement {
 	public List<Field> fields = new ArrayList<Field>();
 	public Map<String, Field> fieldMap = new HashMap<String, Field>();
 
-	public Constructor(IniParser parser, Token token, String name,
+	public Constructor(String name,
 			List<Field> fields) {
-		super(parser, token, name);
+		super(name);
 
 		if (this.name == null) {
 			this.name = "_C" + index++;
@@ -31,16 +31,13 @@ public class Constructor extends NamedElement {
 				this.fieldMap.put(f.name, f);
 			}
 		}
-		//parser.ast.register(this);
-		nodeTypeId = AstNode.CONSTRUCTOR;
 	}
 
 	public Constructor element;
 
-	public Constructor(IniParser parser, Token token, Constructor element) {
-		super(parser, token, null);
+	public Constructor(Constructor element) {
+		super(null);
 		this.element = element;
-		nodeTypeId = AstNode.CONSTRUCTOR;
 	}
 
 	@Override

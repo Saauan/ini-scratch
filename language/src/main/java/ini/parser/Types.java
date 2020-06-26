@@ -66,19 +66,19 @@ public class Types {
 	public Type createEnum(String name, String... values) {
 		List<Constructor> constructors = new ArrayList<>();
 		for (String cname : values) {
-			constructors.add(new Constructor(parser, null, cname, null));
+			constructors.add(new Constructor(cname, null));
 		}
-		UserType userType = new UserType(parser, null, name, constructors);
+		UserType userType = new UserType(name, constructors);
 		Type t = new Type(userType);
 		register(name, t);
-		userType.type = t;
+//		userType.type = t;
 		for (Constructor constructor : constructors) {
 			Type constructorType = parser.types.createType(constructor.name);
-			constructorType.superType = constructor.userType.type;
-			constructor.userType.type.addSubType(constructorType);
+//			constructorType.superType = constructor.userType.type;
+//			constructor.userType.type.addSubType(constructorType);
 			constructorType.variable = false;
 			constructorType.constructorType = true;
-			constructor.type = constructorType;
+//			constructor.type = constructorType;
 		}
 		return t;
 	}
@@ -120,7 +120,7 @@ public class Types {
 	public Constructor getOrCreatePrimitiveConstructor(String name) {
 		Constructor c = constructors.get(name);
 		if (c == null) {
-			c = new Constructor(parser, null, name, null);
+			c = new Constructor(name, null);
 			constructors.put(name, c);
 		}
 		return c;

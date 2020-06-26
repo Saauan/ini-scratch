@@ -5,26 +5,17 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.IniTypes;
-import ini.parser.IniParser;
-import ini.type.Type;
 
 @TypeSystemReference(IniTypes.class)
 @NodeInfo(language = "INI", description = "The abstract base node for all expressions")
 public abstract class AstElement extends Node implements AstNode {
 
-	transient public IniParser parser;
-	transient public Token token;
-	public int nodeTypeId = -1;
-	transient public Type type;
-	public String owner;
 	public List<Expression> annotations;
 
 	/**
@@ -40,76 +31,59 @@ public abstract class AstElement extends Node implements AstNode {
 		return String.format("%s parameters:%d", functionName, nbParameters);
 	}
 
-	@Override
-	public String getAnnotationStringValue(String... keys) {
-		if (annotations != null && !annotations.isEmpty()) {
-			for (Expression e : annotations) {
-				if (e instanceof Assignment) {
-					Assignment a = (Assignment) e;
-					String name = a.assignee.toString();
-					if (ArrayUtils.contains(keys, name)) {
-						if (a.assignment instanceof StringLiteral) {
-							return ((StringLiteral) a.assignment).value;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
+//	@Override
+//	public String getAnnotationStringValue(String... keys) {
+//		if (annotations != null && !annotations.isEmpty()) {
+//			for (Expression e : annotations) {
+//				if (e instanceof Assignment) {
+//					AssignmentNodeGen a = (AssignmentNodeGen) e;
+//					String name = a.assignee.toString();
+//					if (ArrayUtils.contains(keys, name)) {
+//						if (a.assignment instanceof StringLiteral) {
+//							return ((StringLiteral) a.assignment).value;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 
-	@Override
-	public Number getAnnotationNumberValue(String... keys) {
-		if (annotations != null && !annotations.isEmpty()) {
-			for (Expression e : annotations) {
-				if (e instanceof Assignment) {
-					Assignment a = (Assignment) e;
-					String name = a.assignee.toString();
-					if (ArrayUtils.contains(keys, name)) {
-						if (a.assignment instanceof NumberLiteral) {
-							return ((NumberLiteral) a.assignment).value;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public <T extends AstNode> T getAnnotationNode(String... keys) {
-		if (annotations != null && !annotations.isEmpty()) {
-			for (Expression e : annotations) {
-				if (e instanceof Assignment) {
-					Assignment a = (Assignment) e;
-					String name = a.assignee.toString();
-					if (ArrayUtils.contains(keys, name)) {
-						@SuppressWarnings("unchecked")
-						T assignment = (T) a.assignment;
-						return assignment;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public int nodeTypeId() {
-		return nodeTypeId;
-	}
-
-	public AstElement(IniParser parser, Token token) {
-		super();
-		// if(token==null) {
-		// throw new RuntimeException("token cannot be null");
-		// }
-		this.parser = parser;
-		this.token = token;
-		if (parser != null) {
-			this.owner = parser.env.node;
-		}
-	}
+//	@Override
+//	public Number getAnnotationNumberValue(String... keys) {
+//		if (annotations != null && !annotations.isEmpty()) {
+//			for (Expression e : annotations) {
+//				if (e instanceof Assignment) {
+//					Assignment a = (Assignment) e;
+//					String name = a.assignee.toString();
+//					if (ArrayUtils.contains(keys, name)) {
+//						if (a.assignment instanceof NumberLiteral) {
+//							return ((NumberLiteral) a.assignment).value;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
+//
+//	@Override
+//	public <T extends AstNode> T getAnnotationNode(String... keys) {
+//		if (annotations != null && !annotations.isEmpty()) {
+//			for (Expression e : annotations) {
+//				if (e instanceof Assignment) {
+//					Assignment a = (Assignment) e;
+//					String name = a.assignee.toString();
+//					if (ArrayUtils.contains(keys, name)) {
+//						@SuppressWarnings("unchecked")
+//						T assignment = (T) a.assignment;
+//						return assignment;
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 
 	public AstElement() {
 		super();
@@ -128,12 +102,6 @@ public abstract class AstElement extends Node implements AstNode {
 	}
 
 	@Override
-	public Token token() {
-		return token;
-	}
-
-
-	@Override
 	public void accept(Visitor visitor) {
 		System.out.println("DEBUG : No visitor accepted, default method in AstElement"); // TODO
 	}
@@ -150,15 +118,4 @@ public abstract class AstElement extends Node implements AstNode {
 		}
 		return s;
 	}
-
-	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Override
-	public void setType(Type type) {
-		this.type = type;
-	}
-
 }

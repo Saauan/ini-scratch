@@ -49,9 +49,9 @@ public class Scanner implements Visitor {
 	}
 
 	public void visitAssignment(Assignment assignment) {
-		visitAstElement(assignment);
-		scan(assignment.assignee);
-		scan(assignment.assignment);
+//		visitAstElement(assignment);
+//		scan(assignment.assignee);
+//		scan(assignment.assignment);
 	}
 
 	public void visitAtBinding(AtBinding atBinding) {
@@ -150,10 +150,6 @@ public class Scanner implements Visitor {
 	public void visitListExpression(ListExpression listExpression) {
 		visitAstElement(listExpression);
 		scan(listExpression.elements);
-	}
-
-	public void visitNumberLiteral(NumberLiteral numberLiteral) {
-		visitAstElement(numberLiteral);
 	}
 
 	public void visitParameter(Parameter parameter) {

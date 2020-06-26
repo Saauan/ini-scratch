@@ -1,58 +1,5 @@
 package ini.type;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Stack;
-import java.util.stream.Collectors;
-
-import ini.IniLanguage;
-import ini.ast.ArrayAccess;
-import ini.ast.Assignment;
-import ini.ast.AstNode;
-import ini.ast.AtPredicate;
-import ini.ast.BinaryOperator;
-import ini.ast.Binding;
-import ini.ast.CaseStatement;
-import ini.ast.ChannelDeclaration;
-import ini.ast.ConditionalExpression;
-import ini.ast.Constructor;
-import ini.ast.ConstructorMatchExpression;
-import ini.ast.Executable;
-import ini.ast.Expression;
-import ini.ast.Field;
-import ini.ast.FieldAccess;
-import ini.ast.Function;
-import ini.ast.Import;
-import ini.ast.Invocation;
-import ini.ast.ListExpression;
-import ini.ast.NamedElement;
-import ini.ast.NumberLiteral;
-import ini.ast.Process;
-import ini.ast.ReturnStatement;
-import ini.ast.Rule;
-import ini.ast.Sequence;
-import ini.ast.SetConstructor;
-import ini.ast.SetDeclaration;
-import ini.ast.SetExpression;
-import ini.ast.Statement;
-import ini.ast.SubArrayAccess;
-import ini.ast.TypeVariable;
-import ini.ast.UnaryOperator;
-import ini.ast.UserType;
-import ini.ast.Variable;
-import ini.ast.VariableAccess;
-//import ini.eval.at.At;
-//import ini.eval.function.BoundExecutable;
-import ini.parser.IniParser;
-import ini.parser.Types;
-import ini.type.TypingConstraint.Kind;
-
 public class AstAttrib {
 //
 //	public IniParser parser;

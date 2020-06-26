@@ -2,11 +2,7 @@ package ini.ast;
 
 import java.io.PrintStream;
 
-import com.oracle.truffle.api.frame.Frame;
-import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
-
-import ini.parser.IniParser;
 
 /**
  * Reads an argument from the frame's argument at a specific index and returns it
@@ -17,8 +13,8 @@ public class ReadArgumentFromContextNode extends AstExpression implements Expres
 	
 	public final int argumentIndex;
 
-	public ReadArgumentFromContextNode(IniParser parser, Token token, int argumentIndex) {
-		super(parser, token);
+	public ReadArgumentFromContextNode(int argumentIndex) {
+		super();
 		this.argumentIndex = argumentIndex;
 	}
 

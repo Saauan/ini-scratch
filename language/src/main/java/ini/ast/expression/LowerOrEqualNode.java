@@ -4,17 +4,13 @@ import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.ast.Token;
-import ini.parser.IniParser;
 import ini.runtime.IniException;
 
 //TODO use comparable interface ?
 @NodeInfo(shortName = "<=")
 public abstract class LowerOrEqualNode extends BinaryNode {
 
-	public LowerOrEqualNode(IniParser parser, Token token) {
-		super(parser, token);
-		// TODO Auto-generated constructor stub
+	public LowerOrEqualNode() {
 	}
     
     @Specialization

@@ -50,10 +50,10 @@ public class TypingConstraint {
 			s = s + " >= " + (right == null ? "null" : right.getFullName());
 			break;
 		}
-		s = s + (leftOrigin != null ? " at '" + leftOrigin.toString() + "'"
-				+ (leftOrigin.token() != null ? " " + leftOrigin.token().getLocation() : "") : "");
-		s = s + (rightOrigin != null && rightOrigin != leftOrigin ? " and at '" + rightOrigin.toString() + "'"
-				+ (rightOrigin.token() != null ? " " + rightOrigin.token().getLocation() : "") : "");
+//		s = s + (leftOrigin != null ? " at '" + leftOrigin.toString() + "'"
+//				+ (leftOrigin.token() != null ? " " + leftOrigin.token().getLocation() : "") : "");
+//		s = s + (rightOrigin != null && rightOrigin != leftOrigin ? " and at '" + rightOrigin.toString() + "'"
+//				+ (rightOrigin.token() != null ? " " + rightOrigin.token().getLocation() : "") : "");
 		s += "]";
 		return s;
 	}

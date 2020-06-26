@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -11,11 +9,10 @@ public class FieldAccess extends AstElement implements VariableAccess {
 	public Expression targetExpression;
 	public String fieldName;
 
-	public FieldAccess(IniParser parser, Token token, Expression targetExpression, String fieldName) {
-		super(parser, token);
+	public FieldAccess(Expression targetExpression, String fieldName) {
+		super();
 		this.targetExpression = targetExpression;
 		this.fieldName = fieldName;
-		this.nodeTypeId = AstNode.FIELD_ACCESS;
 	}
 
 	@Override
