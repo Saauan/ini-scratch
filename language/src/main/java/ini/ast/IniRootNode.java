@@ -9,10 +9,17 @@ import com.oracle.truffle.api.nodes.RootNode;
 
 import ini.IniLanguage;
 
+/**
+ * The Root Node is the root node of an execution tree. It executes a list of
+ * statements.
+ * 
+ * @author Tristan
+ *
+ */
 public class IniRootNode extends RootNode {
-	
+
 	/** The name of the function, for printing purposes only. */
-    private final String name;
+	private final String name;
 
 	@Children
 	private final AstElement[] bodyNodes;
@@ -30,17 +37,20 @@ public class IniRootNode extends RootNode {
 		final int nbNodes = s.length;
 		int i;
 		try {
-			for (i = 0; i < nbNodes-1; i++) {
+			for (i = 0; i < nbNodes - 1; i++) {
 				s[i].executeVoid(frame);
 			}
-			if(s[i] instanceof AstExpression) {
+			/*
+			 * For the last node to execute. If it returns a result, simply return its
+			 * result, otherwise return 0
+			 */
+			if (s[i] instanceof AstExpression) {
 				return ((AstExpression) s[i]).executeGeneric(frame);
-			}
-			else {
+			} else {
 				s[i].executeVoid(frame);
 				return 0;
 			}
-		} catch(ReturnException e) {
+		} catch (ReturnException e) {
 			return e.getResult();
 		}
 	}
@@ -50,15 +60,15 @@ public class IniRootNode extends RootNode {
 			FrameDescriptor frameDescriptor) {
 		final int nbParams = parametersSlots.length;
 		CompilerAsserts.partialEvaluationConstant(nbParams);
-		AstElement[] allNodes = new AstElement[nbParams+bodyNodes.length];
-		// If there are parameters, create Assignments to read the argument passed in the function and write them to local variables
-		if(nbParams>0) {
+		AstElement[] allNodes = new AstElement[nbParams + bodyNodes.length];
+		// If there are parameters, create Assignments to read the argument passed in
+		// the function and write them to local variables
+		if (nbParams > 0) {
 			for (int arg_index = 0; arg_index < nbParams; arg_index++) {
 				allNodes[arg_index] = createAssignment(parametersSlots, arg_index);
 			}
 		}
-		System.arraycopy(bodyNodes, 0, allNodes,
-                nbParams, bodyNodes.length);
+		System.arraycopy(bodyNodes, 0, allNodes, nbParams, bodyNodes.length);
 		return new IniRootNode(lang, name, allNodes, frameDescriptor);
 	}
 
@@ -69,8 +79,7 @@ public class IniRootNode extends RootNode {
 	private static Assignment createAssignment(FrameSlot[] argumentNames, int arg_index) {
 		return AssignmentNodeGen.create(
 				VariableNodeGen.create(argumentNames[arg_index].getIdentifier().toString(), argumentNames[arg_index]),
-				argumentNames[arg_index],
-				new ReadArgumentFromContextNode(arg_index));
+				argumentNames[arg_index], new ReadArgumentFromContextNode(arg_index));
 	}
 
 	@Override
@@ -78,9 +87,9 @@ public class IniRootNode extends RootNode {
 		return name;
 	}
 
-    @Override
-    public String toString() {
-        return "root " + name;
-    }
+	@Override
+	public String toString() {
+		return "root " + name;
+	}
 
 }

@@ -13,7 +13,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import ini.parser.IniParser;
 
 /**
- * When executed, returns the value of the variable (value access)
+ * When executed, returns the value of the variable
  */
 public abstract class Variable extends AstExpression implements VariableAccess {
 

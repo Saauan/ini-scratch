@@ -7,7 +7,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.runtime.IniFunction;
 /**
- * Implementation of the SL return statement. We need to unwind an unknown number of interpreter
+ * Implementation of the INI return statement. We need to unwind an unknown number of interpreter
  * frames that are between this {@link ReturnStatement} and the {@link IniFunction} of the
  * method we are exiting. This is done by throwing an {@link ReturnException exception} that is
  * caught by the {@link IniFunction#executeGeneric function body}. The exception transports

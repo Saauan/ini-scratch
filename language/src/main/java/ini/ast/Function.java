@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.CompilerAsserts;
+import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -14,15 +15,15 @@ import ini.IniLanguage;
 import ini.Utils;
 import ini.runtime.IniFunction;
 
-@NodeInfo(shortName = "function", description = "builds and contain a IniFunction")
+@NodeInfo(shortName = "function", description = "builds an IniFunction")
 public class Function extends Executable {
 
 	private IniFunction function;
+	@Children
 	public AstElement[] statements;
 	public boolean oneExpressionLambda = false;
 
-	public Function(String name, List<Parameter> parameters,
-			Sequence<AstElement> statements) {
+	public Function(String name, List<Parameter> parameters, Sequence<AstElement> statements) {
 		super(name, parameters);
 		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
 		this.parameters = parameters;
@@ -71,7 +72,6 @@ public class Function extends Executable {
 		visitor.visitFunction(this);
 	}
 
-
 	/**
 	 * Creates an IniFunction, registers it, and returns it.
 	 */
@@ -79,19 +79,18 @@ public class Function extends Executable {
 	public IniFunction executeGeneric(VirtualFrame virtualFrame) {
 		/* Each time a new function is created, a new frame descriptor is created */
 		FrameDescriptor frameDescriptor = new FrameDescriptor();
-		IniFunction function = IniFunction.create(
-				lookupContextReference(IniLanguage.class).get().getLang(),
-				name,
-				convertListOfParametersToArrayOfFrameSlot(parameters, frameDescriptor),
-				statements,
-				frameDescriptor);
+		IniFunction function = IniFunction.create(lookupContextReference(IniLanguage.class).get().getLang(), name,
+				convertListOfParametersToArrayOfFrameSlot(parameters, frameDescriptor), statements, frameDescriptor);
 
 		this.function = function;
-		
+
 		registerFunction(function, getFunctionIdentifier(this.name, this.parameters.size()));
 		return function;
 	}
 
+	/*
+	 * Registers the function into the function registry 
+	 */
 	private void registerFunction(IniFunction function, String functionId) {
 		lookupContextReference(IniLanguage.class).get().getFunctionRegistry().register(functionId, function);
 	}

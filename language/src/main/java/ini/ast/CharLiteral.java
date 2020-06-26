@@ -1,7 +1,5 @@
 package ini.ast;
 
-import ini.parser.IniParser;
-
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;

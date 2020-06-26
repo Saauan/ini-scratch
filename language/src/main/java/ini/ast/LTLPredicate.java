@@ -16,20 +16,18 @@ public class LTLPredicate extends NamedElement {
 	}
 
 	@Override
-	public void prettyPrint(PrintStream out) {
-		out.print("predicate " + name + " "+STRING_LITERAL);
-		if (annotations != null) {
-			out.print(" " + annotations);
-		}
-	}
-
-	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitLTLPredicate(this);
 	}
 
 	@Override
 	public void executeVoid(VirtualFrame frame) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void prettyPrint(PrintStream out) {
 		// TODO Auto-generated method stub
 		
 	}

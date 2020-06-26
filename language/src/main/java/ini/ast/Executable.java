@@ -7,13 +7,8 @@ import java.util.List;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 
-//import ini.eval.Context;
-//import ini.eval.IniEval;
-//import ini.eval.data.Data;
-import ini.parser.IniParser;
 import ini.type.AstAttrib;
 import ini.type.AttrContext;
-import ini.type.Type;
 
 public abstract class Executable extends AstExpression implements Expression {
 

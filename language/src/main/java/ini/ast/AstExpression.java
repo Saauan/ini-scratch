@@ -1,22 +1,17 @@
 package ini.ast;
 
-import java.io.PrintStream;
-
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import ini.IniTypesGen;
 
+/**
+ * An AstExpression is an AstElement that can produce a value
+ */
 public abstract class AstExpression extends AstElement {
 
 	public AstExpression() {
 		super();
-	}
-
-	@Override
-	public void prettyPrint(PrintStream out) {
-		// TODO Auto-generated method stub
-
 	}
 	
 	/**

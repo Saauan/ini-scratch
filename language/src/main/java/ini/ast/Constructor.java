@@ -8,8 +8,6 @@ import java.util.Map;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.parser.IniParser;
-
 public class Constructor extends NamedElement {
 
 	private static int index = 1;

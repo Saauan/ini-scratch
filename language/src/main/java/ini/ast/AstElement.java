@@ -18,18 +18,53 @@ public abstract class AstElement extends Node implements AstNode {
 
 	public List<Expression> annotations;
 
+	public AstElement() {
+		super();
+	}
+
 	/**
 	 * Default behaviour for a node
 	 */
 	@Override
 	public abstract void executeVoid(VirtualFrame frame);
-	
+
 	/**
 	 * Returns the function identifier used as a key for the FrameSlots.
 	 */
 	public static String getFunctionIdentifier(String functionName, int nbParameters) {
 		return String.format("%s parameters:%d", functionName, nbParameters);
 	}
+
+	static public void prettyPrintList(PrintStream out, List<? extends AstNode> nodes, String separator) {
+		if (nodes == null) {
+			return;
+		}
+		for (int i = 0; i < nodes.size(); i++) {
+			nodes.get(i).prettyPrint(out);
+			if (i < nodes.size() - 1) {
+				out.print(separator);
+			}
+		}
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		System.out.println("DEBUG : No visitor accepted, default method in AstElement"); // TODO
+	}
+
+	@Override
+	public String toString() {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		prettyPrint(new PrintStream(os));
+		String s = os.toString();
+		try {
+			os.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return s;
+	}
+	
 
 //	@Override
 //	public String getAnnotationStringValue(String... keys) {
@@ -85,37 +120,4 @@ public abstract class AstElement extends Node implements AstNode {
 //		return null;
 //	}
 
-	public AstElement() {
-		super();
-	}
-
-	static public void prettyPrintList(PrintStream out, List<? extends AstNode> nodes, String separator) {
-		if (nodes == null) {
-			return;
-		}
-		for (int i = 0; i < nodes.size(); i++) {
-			nodes.get(i).prettyPrint(out);
-			if (i < nodes.size() - 1) {
-				out.print(separator);
-			}
-		}
-	}
-
-	@Override
-	public void accept(Visitor visitor) {
-		System.out.println("DEBUG : No visitor accepted, default method in AstElement"); // TODO
-	}
-
-	@Override
-	public String toString() {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		prettyPrint(new PrintStream(os));
-		String s = os.toString();
-		try {
-			os.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return s;
-	}
 }
