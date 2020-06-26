@@ -82,54 +82,54 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
     @Specialization(guards = "isIntOrIllegal(frame)")
     protected long writeInt(VirtualFrame frame, int value) {
         /* Initialize type on first write of the local variable. No-op if kind is already int. */
-        frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Int);
+        frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Int);
 
-        frame.setInt(getSlotSafe(frame), value);
+        frame.setInt(getSlot(), value);
         return value;
     }
 
     @Specialization(guards = "isLongOrIllegal(frame)")
     protected long writeLong(VirtualFrame frame, long value) {
         /* Initialize type on first write of the local variable. No-op if kind is already Long. */
-        frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Long);
+        frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Long);
 
-        frame.setLong(getSlotSafe(frame), value);
+        frame.setLong(getSlot(), value);
         return value;
     }
     
     @Specialization(guards = "isFloatOrIllegal(frame)")
     protected float writeFloat(VirtualFrame frame, float value) {
         /* Initialize type on first write of the local variable. No-op if kind is already Long. */
-        frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Float);
+        frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Float);
 
-        frame.setFloat(getSlotSafe(frame), value);
+        frame.setFloat(getSlot(), value);
         return value;
     }
     
     @Specialization(guards = "isDoubleOrIllegal(frame)")
     protected double writeDouble(VirtualFrame frame, double value) {
         /* Initialize type on first write of the local variable. No-op if kind is already Long. */
-        frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Double);
+        frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Double);
 
-        frame.setDouble(getSlotSafe(frame), value);
+        frame.setDouble(getSlot(), value);
         return value;
     }
     
     @Specialization(guards = "isBooleanOrIllegal(frame)")
     protected boolean writeBoolean(VirtualFrame frame, boolean value) {
         /* Initialize type on first write of the local variable. No-op if kind is already Long. */
-        frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Boolean);
+        frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Boolean);
 
-        frame.setBoolean(getSlotSafe(frame), value);
+        frame.setBoolean(getSlot(), value);
         return value;
     }
     
     @Specialization(guards = "isByteOrIllegal(frame)")
     protected byte writeByte(VirtualFrame frame, byte value) {
         /* Initialize type on first write of the local variable. No-op if kind is already Long. */
-        frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Byte);
+        frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Byte);
 
-        frame.setByte(getSlotSafe(frame), value);
+        frame.setByte(getSlot(), value);
         return value;
     }
     
@@ -154,7 +154,7 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
          */
         frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Object);
 
-        frame.setObject(getSlotSafe(frame), assignmentValue);
+        frame.setObject(getSlot(), assignmentValue);
         return assignmentValue;
     }
 

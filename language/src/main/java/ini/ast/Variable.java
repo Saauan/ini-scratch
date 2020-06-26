@@ -72,32 +72,32 @@ public abstract class Variable extends AstExpression implements VariableAccess {
          * written to the local variable. So we do not need to check that the frame really contains
          * a primitive long value.
          */
-        return FrameUtil.getLongSafe(frame, getSlotSafe(frame));
+        return FrameUtil.getLongSafe(frame, getSlot());
     }
     
     @Specialization(guards = "frame.isInt(getSlotSafe(frame))")
     protected int readInt(VirtualFrame frame) {
-        return FrameUtil.getIntSafe(frame, getSlotSafe(frame));
+        return FrameUtil.getIntSafe(frame, getSlot());
     }
     
     @Specialization(guards = "frame.isFloat(getSlotSafe(frame))")
     protected float readFloat(VirtualFrame frame) {
-        return FrameUtil.getFloatSafe(frame, getSlotSafe(frame));
+        return FrameUtil.getFloatSafe(frame, getSlot());
     }
     
     @Specialization(guards = "frame.isDouble(getSlotSafe(frame))")
     protected double readDouble(VirtualFrame frame) {
-        return FrameUtil.getDoubleSafe(frame, getSlotSafe(frame));
+        return FrameUtil.getDoubleSafe(frame, getSlot());
     }
     
     @Specialization(guards = "frame.isByte(getSlotSafe(frame))")
     protected Byte readByte(VirtualFrame frame) {
-        return FrameUtil.getByteSafe(frame, getSlotSafe(frame));
+        return FrameUtil.getByteSafe(frame, getSlot());
     }
 
     @Specialization(guards = "frame.isBoolean(getSlotSafe(frame))")
     protected boolean readBoolean(VirtualFrame frame) {
-        return FrameUtil.getBooleanSafe(frame, getSlotSafe(frame));
+        return FrameUtil.getBooleanSafe(frame, getSlot());
     }
     
     @Specialization(replaces = {"readInt", "readLong", "readFloat", "readDouble", "readByte", "readBoolean"})
@@ -111,11 +111,11 @@ public abstract class Variable extends AstExpression implements VariableAccess {
              * multiple times for the same variable of the same frame.
              */
             CompilerDirectives.transferToInterpreter();
-            Object result = frame.getValue(getSlotSafe(frame));
-            frame.setObject(getSlotSafe(frame), result);
+            Object result = frame.getValue(getSlot());
+            frame.setObject(getSlot(), result);
             return result;
         }
-        Object readObject = FrameUtil.getObjectSafe(frame, getSlotSafe(frame));
+        Object readObject = FrameUtil.getObjectSafe(frame, getSlot());
         if (readObject == null) {
         	System.out.println(String.format("Warning : %s value is null", this.name)); // TODO remove eventually
         }
