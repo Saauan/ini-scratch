@@ -55,14 +55,18 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
 	}
 
 	protected FrameSlot getSlotSafe(VirtualFrame frame) {
-    	if(this.slot == null) {
-    		CompilerDirectives.transferToInterpreterAndInvalidate();
+		if (this.slot == null) {
 			initializeSlot(frame);
 		}
 		return this.slot;
 	}
 
 	private void initializeSlot(VirtualFrame frame) {
+		/*
+		 * We are about to modify a CompilationFinal field. So we tell the Compiler to
+		 * transfer to interpreter and invalidate the following code
+		 */
+		CompilerDirectives.transferToInterpreterAndInvalidate();
 		this.slot = getSlotFromFrameDescriptor(frame.getFrameDescriptor());
 	}
 
