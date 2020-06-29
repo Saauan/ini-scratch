@@ -31,49 +31,17 @@ It comes with a built-in type inference engine to type check the programs. Also,
 
 # Quick start
 
-Requirements: Java 1.8+, Apache Maven (in your path)
+Requirements: GraalVM 20.0.0, Apache Maven (in your path)
 
 Build with:
 
 ```console
 $ cd {ini_root_dir}
-$ mvn clean package -Dmaven.test.skip=true
+$ mvn clean package
 ```
 
 ```console
-$ java -Xss10M -classpath target/ini.jar ini.IniMain ini/truffle/test1.ini
-```
-
-Start an INI shell (UNIX-based OS):
-
-```console
-$ cd {ini_root_dir}
-$ bin/ini --shell
->
-```
-
-Type-in INI statements with INI shell:
-
-```console
-> s = "hello world" # defines a string variable 's'
-hello world
-> println(s) # prints out the content of s
-hello world
-> l = [1..4] # defines a list containing 4 integers
-[1..4]
-> inc = i => i+1 # defines a lambda that increments an integer
-<lambda>(i)
-> import "ini/lib/collect.ini" # imports the lib to support functions about collections
-select(l,function)
-> l.map(inc) # increments all the integers in 'l'
-[2,3,4,5]
-```
-
-Launch INI programs (UNIX-based OS):
-
-```console
-$ cd {ini_root_dir}
-$ bin/ini {ini_file} [{main_args}]
+$ ./run_ini {target_file} 
 ```
 
 # Examples
