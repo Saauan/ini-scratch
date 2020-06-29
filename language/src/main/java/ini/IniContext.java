@@ -26,7 +26,7 @@ import ini.runtime.IniFunction;
 /**
  * The run-time state of INI during execution. The context is created by the
  * {@link IniLanguage}.
- * <p>
+ * 
  * It would be an error to have two different context instances during the
  * execution of one script. However, if two separate scripts run in one Java VM
  * at the same time, they have a different context. Therefore, the context is
@@ -34,9 +34,9 @@ import ini.runtime.IniFunction;
  */
 public class IniContext {
 
-	private final FrameDescriptor globalFrameDescriptor;
-
+	/* The global frame is the rootFrame*/
 	private final MaterializedFrame globalFrame;
+	private final FrameDescriptor globalFrameDescriptor;
 
 	private final IniLanguage lang;
 
@@ -69,6 +69,11 @@ public class IniContext {
 		virtualFrame.setObject(getSystemVariableSlot(virtualFrame.getFrameDescriptor()), env);
 	}
 
+	/**
+	 * Returns the system variable of type IniEnv
+	 * 
+	 * @throws FrameSlotTypeException if the system variable is not found
+	 */
 	public static IniEnv getSystemVariable(VirtualFrame virtualFrame) throws FrameSlotTypeException {
 		Object env = virtualFrame.getObject(getSystemVariableSlot(virtualFrame.getFrameDescriptor()));
 		if (!(env instanceof IniEnv)) {
@@ -143,9 +148,6 @@ public class IniContext {
 			argumentNodes[i] = new ReadArgumentFromContextNode(i);
 		}
 		/* Instantiate the builtin node. This node performs the actual functionality. */
-		/*
-		 * It is an array of one element. IniRootNode accepts only arrays as body nodes
-		 */
 		BuiltInExecutable[] builtinBodyNodeArray = { factory.createNode((Object) argumentNodes) };
 		/*
 		 * The name of the builtin function is specified via an annotation on the node

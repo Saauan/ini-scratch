@@ -86,12 +86,9 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		return function;
 	}
 
-	@Override
-	protected boolean isObjectOfLanguage(Object object) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
+	/**
+	 * returns the main function of the program, if any
+	 */
 	public IniFunction getMainExecutable(IniParser parser, MaterializedFrame globalFrame) {
 		Function mainDefinition = null;
 		for (AstNode topLevel : parser.topLevels) {
@@ -132,5 +129,10 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		out.println("Usage: ini " + jsap.getUsage());
 		out.println();
 		out.println(jsap.getHelp());
+	}
+
+	@Override
+	protected boolean isObjectOfLanguage(Object object) {
+		return false;
 	}
 }
