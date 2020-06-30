@@ -16,6 +16,7 @@ import ini.IniContext;
 import ini.IniLanguage;
 import ini.ast.call.DispatchNode;
 import ini.ast.call.UninitializedDispatchNode;
+import ini.runtime.IniException;
 import ini.runtime.IniFunction;
 
 /**
@@ -40,10 +41,10 @@ public class Invocation extends AstExpression implements Statement, Expression {
      */
 	@CompilationFinal private IniFunction cachedFunction;
 
-	public Invocation(String name, List<Expression> arguments) {
+	public Invocation(String name, List<AstExpression> arguments) {
 		super();
 		this.name = name;
-		this.argumentNodes = arguments.toArray(new AstExpression[0]);
+		this.argumentNodes = arguments != null ? arguments.toArray(new AstExpression[0]) : new AstExpression[0];
 		this.dispatchNode = new UninitializedDispatchNode();
 	}
 
@@ -74,7 +75,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 			/* First execution of the node: lookup the function in the function registry. */
 			cachedFunction = this.lookupFunction(getFunctionIdentifier(this.name, this.argumentNodes.length));
 			if (cachedFunction == null) {
-				throw new RuntimeException(String.format("The function %s was not found", this.name));
+				throw new IniException(String.format("The function %s was not found", this.name), this);
 			}
 		}
 

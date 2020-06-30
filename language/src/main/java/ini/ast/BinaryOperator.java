@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 @NodeInfo(description = "An operator that takes two arguments")
-public class BinaryOperator extends AstElement implements Expression {
+public class BinaryOperator extends AstExpression implements Expression {
 
 	public enum Kind {
 		PLUS, MINUS, MULT, DIV, EQUALS, NOTEQUALS, LT, LTE, GT, GTE, AND, OR, MATCHES, CONCAT, IMPLIES
@@ -125,5 +125,11 @@ public class BinaryOperator extends AstElement implements Expression {
 	public void executeVoid(VirtualFrame frame) {
 		throw new UnsupportedOperationException();
 		
+	}
+
+	@Override
+	public Object executeGeneric(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

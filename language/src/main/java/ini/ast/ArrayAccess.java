@@ -4,7 +4,7 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class ArrayAccess extends AstElement implements VariableAccess {
+public class ArrayAccess extends AstExpression implements VariableAccess {
 
 	public Expression targetExpression;
 	public Expression indexExpression;
@@ -50,5 +50,11 @@ public class ArrayAccess extends AstElement implements VariableAccess {
 	public void executeVoid(VirtualFrame frame) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Object executeGeneric(VirtualFrame virtualFrame) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

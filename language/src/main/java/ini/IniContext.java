@@ -2,13 +2,13 @@ package ini;
 
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameDescriptor;
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
@@ -39,10 +39,12 @@ public class IniContext {
 	private final FrameDescriptor globalFrameDescriptor;
 
 	private final IniLanguage lang;
-
 	private final IniFunctionRegistry functionRegistry;
 	private final InputStream in;
 	private final PrintWriter out;
+	private final IniEnv env;
+	
+	private final Set<String> importedFiles;
 
 	public IniContext(IniLanguage lang, TruffleLanguage.Env env) {
 		this.globalFrameDescriptor = new FrameDescriptor();
@@ -51,43 +53,19 @@ public class IniContext {
 		this.lang = lang;
 		this.functionRegistry = new IniFunctionRegistry(lang);
 		this.globalFrame = this.initGlobalFrame(lang);
+		this.importedFiles = new HashSet<String>();
+		this.env = new IniEnv();
 	}
 	
 
 	private MaterializedFrame initGlobalFrame(IniLanguage lang) {
 		VirtualFrame frame = Truffle.getRuntime().createVirtualFrame(null, this.globalFrameDescriptor);
-		addSystemVariable(frame);
 		installBuiltins(frame);
 		return frame.materialize();
 	}
 
-	/**
-	 * The system variable is an IniEnv object
-	 */
-	private static void addSystemVariable(VirtualFrame virtualFrame) {
-		IniEnv env = new IniEnv();
-		virtualFrame.setObject(getSystemVariableSlot(virtualFrame.getFrameDescriptor()), env);
-	}
-
-	/**
-	 * Returns the system variable of type IniEnv
-	 * 
-	 * @throws FrameSlotTypeException if the system variable is not found
-	 */
-	public static IniEnv getSystemVariable(VirtualFrame virtualFrame) throws FrameSlotTypeException {
-		Object env = virtualFrame.getObject(getSystemVariableSlot(virtualFrame.getFrameDescriptor()));
-		if (!(env instanceof IniEnv)) {
-			throw new FrameSlotTypeException();
-		}
-		return (IniEnv) env;
-	}
-
-	private static String getSystemVariableIdentifier() {
-		return "ini env";
-	}
-
-	private static FrameSlot getSystemVariableSlot(FrameDescriptor frameDescriptor) {
-		return frameDescriptor.findOrAddFrameSlot(getSystemVariableIdentifier());
+	public IniEnv getEnv() {
+		return env;
 	}
 
 	public IniFunctionRegistry getFunctionRegistry() {
@@ -104,6 +82,23 @@ public class IniContext {
 	
 	public IniLanguage getLang() {
 		return lang;
+	}
+	
+	public Set<String> getImportedFiles(){
+		return importedFiles;
+	}
+	
+	public void addImportedFile(String filePath) {
+		if(isFileImported(filePath)) {
+			throw new RuntimeException("Cannot add twice the same imported file");
+		}
+		else {
+			importedFiles.add(filePath);
+		}
+	}
+	
+	public boolean isFileImported(String filePath) {
+		return importedFiles.contains(filePath);
 	}
 
 	/**
