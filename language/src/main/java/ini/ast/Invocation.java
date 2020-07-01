@@ -7,15 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
+import com.oracle.truffle.api.nodes.IndirectCallNode;
 
 import ini.IniContext;
 import ini.IniLanguage;
-import ini.ast.call.DispatchNode;
-import ini.ast.call.UninitializedDispatchNode;
 import ini.runtime.IniException;
 import ini.runtime.IniFunction;
 
@@ -29,7 +28,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 
 	@Children
 	public AstExpression[] argumentNodes;
-	@Child public DispatchNode dispatchNode;
+	@Child public IndirectCallNode callNode;
 	public String name;
 	
     /**
@@ -44,7 +43,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		super();
 		this.name = name;
 		this.argumentNodes = arguments != null ? arguments.toArray(new AstExpression[0]) : new AstExpression[0];
-		this.dispatchNode = new UninitializedDispatchNode();
+		this.callNode = Truffle.getRuntime().createIndirectCallNode();
 	}
 
 	@Override
@@ -92,7 +91,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 			argumentValues[i] = this.argumentNodes[i].executeGeneric(virtualFrame);
 		}
 		
-		return this.dispatchNode.executeDispatch(virtualFrame, cachedFunction.callTarget, argumentValues);
+		return this.callNode.call(cachedFunction.callTarget, argumentValues);
 	}
 
 	public IniFunction lookupFunction(String functionId) {
