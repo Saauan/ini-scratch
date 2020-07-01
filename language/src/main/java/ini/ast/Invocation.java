@@ -29,7 +29,6 @@ public class Invocation extends AstExpression implements Statement, Expression {
 
 	@Children
 	public AstExpression[] argumentNodes;
-	@Child protected DirectCallNode callNode;
 	@Child public DispatchNode dispatchNode;
 	public String name;
 	
