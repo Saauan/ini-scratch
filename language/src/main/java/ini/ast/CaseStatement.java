@@ -15,8 +15,6 @@ public class CaseStatement extends AstElement implements Statement {
 	
 	@Children public Rule[] cases;
 	@Children public AstElement[] defaultStatements;
-	
-	private final LoopConditionProfile condition = LoopConditionProfile.createCountingProfile();
 
 	public CaseStatement(List<Rule> cases, Sequence<AstElement> defaultStatements) {
 		this.cases = cases.toArray(new Rule[0]);
@@ -54,7 +52,7 @@ public class CaseStatement extends AstElement implements Statement {
 		final int nbCases = cases.length;
 		boolean foundRule = false;
 		Rule currentRule;
-		for(int i=0; condition.profile(i<nbCases && !foundRule); i++) {
+		for(int i=0; i<nbCases && !foundRule; i++) {
 			currentRule = cases[i];
 			if (currentRule.guard != null) {
 				try {
