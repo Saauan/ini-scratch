@@ -1,3 +1,19 @@
+Fair warning
+============
+
+The Dockerfiles here are outdated.
+
+To use a graalVM use the standard `oracle/graalvm-ce image`  
+
+If you are on windows :
+
+`docker run -it -v %cd%:/ini_volume --name graal-container --entrypoint "sh" oracle/graalvm-ce`
+
+To use a openJDK container, either use the `build_openjdk_image` script
+or use the official java image
+
+It is much easier in the state of the current dockerfiles to use the official images.
+
 # How to use the dockerfiles
 
 Use `build_graalvm_image.bat [Version]` to build an image with ini and graalvm inside
