@@ -67,7 +67,11 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		AstElement[] topLevelNodes = parser.topLevels.toArray(new AstElement[0]);
 		MaterializedFrame globalFrame = getCurrentContext().getGlobalFrame();
 		
+		// BUG : If there is code around the main function (imports and function definitions), they won't be in the MainExecutable
+		// To circumvent this, either don't have a main function in the program, or add a call to the main at the end of
+		// wrapNodesAndCreateCallTarget
 		IniFunction main = getMainExecutable(parser, globalFrame);
+		
 		if(main == null) {
 			main = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
 		}				
@@ -79,7 +83,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	private IniFunction wrapNodesAndCreateCallTarget(AstElement[] topLevelNodes, MaterializedFrame globalFrame) {
 		IniFunction function = IniFunction.create(
         		null,
-        		"main",
+        		"rootFunction",
         		new FrameSlot[] {},
         		topLevelNodes,
         		globalFrame.getFrameDescriptor());
@@ -98,6 +102,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		}
 		IniFunction mainFunction = null;
 		if(mainDefinition != null) {
+			System.err.println("BUG : The code around the main function won't be executed");
 			mainFunction = createMainFunction(mainDefinition, getCurrentContext());
 		}
 		
