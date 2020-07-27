@@ -30,6 +30,18 @@ Les tests sont assez intuitifs. Ils sont inspirés des tests de SimpleLanguage. 
 
 Mais les ressources de tests, sont dans `language/tests`. Ce sont des fichiers INI ainsi que des fichiers output. Le TestRunner va simpement comparer l'output attendu avec le véritable output du programme INI.
 
+### Remarques pour écrire un programme en INI
+
+Lorsque l'on termine le programme, en renvoyant une valeur, graal va vérifier cette valeur, afin d'éventuellement l'utiliser pour un autre script. Sauf que cette valeur doit implémenter la `Interop Library`. En gros, être une valeur que l'on peut passer entre des langages.
+
+Les `Integer` et la plupart des types de Java sont déjà par défaut dans la `Interop Library`. Donc, si on retourne un entier en INI, tout va bien.
+En revanche, les fonctions INI, les listes INI ne sont pas dans cette library. Car je n'ai pas prit le temps d'implémenter l'interface pour elle.
+Donc, si on renvoie une fonction (avec une définition de fonction), ou une liste, ou tout autre valeur illégale (pas dans la library), le programme nous affichera un beau message d'erreur nous expliquant cela.
+
+#### Comment contourner le problème ?
+
+Si vous avez un doute sur ce que renvoie votre programme, finissez le par un `return 0`, c'est simple et efficace.
+
 ## Quelques fonctionnalités utiles
 
 ### Frame

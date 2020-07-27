@@ -19,6 +19,7 @@ import com.oracle.truffle.api.source.Source;
 import ini.ast.AstElement;
 import ini.ast.AstNode;
 import ini.ast.Function;
+import ini.ast.Invocation;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
@@ -64,22 +65,17 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 				System.exit(1);
 			}
 		}
-		AstElement[] topLevelNodes = parser.topLevels.toArray(new AstElement[0]);
+		
 		MaterializedFrame globalFrame = getCurrentContext().getGlobalFrame();
-		
-		// BUG : If there is code around the main function (imports and function definitions), they won't be in the MainExecutable
-		// To circumvent this, either don't have a main function in the program, or add a call to the main at the end of
-		// wrapNodesAndCreateCallTarget
-		IniFunction main = getMainExecutable(parser, globalFrame);
-		
-		if(main == null) {
-			main = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
+		/* If there is a main, we just add a call to the main function at the end of the program */
+		if(isMainFunctionPresent(parser)) {
+			parser.topLevels.add(new Invocation("main", null));
 		}				
-
-        return main.callTarget;
+		AstElement[] topLevelNodes = parser.topLevels.toArray(new AstElement[0]);
+		IniFunction root = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
+        return root.callTarget;
     }
 
-    
 	private IniFunction wrapNodesAndCreateCallTarget(AstElement[] topLevelNodes, MaterializedFrame globalFrame) {
 		IniFunction function = IniFunction.create(
         		null,
@@ -91,34 +87,15 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	}
 
 	/**
-	 * returns the main function of the program, if any
+	 * Returns true if there is a main function definition in the program
 	 */
-	public IniFunction getMainExecutable(IniParser parser, MaterializedFrame globalFrame) {
-		Function mainDefinition = null;
+	public boolean isMainFunctionPresent(IniParser parser) {
 		for (AstNode topLevel : parser.topLevels) {
 			if ((topLevel instanceof Function) && "main".equals(((Function) topLevel).name)) {
-				mainDefinition = (Function) topLevel;
+				return true;
 			}
 		}
-		IniFunction mainFunction = null;
-		if(mainDefinition != null) {
-			System.err.println("BUG : The code around the main function won't be executed");
-			mainFunction = createMainFunction(mainDefinition, getCurrentContext());
-		}
-		
-		return mainFunction;
-	}
-	
-	public IniFunction createMainFunction(Function mainDefinition, IniContext context) {
-		/* Each time a new function is created, a new frame descriptor is created */
-		FrameDescriptor frameDescriptor = new FrameDescriptor();
-		IniFunction function = IniFunction.create(
-				this,
-				"main",
-				Function.convertListOfParametersToArrayOfFrameSlot(mainDefinition.parameters, frameDescriptor),
-				mainDefinition.statements,
-				frameDescriptor);
-		return function;
+		return false;
 	}
 
 	public static void parseConfiguration(IniParser parser) {
