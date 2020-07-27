@@ -3,13 +3,17 @@ package ini.ast;
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
+
+import ini.runtime.IniException;
+import ini.runtime.IniList;
 
 public class ArrayAccess extends AstExpression implements VariableAccess {
 
-	public Expression targetExpression;
-	public Expression indexExpression;
+	public AstExpression targetExpression;
+	public AstExpression indexExpression;
 
-	public ArrayAccess(Expression targetExpression, Expression indexExpression) {
+	public ArrayAccess(AstExpression targetExpression, AstExpression indexExpression) {
 		super();
 		this.targetExpression = targetExpression;
 		this.indexExpression = indexExpression;
@@ -47,14 +51,14 @@ public class ArrayAccess extends AstExpression implements VariableAccess {
 	}
 
 	@Override
-	public void executeVoid(VirtualFrame frame) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
+		IniList list = (IniList) targetExpression.executeGeneric(virtualFrame);
+		int index;
+		try {
+			index = indexExpression.executeInteger(virtualFrame);
+		} catch (UnexpectedResultException e) {
+			throw new IniException("The index must be an integer !", this);
+		}
+		return list.getElementAt(index);
 	}
 }

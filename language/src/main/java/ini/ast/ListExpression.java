@@ -1,14 +1,16 @@
 package ini.ast;
 
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+import ini.runtime.IniList;
+
 public class ListExpression extends AstExpression implements Expression {
 
+	//TODO TEST WITH LIST INTENSIVE BENCHMARK
+//	@Children
 	public AstExpression[] elements;
 	
 	public ListExpression(List<AstExpression> elements) {
@@ -28,12 +30,11 @@ public class ListExpression extends AstExpression implements Expression {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		
-		Map<Integer, Object> res = new HashMap<Integer, Object>();
-		final int nbElements = elements.length;
-		for (int i=0; i<nbElements; i++) {
-			res.put(i, elements[i]);
+		Object[] processedElements = new Object[elements.length];
+		for(int i=0; i<elements.length; i++) {
+			processedElements[i] = elements[i].executeGeneric(virtualFrame);
 		}
+		IniList res = new IniList(virtualFrame, elements);
 		return res;
 	}
 	

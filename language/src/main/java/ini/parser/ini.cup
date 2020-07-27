@@ -465,7 +465,7 @@ boolean_literal ::= TRUE:e {: RESULT=new BooleanLiteral(true); :}
 ;
 
 var_access ::= IDENTIFIER:v {: RESULT = VariableNodeGen.create(v.toString()); :}
-	| expr:v LSPAREN:t expr:e RSPAREN {: RESULT = new ArrayAccess((Expression)v,(Expression)e); :}
+	| expr:v LSPAREN:t expr:e RSPAREN {: RESULT = new ArrayAccess((AstExpression)v,(AstExpression)e); :}
 	| expr:v LSPAREN:t expr:min DOTDOT expr:max RSPAREN {: RESULT = new SubArrayAccess((Expression)v,(Expression)min,(Expression)max); :}
 	| expr:v DOT:t IDENTIFIER:i {: RESULT = new FieldAccess((Expression)v,i.toString()); :}
 ;

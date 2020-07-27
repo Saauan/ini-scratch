@@ -1,0 +1,4 @@
+myList = [1, 2, 3, 4, 5]
+The first element is 1
+The last element is 5
+There are 5 elements
