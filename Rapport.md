@@ -36,11 +36,30 @@ Lorsque l'on termine le programme, en renvoyant une valeur, graal va vérifier c
 
 Les `Integer` et la plupart des types de Java sont déjà par défaut dans la `Interop Library`. Donc, si on retourne un entier en INI, tout va bien.
 En revanche, les fonctions INI, les listes INI ne sont pas dans cette library. Car je n'ai pas prit le temps d'implémenter l'interface pour elle.
+
 Donc, si on renvoie une fonction (avec une définition de fonction), ou une liste, ou tout autre valeur illégale (pas dans la library), le programme nous affichera un beau message d'erreur nous expliquant cela.
 
 #### Comment contourner le problème ?
 
 Si vous avez un doute sur ce que renvoie votre programme, finissez le par un `return 0`, c'est simple et efficace.
+
+### IniList
+
+Les listes en INI sont implémentées grâce à IniList, qui modélise le comportement d'une liste. (Pour l'instant, il sert de wrapper a une ArrayList).
+
+Pour l'instant, il n'y a pas de builtin pour rajouter un élément à la fin
+de la liste, alors il suffit de rajouter un élément a l'index juste après la fin
+
+```
+myList = [1,2]
+myList[2] = 3
+myList == [1,2,3]
+```
+
+En revanche, on ne peut pas encore supprimer un élément.
+
+De même, il n'y a pas de type check sur les élements de la liste, et une
+même liste peut contenir des éléments de différents types.
 
 ## Quelques fonctionnalités utiles
 

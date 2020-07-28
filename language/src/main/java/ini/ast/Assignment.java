@@ -13,6 +13,10 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
+
+import ini.runtime.IniException;
+import ini.runtime.IniList;
 
 /**
  * When we assign a value (assignment) to something else (assignee)
@@ -75,9 +79,29 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
 			CompilerDirectives.transferToInterpreter();
 			return frameDescriptor.findOrAddFrameSlot(((Variable) assignee).name);
 		}
+//		else if (assignee instanceof ArrayAccess) {
+//			CompilerDirectives.transferToInterpreter();
+//			return frameDescriptor.findOrAddFrameSlot();
+//		}
 		throw new RuntimeException("Can't get a frameSlot from something that is not a variable (not implemented)");
 	}
 
+	@Specialization(guards = "assigneeIsList()")
+	protected Object writeInList(VirtualFrame frame, Object value) {
+		int index;
+		assert assignee instanceof ArrayAccess;
+		ArrayAccess access = (ArrayAccess) assignee;
+		try {
+			index = access.indexExpression.executeInteger(frame);
+		} catch (UnexpectedResultException e) {
+			throw new IniException("The value of the index must be an integer.", this);
+		}
+		IniList theList = (IniList) access.targetExpression.executeGeneric(frame);
+		theList.setElementAt(index, value);
+		
+		return value;
+	}
+	
 	/**
 	 * Specialized method to write a primitive {@code int} value. This is only
 	 * possible if the local variable also has currently the type {@code int} or was
@@ -167,7 +191,7 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
 	 * {@link Object}, it is guaranteed to never fail, i.e., once we are in this
 	 * specialization the node will never be re-specialized.
 	 */
-	@Specialization(replaces = { "writeInt", "writeLong", "writeBoolean", "writeFloat", "writeDouble", "writeByte" })
+	@Specialization(replaces = { "writeInt", "writeLong", "writeBoolean", "writeFloat", "writeDouble", "writeByte"})
 	protected Object write(VirtualFrame frame, Object assignmentValue) {
 		/*
 		 * Regardless of the type before, the new and final type of the local variable
@@ -176,12 +200,17 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
 		 *
 		 * No-op if kind is already Object.
 		 */
+		assert !(this.assignee instanceof ArrayAccess); 
 		frame.getFrameDescriptor().setFrameSlotKind(getSlotSafe(frame), FrameSlotKind.Object);
 
 		frame.setObject(getSlot(), assignmentValue);
 		return assignmentValue;
 	}
 
+	protected boolean assigneeIsList() {
+		return this.assignee instanceof ArrayAccess;
+	}
+	
 	/**
 	 * Guard function that the local variable has the type {@code long}.
 	 *

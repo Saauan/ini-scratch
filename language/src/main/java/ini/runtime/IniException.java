@@ -26,7 +26,7 @@ public class IniException extends RuntimeException implements TruffleException {
 	}
 
 	/**
-	 * Provides a user-readable message for run-time type errors. SL is strongly
+	 * Provides a user-readable message for run-time type errors. INI is strongly
 	 * typed, i.e., there are no automatic type conversions of values.
 	 */
 	@TruffleBoundary

@@ -52,7 +52,13 @@ public class ArrayAccess extends AstExpression implements VariableAccess {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		IniList list = (IniList) targetExpression.executeGeneric(virtualFrame);
+		IniList list;
+		if(targetExpression instanceof Variable) {
+			list = (IniList) targetExpression.executeGeneric(virtualFrame);
+		}
+		else {
+			throw new IniException("The target for the Array Access is not a Variable", this);
+		}
 		int index;
 		try {
 			index = indexExpression.executeInteger(virtualFrame);

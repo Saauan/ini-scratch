@@ -2,3 +2,9 @@ myList = [1, 2, 3, 4, 5]
 The first element is 1
 The last element is 5
 There are 5 elements
+The first element is now 10
+The second element is now hehe
+Changed myList to an integer : 42
+Changed myList back into a list : [4, 2]
+Changed the second element of myList : 3
+Added two elements to myList : [4, 3, 2, 1]
