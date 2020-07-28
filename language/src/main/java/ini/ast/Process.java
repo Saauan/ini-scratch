@@ -4,43 +4,48 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class Process extends Executable {
 
-	public List<Rule> initRules = new ArrayList<Rule>();
-	public List<Rule> atRules = new ArrayList<Rule>();
-	public List<Rule> rules = new ArrayList<Rule>();
-	public List<Rule> endRules = new ArrayList<Rule>();
-	public List<Rule> readyRules = new ArrayList<Rule>();
-	public List<Rule> errorRules = new ArrayList<Rule>();
+	@Children
+	public Rule[] initRules = new Rule[0];
+	@Children
+	public Rule[] atRules = new Rule[0];
+	@Children
+	public Rule[] rules = new Rule[0];
+	@Children
+	public Rule[] endRules = new Rule[0];
+	@Children
+	public Rule[] readyRules = new Rule[0];
+	@Children
+	public Rule[] errorRules = new Rule[0];
 
 	public Process(String name, List<Parameter> parameters, List<Rule> rules) {
 		super(name, parameters);
-		this.rules = rules;
 		for (Rule r : new ArrayList<Rule>(rules)) {
 			if (r.atPredicate != null) {
 				switch (r.atPredicate.kind) {
 				case INIT:
-					this.initRules.add(r);
-					this.rules.remove(r);
+					initRules = ArrayUtils.add(initRules, r);
 					break;
 				case END:
-					this.endRules.add(r);
-					this.rules.remove(r);
+					endRules = ArrayUtils.add(endRules, r);
 					break;
 				case READY:
-					this.readyRules.add(r);
-					this.rules.remove(r);
+					readyRules = ArrayUtils.add(readyRules, r);
 					break;
 				case ERROR:
-					this.errorRules.add(r);
-					this.rules.remove(r);
+					errorRules = ArrayUtils.add(errorRules, r);
 					break;
 				default:
-					this.atRules.add(r);
-					this.rules.remove(r);
+					atRules = ArrayUtils.add(atRules, r);
 				}
+			}
+			else {
+				this.rules = ArrayUtils.add(this.rules, r);
 			}
 		}
 	}
@@ -203,16 +208,39 @@ public class Process extends Executable {
 		visitor.visitProcess(this);
 	}
 
+	
+	/**
+	 * Creates and initialize the process
+	 */
 	@Override
-	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void executeVoid(VirtualFrame frame) {
-		// TODO Auto-generated method stub
+	public Object executeGeneric(VirtualFrame frame) {
+		// Execute the init rules
+		for (Rule rule : this.initRules) {
+			rule.executeVoid(frame);
+		}
 		
+		// Set up all the at related rules | I don't understand this part
+		
+		// Execute all the readyRules
+		for (Rule rule : this.readyRules) {
+			rule.executeVoid(frame);
+		}
+		
+		// While the rules are not terminated and can be executed, execute them in order
+		boolean atLeastOneRuleExecuted = true;
+		while(atLeastOneRuleExecuted) {
+			atLeastOneRuleExecuted = false;
+			for (Rule rule : this.rules) {
+				atLeastOneRuleExecuted = rule.executeBoolean(frame) ? true : atLeastOneRuleExecuted;
+			}
+		}
+		
+		// Destroy the ats
+		// Execute the end rules
+		for (Rule rule : this.endRules) {
+			rule.executeBoolean(frame);
+		}
+		return null;
 	}
 
 }
