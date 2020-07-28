@@ -4,10 +4,12 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import ini.Utils;
+import ini.runtime.IniException;
 
-public class Rule extends AstElement {
+public class Rule extends AstExpression {
 
 	@Children public final AstElement[] statements;
 	@Child public AstExpression guard;
@@ -63,11 +65,33 @@ public class Rule extends AstElement {
 		visitor.visitRule(this);
 	}
 
+	/**
+	 * Executes the statements if the guard evaluates to true
+	 * 
+	 * Returns whether the statements were executed or not
+	 */
 	@Override
-	public void executeVoid(VirtualFrame virtualFrame) {
-		for(int i=0; i<statements.length; i++) {
-			statements[i].executeVoid(virtualFrame);
+	public boolean executeBoolean(VirtualFrame frame) {
+		try {
+			if (this.guard == null || this.guard.executeBoolean(frame)) {
+				for(int i=0; i<statements.length; i++) {
+					statements[i].executeVoid(frame);
+				}
+				return true;
+			}
+			else {
+				return false;
+			}
+		} catch (UnexpectedResultException e) {
+			throw IniException.typeError(this, this.guard);
 		}
+
 	}
+
+	@Override
+	public Object executeGeneric(VirtualFrame virtualFrame) {
+		return this.executeBoolean(virtualFrame);
+	}
+
 	
 }

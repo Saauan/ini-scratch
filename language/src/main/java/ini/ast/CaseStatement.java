@@ -5,10 +5,6 @@ import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.oracle.truffle.api.nodes.UnexpectedResultException;
-import com.oracle.truffle.api.profiles.LoopConditionProfile;
-
-import ini.runtime.IniException;
 
 @NodeInfo(shortName="case")
 public class CaseStatement extends AstElement implements Statement {
@@ -54,16 +50,7 @@ public class CaseStatement extends AstElement implements Statement {
 		Rule currentRule;
 		for(int i=0; i<nbCases && !foundRule; i++) {
 			currentRule = cases[i];
-			if (currentRule.guard != null) {
-				try {
-					if (currentRule.guard.executeBoolean(frame)) {
-						currentRule.executeVoid(frame);
-						foundRule = true;
-					}
-				} catch (UnexpectedResultException e) {
-					throw IniException.typeError(this, currentRule);
-				}
-			}
+			foundRule = currentRule.executeBoolean(frame);
 		}
 		if(!foundRule && this.defaultStatements != null) {
 			// No caseRule was executed, executing the default statements
