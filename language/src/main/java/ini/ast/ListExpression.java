@@ -10,7 +10,7 @@ import ini.runtime.IniList;
 public class ListExpression extends AstExpression implements Expression {
 
 	//TODO TEST WITH LIST INTENSIVE BENCHMARK
-//	@Children
+	@Children
 	public AstExpression[] elements;
 	
 	public ListExpression(List<AstExpression> elements) {
@@ -34,7 +34,7 @@ public class ListExpression extends AstExpression implements Expression {
 		for(int i=0; i<elements.length; i++) {
 			processedElements[i] = elements[i].executeGeneric(virtualFrame);
 		}
-		IniList res = new IniList(virtualFrame, elements);
+		IniList res = new IniList(virtualFrame, processedElements);
 		return res;
 	}
 	
