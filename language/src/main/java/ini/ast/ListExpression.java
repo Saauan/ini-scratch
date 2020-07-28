@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.ExplodeLoop;
 
 import ini.runtime.IniList;
 
@@ -29,6 +30,7 @@ public class ListExpression extends AstExpression implements Expression {
 	}
 
 	@Override
+	@ExplodeLoop
 	public Object executeGeneric(VirtualFrame virtualFrame) {
 		Object[] processedElements = new Object[elements.length];
 		for(int i=0; i<elements.length; i++) {

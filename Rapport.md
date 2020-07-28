@@ -303,3 +303,61 @@ Si on les retire, Truffle ne peut pas construire un AST.
 Et je pense que dans la structure interne du programme, `lookupContextReference` fait référence à l'AST.
 
 Si jamais je n'utilisais pas `lookupContextReference`, je pense que je pourrais sûrement retirer toutes ces annotations, et comparer la vitesse. (Malheureusement, je n'ai pas eu le temps de le faire maintenant)
+
+### Les @Specialization
+
+#### Une seule fois fib(30)
+
+Average time over 200 runs : 640
+Standard deviation = 26.42811003458249566094
+Error margin = 3.73749916387950513746
+Confidence interval = [636.26250083612049486254 ; 643.73749916387950513746]
+
+
+#### Deux fois fib(30)
+
+Average time over 200 runs : 504
+Standard deviation = 58.73806261701180760182
+Error margin = 8.30681647804981905632
+Confidence interval = [495.69318352195018094368 ; 512.30681647804981905632]
+
+#### Trois fois
+
+Average time over 100 runs : 478
+Standard deviation = 9.79948978263664500668
+Error margin = 1.95989795652732900132
+Confidence interval = [476.04010204347267099868 ; 479.95989795652732900132]
+
+#### Quatre fois
+
+Average time over 100 runs : 476
+Standard deviation = 10.37496987947434958720
+Error margin = 2.07499397589486991744
+Confidence interval = [473.92500602410513008256 ; 478.07499397589486991744]
+
+#### Cinq fois
+
+Average time over 100 runs : 476
+Standard deviation = 13.56097341638866276853
+Error margin = 2.71219468327773255370
+Confidence interval = [473.28780531672226744630 ; 478.71219468327773255370]
+
+
+### Listes
+
+#### Avant
+
+Average time over 50 runs : 7
+Standard deviation = 2.69814751264640829311
+Error margin = .76315136113355651932
+Confidence interval = [6.23684863886644348068 ; 7.76315136113355651932]
+
+En faisant dix fois fibonacci :
+
+Average time over 50 runs : 19
+Standard deviation = 4.07430975749267252494
+Error margin = 1.15238882327103467964
+Confidence interval = [17.84761117672896532036 ; 20.15238882327103467964]
+
+
+Ce programme ne prend pas assez de temps... Il nous faudrait quelque chose de plus gourmand, comme un bubble sort par exemple !
