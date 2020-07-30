@@ -11,5 +11,9 @@ public interface AstNode {
 	void accept(Visitor visitor);
 	
 	void prettyPrint(PrintStream out);
+	
+	public String getAnnotationStringValue(String... keys);
+	public Number getAnnotationNumberValue(String... keys);
+	public <T extends AstNode> T getAnnotationNode(String... keys);
 }
 

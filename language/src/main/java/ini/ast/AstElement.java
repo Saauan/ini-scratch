@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
+
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
@@ -66,58 +69,77 @@ public abstract class AstElement extends Node implements AstNode {
 	}
 	
 
-//	@Override
-//	public String getAnnotationStringValue(String... keys) {
-//		if (annotations != null && !annotations.isEmpty()) {
-//			for (Expression e : annotations) {
-//				if (e instanceof Assignment) {
-//					AssignmentNodeGen a = (AssignmentNodeGen) e;
-//					String name = a.assignee.toString();
-//					if (ArrayUtils.contains(keys, name)) {
-//						if (a.assignment instanceof StringLiteral) {
-//							return ((StringLiteral) a.assignment).value;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return null;
-//	}
+	@Override
+	public String getAnnotationStringValue(String... keys) {
+		if (annotations != null && !annotations.isEmpty()) {
+			for (Expression e : annotations) {
+				if (e instanceof Assignment) {
+					AssignmentNodeGen a = (AssignmentNodeGen) e;
+					String name = a.assignee.toString();
+					if (ArrayUtils.contains(keys, name)) {
+						AstExpression assignment = null;
+						try {
+							assignment = (AstExpression) FieldUtils.readField(a, "assignmentValue_", true);
+						} catch (IllegalAccessException e1) {
+							e1.printStackTrace();
+						}
+						if (assignment instanceof StringLiteral) {
+							return ((StringLiteral) assignment).value;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-//	@Override
-//	public Number getAnnotationNumberValue(String... keys) {
-//		if (annotations != null && !annotations.isEmpty()) {
-//			for (Expression e : annotations) {
-//				if (e instanceof Assignment) {
-//					Assignment a = (Assignment) e;
-//					String name = a.assignee.toString();
-//					if (ArrayUtils.contains(keys, name)) {
-//						if (a.assignment instanceof NumberLiteral) {
-//							return ((NumberLiteral) a.assignment).value;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return null;
-//	}
-//
-//	@Override
-//	public <T extends AstNode> T getAnnotationNode(String... keys) {
-//		if (annotations != null && !annotations.isEmpty()) {
-//			for (Expression e : annotations) {
-//				if (e instanceof Assignment) {
-//					Assignment a = (Assignment) e;
-//					String name = a.assignee.toString();
-//					if (ArrayUtils.contains(keys, name)) {
-//						@SuppressWarnings("unchecked")
-//						T assignment = (T) a.assignment;
-//						return assignment;
-//					}
-//				}
-//			}
-//		}
-//		return null;
-//	}
+	@Override
+	public Number getAnnotationNumberValue(String... keys) {
+		if (annotations != null && !annotations.isEmpty()) {
+			for (Expression e : annotations) {
+				if (e instanceof Assignment) {
+					Assignment a = (Assignment) e;
+					String name = a.assignee.toString();
+					if (ArrayUtils.contains(keys, name)) {
+						AstExpression assignment = null;
+						try {
+							assignment = (AstExpression) FieldUtils.readField(a, "assignmentValue_", true);
+						} catch (IllegalAccessException e1) {
+							e1.printStackTrace();
+						}
+						if (assignment instanceof NumberLiteral) {
+							return ((NumberLiteral) assignment).value;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends AstNode> T getAnnotationNode(String... keys) {
+		if (annotations != null && !annotations.isEmpty()) {
+			for (Expression e : annotations) {
+				if (e instanceof Assignment) {
+					Assignment a = (Assignment) e;
+					String name = a.assignee.toString();
+					if (ArrayUtils.contains(keys, name)) {
+						T assignment;
+						try {
+							assignment = (T) FieldUtils.readField(a, "assignmentValue_", true);
+							return assignment;
+						} catch (IllegalAccessException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 }
