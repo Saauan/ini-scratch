@@ -2,11 +2,20 @@ package ini.ast;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.oracle.truffle.api.TruffleLanguage.Env;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
+
+import ini.IniLanguage;
+import ini.eval.at.At;
+import ini.runtime.IniException;
 
 public class Process extends Executable {
 
@@ -43,8 +52,7 @@ public class Process extends Executable {
 				default:
 					atRules = ArrayUtils.add(atRules, r);
 				}
-			}
-			else {
+			} else {
 				this.rules = ArrayUtils.add(this.rules, r);
 			}
 		}
@@ -208,39 +216,112 @@ public class Process extends Executable {
 		visitor.visitProcess(this);
 	}
 
-	
 	/**
 	 * Creates and initialize the process
 	 */
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		// Execute the init rules
-		for (Rule rule : this.initRules) {
-			rule.executeVoid(frame);
-		}
-		
-		// Set up all the at related rules | I don't understand this part
-		
-		// Execute all the readyRules
-		for (Rule rule : this.readyRules) {
-			rule.executeVoid(frame);
-		}
-		
-		// While the rules are not terminated and can be executed, execute them in order
-		boolean atLeastOneRuleExecuted = true;
-		while(atLeastOneRuleExecuted) {
-			atLeastOneRuleExecuted = false;
-			for (Rule rule : this.rules) {
-				atLeastOneRuleExecuted = rule.executeBoolean(frame) ? true : atLeastOneRuleExecuted;
+		List<At> ats = null;
+		try {
+			// Execute the init rules
+			for (Rule rule : this.initRules) {
+				rule.executeVoid(frame);
 			}
-		}
-		
-		// Destroy the ats
-		// Execute the end rules
-		for (Rule rule : this.endRules) {
-			rule.executeBoolean(frame);
+
+			// Set up all the at related rules | I don't understand this part
+			if (this.atRules.length > 0) {
+				ats = new ArrayList<At>();
+			}
+			Map<Rule, At> atMap = new HashMap<Rule, At>();
+			for (Rule rule : this.atRules) {
+				// At at = At.atPredicates.get(rule.atPredicate.name);
+				Class<? extends At> c = At.atPredicates.get(rule.atPredicate.name);
+				At at = null;
+				try {
+					at = c.newInstance();
+					at.setRule(rule);
+					at.process = this;
+					at.setAtPredicate(rule.atPredicate);
+					ats.add(at);
+					// Add the identifier to the context
+					if (rule.atPredicate.identifier != null) {
+						addAtToFrame(frame, rule.atPredicate.identifier, at);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (at == null) {
+					throw new RuntimeException("unknown @ predicate '" + rule.atPredicate.name + "'");
+				}
+				atMap.put(rule, at);
+			}
+			Iterator<Rule> itr = atMap.keySet().iterator();
+			while (itr.hasNext()) {
+				Rule evalRule = itr.next();
+				At evalAt = atMap.get(evalRule);
+				AstExpression[] synchronizedAtsNames = evalRule.synchronizedAtsNames;
+				if (synchronizedAtsNames != null) {
+					for (AstExpression e : synchronizedAtsNames) {
+						evalAt.synchronizedAts.add((At) e.executeGeneric(frame));
+					}
+				}
+
+//				eval.evaluationStack.push(evalRule.atPredicate);
+				evalAt.parseInParameters(frame, evalRule.atPredicate.annotations);
+				Env env = lookupContextReference(IniLanguage.class).get().getEnv();
+				evalAt.executeAndSetEnv(frame, env);
+//				eval.evaluationStack.pop();
+			}
+
+			// Execute all the readyRules
+			for (Rule rule : this.readyRules) {
+				rule.executeVoid(frame);
+			}
+
+			// While the rules are not terminated and can be executed, execute them in order
+			do {
+				boolean atLeastOneRuleExecuted = true;
+				while (atLeastOneRuleExecuted) {
+					atLeastOneRuleExecuted = false;
+					for (Rule rule : this.rules) {
+						atLeastOneRuleExecuted = rule.executeBoolean(frame) ? true : atLeastOneRuleExecuted;
+					}
+				}
+			} while (!At.checkAllTerminated(ats));
+			
+			// Destroy the ats
+			At.destroyAll(ats);
+			
+			// Execute the end rules
+			for (Rule rule : this.endRules) {
+				rule.executeBoolean(frame);
+			}
+		} catch (IniException e) {
+			handleException(frame, e);
+		} catch (ReturnException r) {
+			At.destroyAll(ats);
+			
+			throw r;
 		}
 		return null;
+
+	}
+
+	/**
+	 * Adds the At to the frame using its identifier.
+	 */
+	private void addAtToFrame(VirtualFrame frame, String identifier, At at) {
+//		String frameSlotIdentifier = At.getFrameSlotIdentifier(identifier);
+		FrameSlot slot = frame.getFrameDescriptor().findOrAddFrameSlot(identifier);
+		frame.setObject(slot, at);
+	}
+
+	public void handleException(VirtualFrame frame, IniException e) throws RuntimeException {
+		boolean caught = false;
+		for (Rule rule : this.errorRules) {
+			caught = rule.executeBoolean(frame) ? true : caught;
+		}
+		throw e; 
 	}
 
 }

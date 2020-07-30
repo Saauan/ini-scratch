@@ -21,6 +21,7 @@ import ini.eval.function.BuiltInExecutable;
 import ini.eval.function.PrintFunctionFactory;
 import ini.eval.function.PrintlnFunctionFactory;
 import ini.eval.function.SizeFunctionFactory;
+import ini.eval.function.StopFunctionFactory;
 import ini.eval.function.TimeFunctionFactory;
 import ini.runtime.IniFunction;
 
@@ -127,6 +128,7 @@ public class IniContext {
 		installBuiltin(materializedFrame, PrintFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, PrintlnFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, SizeFunctionFactory.getInstance(), 1);
+		installBuiltin(materializedFrame, StopFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, TimeFunctionFactory.getInstance(), 0);
 	}
 
