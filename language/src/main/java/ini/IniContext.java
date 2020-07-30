@@ -43,7 +43,7 @@ public class IniContext {
 	private final IniFunctionRegistry functionRegistry;
 	private final InputStream in;
 	private final PrintWriter out;
-	private final IniEnv env;
+	private TruffleLanguage.Env env;
 	
 	private final Set<String> importedFiles;
 
@@ -55,7 +55,7 @@ public class IniContext {
 		this.functionRegistry = new IniFunctionRegistry(lang);
 		this.globalFrame = this.initGlobalFrame(lang);
 		this.importedFiles = new HashSet<String>();
-		this.env = new IniEnv();
+		this.env = env;
 	}
 	
 
@@ -65,7 +65,7 @@ public class IniContext {
 		return frame.materialize();
 	}
 
-	public IniEnv getEnv() {
+	public TruffleLanguage.Env getEnv() {
 		return env;
 	}
 

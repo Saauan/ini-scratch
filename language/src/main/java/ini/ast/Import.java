@@ -46,7 +46,7 @@ public class Import extends AstElement implements Comparable<Import> {
 		}
 		IniParser localParser;
 		try {
-			localParser= IniParser.createParserForFile(context.getEnv(), null, this.filePath.toString());
+			localParser= IniParser.createParserForFile(null, null, this.filePath.toString());
 			// Create parser
 			localParser.parse();
 			if (localParser.hasErrors()) {
