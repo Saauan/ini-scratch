@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.martiansoftware.jsap.JSAP;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.source.Source;
@@ -116,5 +115,11 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	@Override
 	protected boolean isObjectOfLanguage(Object object) {
 		return false;
+	}
+	
+	@Override
+	protected boolean isThreadAccessAllowed(Thread thread,
+            boolean singleThreaded) {
+		return true;
 	}
 }
