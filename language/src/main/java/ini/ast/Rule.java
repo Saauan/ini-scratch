@@ -14,19 +14,19 @@ public class Rule extends AstExpression {
 	@Children public final AstElement[] statements;
 	@Child public AstExpression guard;
 	@Child public AtPredicate atPredicate;
-	@Children public AstElement[] synchronizedAtsNames;
+	@Children public AstExpression[] synchronizedAtsNames;
 
 	public Rule(AtPredicate atPredicate, AstExpression guard,
-			Sequence<AstElement> statements, List<Expression> synchronizedAtsNames) {
+			Sequence<AstElement> statements, List<AstExpression> synchronizedAtsNames) {
 		super();		
 		this.atPredicate = atPredicate;
 		this.guard = guard;
 		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
 		if(synchronizedAtsNames != null) {
-			this.synchronizedAtsNames = synchronizedAtsNames.toArray(new AstElement[0]);
+			this.synchronizedAtsNames = synchronizedAtsNames.toArray(new AstExpression[0]);
 		}
 		else {
-			this.synchronizedAtsNames = new AstElement[0];
+			this.synchronizedAtsNames = new AstExpression[0];
 		}
 	}
 
