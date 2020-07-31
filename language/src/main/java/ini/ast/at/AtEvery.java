@@ -13,6 +13,8 @@ public class AtEvery extends At {
 
 	@Override
 	public void executeVoid(VirtualFrame frame) {
+		ruleThread = this.env.createThread(new IniThread(this, getRule(), frame), this.env.newContextBuilder().build());
+		mainThread = this.env.createThread(new Thread() {
 			@Override
 			public void run() {
 				do {
@@ -25,6 +27,7 @@ public class AtEvery extends At {
 				} while (!checkTerminated());
 				System.err.println("Thread terminated");
 			}
+		}, this.env.newContextBuilder().build());
 		mainThread.start();
 	}
 

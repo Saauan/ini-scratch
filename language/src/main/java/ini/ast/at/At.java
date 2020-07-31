@@ -107,6 +107,7 @@ public abstract class At extends AstElement{
 					}
 				}
 			}
+		}, this.env.newContextBuilder().build()).start();
 	}
 
 	public void restart(VirtualFrame frame, Env env) {
@@ -196,6 +197,7 @@ public abstract class At extends AstElement{
 			try {
 				wait();
 			} catch (InterruptedException e) {
+//				IniLanguage.LOGGER.error("interrupted " + this, e);
 				e.printStackTrace();
 			}
 		}
@@ -206,6 +208,7 @@ public abstract class At extends AstElement{
 			try {
 				wait();
 			} catch (InterruptedException e) {
+//				IniLanguage.LOGGER.error("interrupted " + this, e);
 				e.printStackTrace();
 			}
 		}

@@ -1,12 +1,8 @@
 package ini.eval;
 
-import java.util.Map;
-
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.IniLanguage;
 import ini.ast.AstElement;
-import ini.ast.IniRootNode;
 import ini.ast.Rule;
 import ini.ast.at.At;
 import ini.runtime.IniException;
@@ -51,7 +47,7 @@ public class IniThread extends Thread {
 			}
 		} finally {
 			if (at != null) {
-				IniLanguage.LOGGER.debug("end: " + at);
+//				IniLanguage.LOGGER.debug("end: " + at);
 				// System.out.println("------pop: " + at);
 				at.popThread();
 			}
