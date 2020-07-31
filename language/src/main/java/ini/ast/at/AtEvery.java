@@ -1,4 +1,6 @@
-package ini.eval.at;
+package ini.ast.at;
+
+import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
@@ -10,9 +12,7 @@ public class AtEvery extends At {
 	Thread ruleThread;
 
 	@Override
-	public void execute(VirtualFrame frame) {
-		ruleThread = this.env.createThread(new IniThread(this, getRule(), frame));
-		mainThread = new Thread() {
+	public void executeVoid(VirtualFrame frame) {
 			@Override
 			public void run() {
 				do {
@@ -25,8 +25,12 @@ public class AtEvery extends At {
 				} while (!checkTerminated());
 				System.err.println("Thread terminated");
 			}
-		};
 		mainThread.start();
+	}
+
+	@Override
+	public void prettyPrint(PrintStream out) {
+		// TODO Auto-generated method stub
 	}
 	
 	

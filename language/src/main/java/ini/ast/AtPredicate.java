@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+import ini.ast.at.At;
+import ini.ast.at.AtEvery;
+
 public class AtPredicate extends NamedElement {
 
 	public enum Kind {
@@ -14,6 +17,9 @@ public class AtPredicate extends NamedElement {
 	public List<Expression> outParameters;
 	public Kind kind = null;
 	public String identifier;
+	@Child
+	public At attachedAt = null;
+	public boolean isAtAttached = false;
 
 	public AtPredicate(String name, List<Expression> configurationArguments,
 			List<Expression> runtimeArguments, String identifier) {
@@ -47,7 +53,8 @@ public class AtPredicate extends NamedElement {
 			kind = Kind.UPDATE_SYNC;
 		}
 		if (name.equals("every")) {
-			kind = Kind.EVERY;
+			this.attachedAt= new AtEvery();
+			this.isAtAttached = true;
 		}
 		if (name.equals("cron")) {
 			kind = Kind.CRON;

@@ -1,4 +1,4 @@
-package ini.eval.at;
+package ini.ast.at;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +14,8 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.IniLanguage;
 import ini.ast.Assignment;
+import ini.ast.AstElement;
 import ini.ast.AstExpression;
 import ini.ast.AtPredicate;
 import ini.ast.Expression;
@@ -23,7 +23,7 @@ import ini.ast.Process;
 import ini.ast.Rule;
 import ini.ast.Variable;
 
-public abstract class At {
+public abstract class At extends AstElement{
 	protected boolean terminated = false;
 	public static Map<String, Class<? extends At>> atPredicates = new HashMap<String, Class<? extends At>>();
 	public List<At> synchronizedAts = new ArrayList<At>();
@@ -73,15 +73,10 @@ public abstract class At {
 //		atPredicates.put("read_keyboard", AtReadKeyboard.class);
 //		atPredicates.put("consume", AtConsume.class);
 	}
-
-	/**
-	 * old eval
-	 */
-	protected abstract void execute(VirtualFrame frame);
 	
 	public void executeAndSetEnv(VirtualFrame frame, Env env) {
 		this.env = env;
-		this.execute(frame);
+		this.executeVoid(frame);
 	}
 
 	public At() {
@@ -112,13 +107,12 @@ public abstract class At {
 					}
 				}
 			}
-		}).start();
 	}
 
 	public void restart(VirtualFrame frame, Env env) {
 		terminated = false;
 		threadExecutor = null;
-		execute(frame);
+		executeVoid(frame);
 	}
 
 	@Override
@@ -128,7 +122,7 @@ public abstract class At {
 
 	public void executeThread(Thread thread) {
 		// System.out.println(">>>> Excute: " + eval);
-		IniLanguage.LOGGER.debug("execute: " + this + " (active threads=" + currentThreadCount + ")");
+//		IniLanguage.LOGGER.debug("execute: " + this + " (active threads=" + currentThreadCount + ")");
 		pushThreadInQueue();
 		// safelyEnter();
 		if (async) {
@@ -202,7 +196,6 @@ public abstract class At {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				IniLanguage.LOGGER.error("interrupted " + this, e);
 				e.printStackTrace();
 			}
 		}
@@ -213,7 +206,6 @@ public abstract class At {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				IniLanguage.LOGGER.error("interrupted " + this, e);
 				e.printStackTrace();
 			}
 		}

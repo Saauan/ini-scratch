@@ -14,7 +14,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import ini.IniLanguage;
-import ini.eval.at.At;
+import ini.ast.at.At;
 import ini.runtime.IniException;
 
 public class Process extends Executable {
@@ -57,7 +57,7 @@ public class Process extends Executable {
 			}
 		}
 	}
-
+	
 	@Override
 	public void prettyPrint(PrintStream out) {
 		out.print("process " + name + "(");
@@ -234,24 +234,17 @@ public class Process extends Executable {
 			}
 			Map<Rule, At> atMap = new HashMap<Rule, At>();
 			for (Rule rule : this.atRules) {
-				// At at = At.atPredicates.get(rule.atPredicate.name);
-				Class<? extends At> c = At.atPredicates.get(rule.atPredicate.name);
-				At at = null;
-				try {
-					at = c.newInstance();
-					at.setRule(rule);
-					at.process = this;
-					at.setAtPredicate(rule.atPredicate);
-					ats.add(at);
-					// Add the identifier to the context
-					if (rule.atPredicate.identifier != null) {
-						addAtToFrame(frame, rule.atPredicate.identifier, at);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				At at = rule.atPredicate.attachedAt;
 				if (at == null) {
 					throw new RuntimeException("unknown @ predicate '" + rule.atPredicate.name + "'");
+				}
+				/* Initialize the At */
+				at.setRule(rule);
+				at.process=this;
+				at.setAtPredicate(rule.atPredicate);
+				ats.add(at);
+				if (rule.atPredicate.identifier != null) {
+					addAtToFrame(frame, rule.atPredicate.identifier, at);
 				}
 				atMap.put(rule, at);
 			}

@@ -4,7 +4,7 @@ import com.oracle.truffle.api.dsl.GenerateNodeFactory;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.eval.at.At;
+import ini.ast.at.At;
 
 /**
  * aka KillAt
