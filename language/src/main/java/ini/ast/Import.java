@@ -60,7 +60,7 @@ public class Import extends AstElement implements Comparable<Import> {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		IniFunction function = IniFunction.create(
+		IniFunction function = IniFunction.createStatic(
         		null,
         		"main_import",
         		new FrameSlot[] {},

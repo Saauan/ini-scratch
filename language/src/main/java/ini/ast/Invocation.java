@@ -16,7 +16,7 @@ import com.oracle.truffle.api.nodes.IndirectCallNode;
 import ini.IniContext;
 import ini.IniLanguage;
 import ini.runtime.IniException;
-import ini.runtime.IniFunction;
+import ini.runtime.IniExecutable;
 
 /**
  * Invocations share the same name as the function or process they invoke
@@ -37,7 +37,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
      * first execution}. The {@link CompilationFinal} annotation ensures that the function can still
      * be constant folded during compilation.
      */
-	@CompilationFinal private IniFunction cachedFunction;
+	@CompilationFinal private IniExecutable cachedFunction;
 
 	public Invocation(String name, List<AstExpression> arguments) {
 		super();
@@ -94,8 +94,8 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		return this.callNode.call(cachedFunction.callTarget, argumentValues);
 	}
 
-	public IniFunction lookupFunction(String functionId) {
-		IniFunction function = null;
+	public IniExecutable lookupFunction(String functionId) {
+		IniExecutable function = null;
 		function = lookupContextReference(IniLanguage.class).get().getFunctionRegistry().lookup(functionId);
 		return function;
 	}

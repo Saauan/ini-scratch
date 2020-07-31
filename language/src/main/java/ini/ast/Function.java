@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.CompilerAsserts;
-import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -79,7 +78,7 @@ public class Function extends Executable {
 	public IniFunction executeGeneric(VirtualFrame virtualFrame) {
 		/* Each time a new function is created, a new frame descriptor is created */
 		FrameDescriptor frameDescriptor = new FrameDescriptor();
-		IniFunction function = IniFunction.create(lookupContextReference(IniLanguage.class).get().getLang(), name,
+		IniFunction function = IniFunction.createStatic(lookupContextReference(IniLanguage.class).get().getLang(), name,
 				convertListOfParametersToArrayOfFrameSlot(parameters, frameDescriptor), statements, frameDescriptor);
 
 		this.function = function;

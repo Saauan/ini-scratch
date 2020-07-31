@@ -76,7 +76,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
     }
 
 	private IniFunction wrapNodesAndCreateCallTarget(AstElement[] topLevelNodes, MaterializedFrame globalFrame) {
-		IniFunction function = IniFunction.create(
+		IniFunction function = IniFunction.createStatic(
         		null,
         		"rootFunction",
         		new FrameSlot[] {},

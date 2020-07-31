@@ -7,10 +7,10 @@ import java.util.Map;
 
 import com.oracle.truffle.api.RootCallTarget;
 
-import ini.runtime.IniFunction;
+import ini.runtime.IniExecutable;
 
 /**
- * Manages the mapping from function names to {@link IniFunction function
+ * Manages the mapping from function names to {@link IniExecutable function
  * objects}
  * 
  * @author Tristan
@@ -18,30 +18,30 @@ import ini.runtime.IniFunction;
  */
 public final class IniFunctionRegistry {
 	private final IniLanguage language;
-	private final Map<String, IniFunction> functionMap;
-//	private final IniFunction functionsObject = new IniFunction(); // TODO : implement if implementing interop
+	private final Map<String, IniExecutable> functionMap;
+//	private final IniExecutable functionsObject = new IniExecutable(); // TODO : implement if implementing interop
 
 	public IniFunctionRegistry(IniLanguage language) {
 		this.language = language;
-		this.functionMap = new HashMap<String, IniFunction>();
+		this.functionMap = new HashMap<String, IniExecutable>();
 	}
 
 	/**
-	 * Returns the canonical {@link IniFunction} object for the given name. If it
+	 * Returns the canonical {@link IniExecutable} object for the given name. If it
 	 * does not exists, returns null.
 	 */
-	public IniFunction lookup(String name) {
-		IniFunction result = functionMap.get(name);
+	public IniExecutable lookup(String name) {
+		IniExecutable result = functionMap.get(name);
 		return result;
 	}
 	
-	public IniFunction register(String name, IniFunction function) {
+	public IniExecutable register(String name, IniExecutable function) {
 		this.functionMap.put(name, function);
 		return function;
 	}
 
-	public List<IniFunction> getFunctions() {
-		List<IniFunction> result = new ArrayList<>(this.functionMap.values());
+	public List<IniExecutable> getFunctions() {
+		List<IniExecutable> result = new ArrayList<>(this.functionMap.values());
 		return result;
 	}
 }
