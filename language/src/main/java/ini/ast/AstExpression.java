@@ -1,6 +1,8 @@
 package ini.ast;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.GenerateWrapper;
+import com.oracle.truffle.api.instrumentation.ProbeNode;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import ini.IniTypesGen;
@@ -8,6 +10,7 @@ import ini.IniTypesGen;
 /**
  * An AstExpression is an AstElement that can produce a value
  */
+@GenerateWrapper
 public abstract class AstExpression extends AstElement {
 
 	public AstExpression() {
@@ -28,6 +31,10 @@ public abstract class AstExpression extends AstElement {
 	public void executeVoid(VirtualFrame frame) {
 		executeGeneric(frame);
 	}
+	
+	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
+	    return new AstExpressionWrapper(this, probeNode);
+	  }
 	
 	/*
 	 * Execute methods for specialized types. They all follow the same pattern: they
@@ -66,5 +73,4 @@ public abstract class AstExpression extends AstElement {
 	public String executeString(VirtualFrame virtualFrame) throws UnexpectedResultException {
 		return IniTypesGen.expectString(this.executeGeneric(virtualFrame));
 	}
-
 }
