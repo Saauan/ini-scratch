@@ -4,7 +4,7 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-import ini.eval.IniThread;
+import ini.runtime.IniThread;
 
 public class AtEvery extends At {
 
@@ -32,9 +32,7 @@ public class AtEvery extends At {
 	}
 
 	@Override
-	public void prettyPrint(PrintStream out) {
-		// TODO Auto-generated method stub
-	}
+	public void prettyPrint(PrintStream out) {}
 	
 	
 }

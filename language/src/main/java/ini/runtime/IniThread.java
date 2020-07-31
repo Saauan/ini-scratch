@@ -1,11 +1,10 @@
-package ini.eval;
+package ini.runtime;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import ini.ast.AstElement;
 import ini.ast.Rule;
 import ini.ast.at.At;
-import ini.runtime.IniException;
 
 public class IniThread extends Thread {
 
@@ -24,18 +23,13 @@ public class IniThread extends Thread {
 		}
 	}
 
-	public IniThread fork() {
-		IniThread forked = new IniThread(at, toEval, frame);
-		return forked;
-	}
-
 	@Override
 	public void run() {
 		if (at != null) {
 			at.safelyEnter();
 		}
 		try {
-			// Copy the variables passed at instanciation
+			// Copy the variables passed at instantiation
 ;
 			toEval.executeVoid(frame);;
 		} catch (IniException e) {
@@ -47,15 +41,12 @@ public class IniThread extends Thread {
 			}
 		} finally {
 			if (at != null) {
-//				IniLanguage.LOGGER.debug("end: " + at);
-				// System.out.println("------pop: " + at);
 				at.popThread();
 			}
 		}
 	}
 
 	public void kill() {
-//		child.kill = true;
 		this.setName(this.getName() + ":killed");
 	}
 

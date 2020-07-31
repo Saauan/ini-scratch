@@ -95,122 +95,6 @@ public class Process extends Executable {
 		return "process " + super.toString();
 	}
 
-//	@Override
-//	public void eval(IniEval eval) {
-//		List<At> ats = null;
-//		try {
-//			for (Rule rule : this.initRules) {
-//				eval.eval(rule);
-//			}
-//			if (!this.atRules.isEmpty()) {
-//				ats = new ArrayList<At>();
-//			}
-//			Map<Rule, At> atMap = new HashMap<Rule, At>();
-//			for (Rule rule : this.atRules) {
-//				// At at = At.atPredicates.get(rule.atPredicate.name);
-//				Class<? extends At> c = At.atPredicates.get(rule.atPredicate.name);
-//				At at = null;
-//				try {
-//					at = c.newInstance();
-//					at.setRule(rule);
-//					at.process = this;
-//					at.setAtPredicate(rule.atPredicate);
-//					ats.add(at);
-//					if (rule.atPredicate.identifier != null) {
-//						eval.invocationStack.peek().bind(rule.atPredicate.identifier, new RawData(at));
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				if (at == null) {
-//					throw new RuntimeException("unknown @ predicate '" + rule.atPredicate.name + "'");
-//				}
-//				atMap.put(rule, at);
-//			}
-//			Iterator<Rule> itr = atMap.keySet().iterator();
-//			while (itr.hasNext()) {
-//				Rule evalRule = itr.next();
-//				At evalAt = atMap.get(evalRule);
-//				List<Expression> synchronizedAtsNames = evalRule.synchronizedAtsNames;
-//				if (synchronizedAtsNames != null) {
-//					for (Expression e : synchronizedAtsNames) {
-//						evalAt.synchronizedAts.add((At) eval.eval(e).getValue());
-//					}
-//				}
-//
-//				eval.evaluationStack.push(evalRule.atPredicate);
-//				evalAt.parseInParameters(eval, evalRule.atPredicate.annotations);
-//				evalAt.eval(eval);
-//				eval.evaluationStack.pop();
-//			}
-//			onReady(eval);
-//			do {
-//				eval.invocationStack.peek().noRulesApplied = false;
-//				while (!eval.invocationStack.peek().noRulesApplied) {
-//					eval.invocationStack.peek().noRulesApplied = true;
-//					for (Rule rule : this.rules) {
-//						eval.eval(rule);
-//					}
-//				}
-//			} while (!At.checkAllTerminated(ats));
-//			At.destroyAll(ats);
-//			for (Rule rule : this.endRules) {
-//				eval.eval(rule);
-//			}
-//			// unlocks waiting invokers
-//			Context ctx = eval.invocationStack.peek();
-//			Data r = ctx.get(IniEval.PROCESS_RESULT);
-//			if (r != null) {
-//				r.copyData(new RawData());
-//			}
-//		} catch (ReturnException e) {
-//			// swallow
-//		} catch (RuntimeException e) {
-//			handleException(eval, e);
-//		} /*
-//			 * finally { //At.destroyAll(ats); }
-//			 */
-//
-//	}
-//
-//	private void onReady(IniEval eval) {
-//		for (Rule rule : this.readyRules) {
-//			if (rule.guard == null || eval.eval(rule.guard).isTrueOrDefined()) {
-//				Sequence<Statement> s = rule.statements;
-//				while (s != null) {
-//					eval.eval(s.get());
-//					s = s.next();
-//				}
-//			}
-//		}
-//	}
-//
-//	public void handleException(IniEval eval, RuntimeException e) throws RuntimeException {
-//		boolean caught = false;
-//		for (Rule rule : this.errorRules) {
-//			if (rule.guard == null || eval.eval(rule.guard).isTrueOrDefined()) {
-//				eval.invocationStack.peek().bind(((Variable) rule.atPredicate.outParameters.get(0)).name,
-//						new RawData(e));
-//				Sequence<Statement> s = rule.statements;
-//				while (s != null) {
-//					eval.eval(s.get());
-//					s = s.next();
-//				}
-//				caught = true;
-//			}
-//		}
-//		if (!caught) {
-//			// unlocks waiting invokers
-//			Context ctx = eval.invocationStack.peek();
-//			Data r = ctx.get(IniEval.PROCESS_RESULT);
-//			if (r != null) {
-//				r.copyData(new RawData());
-//			}
-//			throw e;
-//		}
-//
-//	}
-
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visitProcess(this);
@@ -259,11 +143,9 @@ public class Process extends Executable {
 					}
 				}
 
-//				eval.evaluationStack.push(evalRule.atPredicate);
 				evalAt.parseInParameters(frame, evalRule.atPredicate.annotations);
 				Env env = lookupContextReference(IniLanguage.class).get().getEnv();
 				evalAt.executeAndSetEnv(frame, env);
-//				eval.evaluationStack.pop();
 			}
 
 			// Execute all the readyRules
@@ -304,7 +186,6 @@ public class Process extends Executable {
 	 * Adds the At to the frame using its identifier.
 	 */
 	private void addAtToFrame(VirtualFrame frame, String identifier, At at) {
-//		String frameSlotIdentifier = At.getFrameSlotIdentifier(identifier);
 		FrameSlot slot = frame.getFrameDescriptor().findOrAddFrameSlot(identifier);
 		frame.setObject(slot, at);
 	}

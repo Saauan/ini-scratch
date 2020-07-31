@@ -25,7 +25,9 @@ import ini.ast.Variable;
 
 public abstract class At extends AstElement{
 	protected boolean terminated = false;
+	/* TODO : Useful ? */
 	public static Map<String, Class<? extends At>> atPredicates = new HashMap<String, Class<? extends At>>();
+	/* TODO : Useful ? */
 	public List<At> synchronizedAts = new ArrayList<At>();
 	private ThreadPoolExecutor threadExecutor;
 	private int currentThreadCount = 0;
@@ -34,6 +36,7 @@ public abstract class At extends AstElement{
 	private Rule rule;
 	private AtPredicate atPredicate;
 	public Process process;
+	/* TODO : Never changed, useful ? */
 	private boolean async = false;
 	protected Env env;
 
@@ -122,16 +125,12 @@ public abstract class At extends AstElement{
 	}
 
 	public void executeThread(Thread thread) {
-		// System.out.println(">>>> Excute: " + eval);
-//		IniLanguage.LOGGER.debug("execute: " + this + " (active threads=" + currentThreadCount + ")");
 		pushThreadInQueue();
-		// safelyEnter();
 		if (async) {
 			getThreadExecutor().execute(null);
 		} else {
 			thread.run();
 		}
-		// System.out.println(">>>> Excute 2: " + this);
 	}
 
 	public ThreadPoolExecutor getThreadExecutor() {
@@ -197,7 +196,6 @@ public abstract class At extends AstElement{
 			try {
 				wait();
 			} catch (InterruptedException e) {
-//				IniLanguage.LOGGER.error("interrupted " + this, e);
 				e.printStackTrace();
 			}
 		}
@@ -208,7 +206,6 @@ public abstract class At extends AstElement{
 			try {
 				wait();
 			} catch (InterruptedException e) {
-//				IniLanguage.LOGGER.error("interrupted " + this, e);
 				e.printStackTrace();
 			}
 		}
@@ -270,18 +267,5 @@ public abstract class At extends AstElement{
 		this.async = "async".equals(atPredicate.getAnnotationStringValue("mode"));
 		this.atPredicate = atPredicate;
 	}
-
-//	protected final void typeInParameters(AstAttrib attrib, boolean mandatory, Type type, String... parameters) {
-//		AstNode target = getAtPredicate().getAnnotationNode(parameters);
-//		if (mandatory && target == null) {
-//			attrib.addError(new TypingError(attrib.getEnclosingNode(),
-//					"cannot find mandatory annotation: " + StringUtils.join(parameters, " or ")));
-//		}
-//		if (target != null) {
-//			attrib.addTypingConstraint(Kind.EQ, attrib.execute(null), type, target, target);
-//		}
-//	}
-//
-//	public abstract void evalType(AstAttrib attrib);
 
 }
