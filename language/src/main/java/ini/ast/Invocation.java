@@ -71,7 +71,7 @@ public class Invocation extends AstExpression implements Statement, Expression {
 			/* We are about to change a @CompilationFinal field. */
 			CompilerDirectives.transferToInterpreterAndInvalidate();
 			/* First execution of the node: lookup the function in the function registry. */
-			cachedFunction = this.lookupFunction(getFunctionIdentifier(this.name, this.argumentNodes.length));
+			cachedFunction = this.lookupFunction(getExecutableIdentifier(this.name, this.argumentNodes.length));
 			if (cachedFunction == null) {
 				throw new IniException(String.format("The function %s was not found", this.name), this);
 			}

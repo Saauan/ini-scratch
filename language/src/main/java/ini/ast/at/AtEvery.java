@@ -4,6 +4,8 @@ import java.io.PrintStream;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+import ini.IniContext;
+import ini.IniLanguage;
 import ini.runtime.IniThread;
 
 public class AtEvery extends At {
@@ -13,7 +15,9 @@ public class AtEvery extends At {
 
 	@Override
 	public void executeVoid(VirtualFrame frame) {
-		ruleThread = this.env.createThread(new IniThread(this, getRule(), frame), this.env.newContextBuilder().build());
+//		ruleThread = this.env.createThread(new IniThread(this, getRule(), frame), this.env.getContext());
+		At thisAt = this;
+		IniContext context = lookupContextReference(IniLanguage.class).get();
 		mainThread = this.env.createThread(new Thread() {
 			@Override
 			public void run() {
@@ -23,11 +27,15 @@ public class AtEvery extends At {
 					} catch (InterruptedException e) {
 						break;
 					}
-					executeThread(ruleThread);
+					ruleThread = env.createThread(new IniThread(thisAt, getRule(), frame), env.getContext());
+					runThread(ruleThread);
+					context.startedThreads.add(ruleThread);
 				} while (!checkTerminated());
 				System.err.println("Thread terminated");
 			}
-		}, this.env.newContextBuilder().build());
+		}, this.env.getContext());
+//		context.startedThreads.add(ruleThread);
+		context.startedThreads.add(mainThread);
 		mainThread.start();
 	}
 

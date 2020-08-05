@@ -2,7 +2,9 @@ package ini;
 
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.oracle.truffle.api.Truffle;
@@ -45,8 +47,9 @@ public class IniContext {
 	private final InputStream in;
 	private final PrintWriter out;
 	private TruffleLanguage.Env env;
-
+	
 	private final Set<String> importedFiles;
+	public List<Thread> startedThreads;
 
 	public IniContext(IniLanguage lang, TruffleLanguage.Env env) {
 		this.globalFrameDescriptor = new FrameDescriptor();
@@ -57,6 +60,7 @@ public class IniContext {
 		this.globalFrame = this.initGlobalFrame(lang);
 		this.importedFiles = new HashSet<String>();
 		this.env = env;
+		this.startedThreads = new ArrayList<Thread>();
 	}
 
 	private MaterializedFrame initGlobalFrame(IniLanguage lang) {
@@ -152,7 +156,7 @@ public class IniContext {
 		 * class.
 		 */
 		String name = lookupNodeInfo(builtinBodyNodeArray[0].getClass()).shortName();
-		String functionId = AstElement.getFunctionIdentifier(name, nbParameters);
+		String functionId = AstElement.getExecutableIdentifier(name, nbParameters);
 
 		/*
 		 * Wrap the builtin in a RootNode. Truffle requires all AST to start with a

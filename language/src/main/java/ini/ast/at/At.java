@@ -21,7 +21,7 @@ import ini.ast.AstElement;
 import ini.ast.AstExpression;
 import ini.ast.AtPredicate;
 import ini.ast.Expression;
-import ini.ast.Process;
+import ini.ast.ProcessExecutor;
 import ini.ast.Rule;
 import ini.ast.Variable;
 
@@ -38,7 +38,8 @@ public abstract class At extends AstElement{
 	private Map<String, Object> inContext = new HashMap<String, Object>();
 	private Rule rule;
 	private AtPredicate atPredicate;
-	public Process process;
+	/* The Node actually performing the execution of the process */
+	public ProcessExecutor processExecutor;
 	/* TODO : Never changed, useful ? */
 	private boolean async = false;
 	protected Env env;
@@ -113,7 +114,7 @@ public abstract class At extends AstElement{
 					}
 				}
 			}
-		}, this.env.newContextBuilder().build()).start();
+		}, this.env.getContext()).start();
 	}
 
 	public void restart(VirtualFrame frame, Env env) {
@@ -127,12 +128,13 @@ public abstract class At extends AstElement{
 		return this.getClass().getName() + "@" + hashCode() + "-" + (async ? "async" : "sync");
 	}
 
-	public void executeThread(Thread thread) {
+	public void runThread(Thread thread) {
+		System.err.println("Running thread : " + thread);
 		pushThreadInQueue();
 		if (async) {
 			getThreadExecutor().execute(null);
 		} else {
-			thread.run();
+			thread.start();
 		}
 	}
 
@@ -152,7 +154,7 @@ public abstract class At extends AstElement{
 	public void destroy() {
 		// we stop the executor in another thread in case we are in the tread of
 		// a running task that would prevent proper shutdown
-		new Thread() {
+		this.env.createThread(new Thread() {
 			public void run() {
 				if (threadExecutor != null) {
 					if (threadExecutor != null && !threadExecutor.isShutdown()) {
@@ -169,7 +171,7 @@ public abstract class At extends AstElement{
 					}
 				}
 			}
-		}.start();
+		}, this.env.getContext()).start();
 	}
 
 	synchronized private void pushThread() {
@@ -270,7 +272,7 @@ public abstract class At extends AstElement{
 		this.async = "async".equals(atPredicate.getAnnotationStringValue("mode"));
 		this.atPredicate = atPredicate;
 	}
-
+	
 	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
 	    return new AtWrapper(this, probeNode);
 	  }

@@ -16,7 +16,4 @@ public abstract class IniExecutable {
         this.callTarget = callTarget;
         this.name = name;
     }
-
-    public abstract IniExecutable create(IniLanguage lang, String name, FrameSlot[] parametersSlots,
-    		AstElement[] bodyNodes, FrameDescriptor frameDescriptor);
 }

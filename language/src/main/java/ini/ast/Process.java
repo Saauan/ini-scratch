@@ -2,23 +2,24 @@ package ini.ast;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.oracle.truffle.api.TruffleLanguage.Env;
-import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.GenerateWrapper;
+import com.oracle.truffle.api.instrumentation.InstrumentableNode;
+import com.oracle.truffle.api.instrumentation.ProbeNode;
 
 import ini.IniLanguage;
-import ini.ast.at.At;
-import ini.runtime.IniException;
+import ini.runtime.IniProcess;
 
+/* This is the class that will create the process. That is to say, put it in a registry */
 @GenerateWrapper
 public class Process extends Executable{
+
+	IniProcess process;
 
 	@Children
 	public Rule[] initRules = new Rule[0];
@@ -115,97 +116,16 @@ public class Process extends Executable{
 	 */
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		List<At> ats = null;
-		try {
-			// Execute the init rules
-			for (Rule rule : this.initRules) {
-				rule.executeVoid(frame);
-			}
+		/* Each time a new function is created, a new frame descriptor is created */
+		FrameDescriptor frameDescriptor = new FrameDescriptor();
+		IniProcess process = IniProcess.createStatic(lookupContextReference(IniLanguage.class).get().getLang(), name,
+				convertListOfParametersToArrayOfFrameSlot(parameters, frameDescriptor), this, frameDescriptor);
 
-			// Set up all the at related rules | I don't understand this part
-			if (this.atRules.length > 0) {
-				ats = new ArrayList<At>();
-			}
-			Map<Rule, At> atMap = new HashMap<Rule, At>();
-			for (Rule rule : this.atRules) {
-				At at = rule.atPredicate.attachedAt;
-				if (at == null) {
-					throw new RuntimeException("unknown @ predicate '" + rule.atPredicate.name + "'");
-				}
-				/* Initialize the At */
-				at.setRule(rule);
-				at.process=this;
-				at.setAtPredicate(rule.atPredicate);
-				ats.add(at);
-				if (rule.atPredicate.identifier != null) {
-					addAtToFrame(frame, rule.atPredicate.identifier, at);
-				}
-				atMap.put(rule, at);
-			}
-			Iterator<Rule> itr = atMap.keySet().iterator();
-			while (itr.hasNext()) {
-				Rule evalRule = itr.next();
-				At evalAt = atMap.get(evalRule);
-				AstExpression[] synchronizedAtsNames = evalRule.synchronizedAtsNames;
-				if (synchronizedAtsNames != null) {
-					for (AstExpression e : synchronizedAtsNames) {
-						evalAt.synchronizedAts.add((At) e.executeGeneric(frame));
-					}
-				}
+		this.process = process;
 
-				evalAt.parseInParameters(frame, evalRule.atPredicate.annotations);
-				Env env = lookupContextReference(IniLanguage.class).get().getEnv();
-				evalAt.executeAndSetEnv(frame, env);
-			}
-
-			// Execute all the readyRules
-			for (Rule rule : this.readyRules) {
-				rule.executeVoid(frame);
-			}
-
-			// While the rules are not terminated and can be executed, execute them in order
-			do {
-				boolean atLeastOneRuleExecuted = true;
-				while (atLeastOneRuleExecuted) {
-					atLeastOneRuleExecuted = false;
-					for (Rule rule : this.rules) {
-						atLeastOneRuleExecuted = rule.executeBoolean(frame) ? true : atLeastOneRuleExecuted;
-					}
-				}
-			} while (!At.checkAllTerminated(ats));
-			
-			// Destroy the ats
-			At.destroyAll(ats);
-			
-			// Execute the end rules
-			for (Rule rule : this.endRules) {
-				rule.executeBoolean(frame);
-			}
-		} catch (IniException e) {
-			handleException(frame, e);
-		} catch (ReturnException r) {
-			At.destroyAll(ats);
-			
-			throw r;
-		}
-		return null;
+		/* Register the process */
+		lookupContextReference(IniLanguage.class).get().getFunctionRegistry().register(getExecutableIdentifier(this.name, this.parameters.size()), process);
+		return process;
 
 	}
-
-	/**
-	 * Adds the At to the frame using its identifier.
-	 */
-	private void addAtToFrame(VirtualFrame frame, String identifier, At at) {
-		FrameSlot slot = frame.getFrameDescriptor().findOrAddFrameSlot(identifier);
-		frame.setObject(slot, at);
-	}
-
-	public void handleException(VirtualFrame frame, IniException e) throws RuntimeException {
-		boolean caught = false;
-		for (Rule rule : this.errorRules) {
-			caught = rule.executeBoolean(frame) ? true : caught;
-		}
-		throw e; 
-	}
-
 }

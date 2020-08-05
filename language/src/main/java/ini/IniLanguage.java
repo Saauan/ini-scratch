@@ -44,6 +44,43 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		return new IniContext(this, env);
 	}
 	
+    @Override
+    protected void initializeContext(IniContext context) throws Exception {
+       System.err.println("Initializing context");
+    }
+	
+	@Override
+	protected void finalizeContext(IniContext context) {
+        // stop and join all the created Threads
+		System.err.println("Finalizing context");
+        boolean interrupted = false;
+        for (int i = 0; i < context.startedThreads.size();) {
+            Thread threadToJoin  = context.startedThreads.get(i);
+            try {
+                if (threadToJoin != Thread.currentThread()) {
+                    threadToJoin.interrupt();
+                    threadToJoin.join();
+                }
+                i++;
+            } catch (InterruptedException ie) {
+                interrupted = true;
+            }
+        }
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+	
+	@Override
+    protected void initializeThread(IniContext context, Thread thread) {
+        System.err.println("New thread :" + thread);
+    }
+
+    @Override
+    protected void disposeThread(IniContext context, Thread thread) {
+        System.err.println("Disposed thread :" + thread);
+    }
+	
     public static IniContext getCurrentContext() {
         return getCurrentContext(IniLanguage.class);
     }

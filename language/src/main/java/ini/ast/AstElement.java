@@ -38,7 +38,7 @@ public abstract class AstElement extends Node implements AstNode, Instrumentable
 	/**
 	 * Returns the function identifier used as a key for the FrameSlots.
 	 */
-	public static String getFunctionIdentifier(String functionName, int nbParameters) {
+	public static String getExecutableIdentifier(String functionName, int nbParameters) {
 		return String.format("%s parameters:%d", functionName, nbParameters);
 	}
 

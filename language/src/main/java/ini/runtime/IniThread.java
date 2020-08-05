@@ -34,7 +34,7 @@ public class IniThread extends Thread {
 			toEval.executeVoid(frame);;
 		} catch (IniException e) {
 			try {
-				at.process.handleException(frame, e);
+				at.processExecutor.handleException(frame, e);
 			} catch (RuntimeException re) {
 				System.err.println(e);
 				e.printStackTrace(System.err);
