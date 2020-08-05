@@ -301,6 +301,7 @@ public class IniTestRunner extends ParentRunner<TestCase> {
 //            }
 
             Context.Builder builder = Context.newBuilder().allowExperimentalOptions(true).in(new ByteArrayInputStream(testCase.testInput.getBytes("UTF-8"))).out(out);
+            builder.allowCreateThread(true);
             for (Map.Entry<String, String> e : testCase.options.entrySet()) {
                 builder.option(e.getKey(), e.getValue());
             }
@@ -315,7 +316,7 @@ public class IniTestRunner extends ParentRunner<TestCase> {
             notifier.fireTestFailure(new Failure(testCase.name, ex));
         } finally {
             if (context != null) {
-                context.close();
+                context.close(true);
             }
             notifier.fireTestFinished(testCase.name);
         }
