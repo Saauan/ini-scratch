@@ -4,11 +4,14 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.GenerateWrapper;
+import com.oracle.truffle.api.instrumentation.ProbeNode;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import ini.Utils;
 import ini.runtime.IniException;
 
+@GenerateWrapper
 public class Rule extends AstExpression {
 
 	@Children public final AstElement[] statements;
@@ -29,6 +32,14 @@ public class Rule extends AstExpression {
 			this.synchronizedAtsNames = new AstExpression[0];
 		}
 	}
+	
+	public Rule() {
+		this.statements = null;
+	}
+	
+	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
+	    return new RuleWrapper(this, probeNode);
+	  }
 
 	@Override
 	public void prettyPrint(PrintStream out) {

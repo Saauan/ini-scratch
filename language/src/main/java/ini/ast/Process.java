@@ -17,7 +17,8 @@ import ini.IniLanguage;
 import ini.ast.at.At;
 import ini.runtime.IniException;
 
-public class Process extends Executable {
+@GenerateWrapper
+public class Process extends Executable{
 
 	@Children
 	public Rule[] initRules = new Rule[0];
@@ -57,6 +58,15 @@ public class Process extends Executable {
 			}
 		}
 	}
+	
+	public Process() {
+		super(null, null);
+	}
+
+	@Override 
+	public WrapperNode createWrapper(ProbeNode probeNode) {
+	    return new ProcessWrapper(this, probeNode);
+	  }
 	
 	@Override
 	public void prettyPrint(PrintStream out) {

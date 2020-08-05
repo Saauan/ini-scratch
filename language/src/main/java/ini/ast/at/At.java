@@ -13,6 +13,8 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.GenerateWrapper;
+import com.oracle.truffle.api.instrumentation.ProbeNode;
 
 import ini.ast.Assignment;
 import ini.ast.AstElement;
@@ -23,6 +25,7 @@ import ini.ast.Process;
 import ini.ast.Rule;
 import ini.ast.Variable;
 
+@GenerateWrapper
 public abstract class At extends AstElement{
 	protected boolean terminated = false;
 	/* TODO : Useful ? */
@@ -40,6 +43,10 @@ public abstract class At extends AstElement{
 	private boolean async = false;
 	protected Env env;
 
+	public At() {
+		id = currentId++;
+	}
+	
 	public boolean isAsync() {
 		return async;
 	}
@@ -80,10 +87,6 @@ public abstract class At extends AstElement{
 	public void executeAndSetEnv(VirtualFrame frame, Env env) {
 		this.env = env;
 		this.executeVoid(frame);
-	}
-
-	public At() {
-		id = currentId++;
 	}
 
 	public int getId() {
@@ -267,5 +270,9 @@ public abstract class At extends AstElement{
 		this.async = "async".equals(atPredicate.getAnnotationStringValue("mode"));
 		this.atPredicate = atPredicate;
 	}
+
+	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
+	    return new AtWrapper(this, probeNode);
+	  }
 
 }
