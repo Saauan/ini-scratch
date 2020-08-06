@@ -112,14 +112,25 @@ public abstract class Variable extends AstExpression implements VariableAccess {
             CompilerDirectives.transferToInterpreter();
             Object result = frame.getValue(getSlot());
             frame.setObject(getSlot(), result);
+            result = checkFutureData(result);
             return result;
         }
         Object readObject = FrameUtil.getObjectSafe(frame, getSlot());
         if (readObject == null) {
-        	System.out.println(String.format("Warning : %s value is null", this.name)); // TODO remove eventually
+        	System.err.println(String.format("Warning : %s value is null", this.name)); // TODO remove eventually
         }
+        readObject = checkFutureData(readObject);
         return readObject;
     }
+    
+    
+
+	private Object checkFutureData(Object result) {
+		if (result instanceof ProcessReturnValue) {
+			result = ((ProcessReturnValue) result).executeGeneric(null);
+		}
+		return result;
+	}
 
 	public final void setDeclaration(boolean declaration) {
 		this.declaration = declaration;
