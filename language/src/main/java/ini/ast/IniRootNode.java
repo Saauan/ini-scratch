@@ -1,5 +1,7 @@
 package ini.ast;
 
+import java.util.List;
+
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -34,6 +36,7 @@ public class IniRootNode extends RootNode {
 	@ExplodeLoop
 	public Object execute(VirtualFrame frame) {
 		AstElement[] s = this.bodyNodes;
+		Object res = 0;
 		final int nbNodes = s.length;
 		int i;
 		try {
@@ -45,13 +48,28 @@ public class IniRootNode extends RootNode {
 			 * result, otherwise return 0
 			 */
 			if (s[i] instanceof AstExpression) {
-				return ((AstExpression) s[i]).executeGeneric(frame);
+				res = ((AstExpression) s[i]).executeGeneric(frame);
 			} else {
 				s[i].executeVoid(frame);
-				return 0;
+				res = 0;
 			}
 		} catch (ReturnException e) {
-			return e.getResult();
+			res = e.getResult();
+		}
+		if(name == IniLanguage.ROOT_FUNCTION_NAME) {
+			try {
+				waitForProcessToEnd(frame);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		return res;
+	}
+	
+	public void waitForProcessToEnd(VirtualFrame frame) throws InterruptedException {
+		List<ProcessRunner> startedProcess = lookupContextReference(IniLanguage.class).get().startedProcesses;
+		for (ProcessRunner process : startedProcess) {
+			process.waitForProcessToEnd();
 		}
 	}
 

@@ -18,11 +18,13 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import ini.ast.AstElement;
 import ini.ast.AstExpression;
 import ini.ast.IniRootNode;
+import ini.ast.ProcessRunner;
 import ini.ast.ReadArgumentFromContextNode;
 import ini.eval.function.BuiltInExecutable;
 import ini.eval.function.PrintFunctionFactory;
 import ini.eval.function.PrintlnFunctionFactory;
 import ini.eval.function.SizeFunctionFactory;
+import ini.eval.function.SleepFunctionFactory;
 import ini.eval.function.StopFunctionFactory;
 import ini.eval.function.TimeFunctionFactory;
 import ini.runtime.IniFunction;
@@ -50,6 +52,7 @@ public class IniContext {
 	
 	private final Set<String> importedFiles;
 	public List<Thread> startedThreads;
+	public List<ProcessRunner> startedProcesses;
 
 	public IniContext(IniLanguage lang, TruffleLanguage.Env env) {
 		this.globalFrameDescriptor = new FrameDescriptor();
@@ -61,6 +64,7 @@ public class IniContext {
 		this.importedFiles = new HashSet<String>();
 		this.env = env;
 		this.startedThreads = new ArrayList<Thread>();
+		this.startedProcesses = new ArrayList<ProcessRunner>();
 	}
 
 	private MaterializedFrame initGlobalFrame(IniLanguage lang) {
@@ -129,6 +133,7 @@ public class IniContext {
 		MaterializedFrame materializedFrame = frame.materialize();
 		installBuiltin(materializedFrame, PrintFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, PrintlnFunctionFactory.getInstance(), 1);
+		installBuiltin(materializedFrame, SleepFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, SizeFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, StopFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, TimeFunctionFactory.getInstance(), 0);

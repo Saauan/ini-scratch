@@ -29,12 +29,10 @@ public class IniThread extends Thread {
 			at.safelyEnter();
 		}
 		try {
-			// Copy the variables passed at instantiation
-;
-			toEval.executeVoid(frame);;
+			toEval.executeVoid(frame);
 		} catch (IniException e) {
 			try {
-				at.processExecutor.handleException(frame, e);
+				at.processRunner.handleException(frame, e);
 			} catch (RuntimeException re) {
 				System.err.println(e);
 				e.printStackTrace(System.err);

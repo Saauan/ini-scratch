@@ -37,6 +37,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	public static final String ID = "INI";
 	public static final String MIME_TYPE = "application/x-ini";
 	
+	public static final String ROOT_FUNCTION_NAME = "";
 	
 
 	@Override
@@ -115,7 +116,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	private IniFunction wrapNodesAndCreateCallTarget(AstElement[] topLevelNodes, MaterializedFrame globalFrame) {
 		IniFunction function = IniFunction.createStatic(
         		null,
-        		"rootFunction",
+        		ROOT_FUNCTION_NAME,
         		new FrameSlot[] {},
         		topLevelNodes,
         		globalFrame.getFrameDescriptor());

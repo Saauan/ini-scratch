@@ -16,12 +16,13 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.ProbeNode;
 
+import ini.IniLanguage;
 import ini.ast.Assignment;
 import ini.ast.AstElement;
 import ini.ast.AstExpression;
 import ini.ast.AtPredicate;
 import ini.ast.Expression;
-import ini.ast.ProcessExecutor;
+import ini.ast.ProcessRunner;
 import ini.ast.Rule;
 import ini.ast.Variable;
 
@@ -38,11 +39,10 @@ public abstract class At extends AstElement{
 	private Map<String, Object> inContext = new HashMap<String, Object>();
 	private Rule rule;
 	private AtPredicate atPredicate;
-	/* The Node actually performing the execution of the process */
-	public ProcessExecutor processExecutor;
+	/* The class actually performing the execution of the process */
+	public ProcessRunner processRunner;
 	/* TODO : Never changed, useful ? */
 	private boolean async = false;
-	protected Env env;
 
 	public At() {
 		id = currentId++;
@@ -84,11 +84,6 @@ public abstract class At extends AstElement{
 //		atPredicates.put("read_keyboard", AtReadKeyboard.class);
 //		atPredicates.put("consume", AtConsume.class);
 	}
-	
-	public void executeAndSetEnv(VirtualFrame frame, Env env) {
-		this.env = env;
-		this.executeVoid(frame);
-	}
 
 	public int getId() {
 		return id;
@@ -102,7 +97,7 @@ public abstract class At extends AstElement{
 		terminated = true;
 		// we stop the executor in another thread in case we are in the thread of
 		// a running task that would prevent proper shutdown
-		this.env.createThread(new Thread() {
+		lookupContextReference(IniLanguage.class).get().getEnv().createThread(new Thread() {
 			public void run() {
 				if (threadExecutor != null) {
 					threadExecutor.shutdown();
@@ -114,10 +109,10 @@ public abstract class At extends AstElement{
 					}
 				}
 			}
-		}, this.env.getContext()).start();
+		}, lookupContextReference(IniLanguage.class).get().getEnv().getContext()).start();
 	}
 
-	public void restart(VirtualFrame frame, Env env) {
+	public void restart(VirtualFrame frame) {
 		terminated = false;
 		threadExecutor = null;
 		executeVoid(frame);
@@ -154,7 +149,7 @@ public abstract class At extends AstElement{
 	public void destroy() {
 		// we stop the executor in another thread in case we are in the tread of
 		// a running task that would prevent proper shutdown
-		this.env.createThread(new Thread() {
+		lookupContextReference(IniLanguage.class).get().getEnv().createThread(new Thread() {
 			public void run() {
 				if (threadExecutor != null) {
 					if (threadExecutor != null && !threadExecutor.isShutdown()) {
@@ -171,7 +166,7 @@ public abstract class At extends AstElement{
 					}
 				}
 			}
-		}, this.env.getContext()).start();
+		}, lookupContextReference(IniLanguage.class).get().getEnv().getContext()).start();
 	}
 
 	synchronized private void pushThread() {
