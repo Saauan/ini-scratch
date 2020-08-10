@@ -78,7 +78,7 @@ public class IniMain {
         boolean isQuiet = options.containsKey("quiet");
         options.remove("quiet");
     	try {
-    		context = Context.newBuilder(ID).in(in).out(out).options(options).build();
+    		context = Context.newBuilder(ID).in(in).out(out).options(options).allowCreateThread(true).build();
     	} catch (IllegalArgumentException e) {
     		err.println(e.getMessage());
     		return 1;
@@ -106,7 +106,7 @@ public class IniMain {
             }
             return 1;
         } finally {
-            context.close();
+            context.close(true);
         }
     }
     

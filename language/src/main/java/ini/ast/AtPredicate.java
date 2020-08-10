@@ -4,7 +4,13 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.GenerateWrapper;
+import com.oracle.truffle.api.instrumentation.ProbeNode;
 
+import ini.ast.at.At;
+import ini.ast.at.AtEvery;
+
+@GenerateWrapper
 public class AtPredicate extends NamedElement {
 
 	public enum Kind {
@@ -14,7 +20,14 @@ public class AtPredicate extends NamedElement {
 	public List<Expression> outParameters;
 	public Kind kind = null;
 	public String identifier;
+	@Child
+	public At attachedAt = null;
+	public boolean isAtAttached = false;
 
+	public AtPredicate() {
+		super(null);
+	}
+	
 	public AtPredicate(String name, List<Expression> configurationArguments,
 			List<Expression> runtimeArguments, String identifier) {
 		super(name);
@@ -47,7 +60,8 @@ public class AtPredicate extends NamedElement {
 			kind = Kind.UPDATE_SYNC;
 		}
 		if (name.equals("every")) {
-			kind = Kind.EVERY;
+			this.attachedAt= new AtEvery();
+			this.isAtAttached = true;
 		}
 		if (name.equals("cron")) {
 			kind = Kind.CRON;
@@ -59,6 +73,10 @@ public class AtPredicate extends NamedElement {
 			kind = Kind.USER_DEFINED;
 		}
 	}
+	
+	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
+	    return new AtPredicateWrapper(this, probeNode);
+	  }
 
 	@Override
 	public void prettyPrint(PrintStream out) {

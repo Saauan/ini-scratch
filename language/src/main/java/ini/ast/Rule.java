@@ -4,31 +4,42 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.GenerateWrapper;
+import com.oracle.truffle.api.instrumentation.ProbeNode;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 import ini.Utils;
 import ini.runtime.IniException;
 
+@GenerateWrapper
 public class Rule extends AstExpression {
 
 	@Children public final AstElement[] statements;
 	@Child public AstExpression guard;
 	@Child public AtPredicate atPredicate;
-	@Children public AstElement[] synchronizedAtsNames;
+	@Children public AstExpression[] synchronizedAtsNames;
 
 	public Rule(AtPredicate atPredicate, AstExpression guard,
-			Sequence<AstElement> statements, List<Expression> synchronizedAtsNames) {
+			Sequence<AstElement> statements, List<AstExpression> synchronizedAtsNames) {
 		super();		
 		this.atPredicate = atPredicate;
 		this.guard = guard;
 		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
 		if(synchronizedAtsNames != null) {
-			this.synchronizedAtsNames = synchronizedAtsNames.toArray(new AstElement[0]);
+			this.synchronizedAtsNames = synchronizedAtsNames.toArray(new AstExpression[0]);
 		}
 		else {
-			this.synchronizedAtsNames = new AstElement[0];
+			this.synchronizedAtsNames = new AstExpression[0];
 		}
 	}
+	
+	public Rule() {
+		this.statements = null;
+	}
+	
+	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
+	    return new RuleWrapper(this, probeNode);
+	  }
 
 	@Override
 	public void prettyPrint(PrintStream out) {

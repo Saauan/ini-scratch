@@ -7,10 +7,29 @@ import java.util.List;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 
+import com.oracle.truffle.api.CompilerAsserts;
+import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.nodes.ExplodeLoop;
+
 import ini.type.AstAttrib;
 import ini.type.AttrContext;
-
 public abstract class Executable extends AstExpression implements Expression {
+
+	/**
+	 * Converts a list of Parameters to an array of frame slots. The identifier of
+	 * the slot is the parameter name
+	 */
+	@ExplodeLoop
+	public static FrameSlot[] convertListOfParametersToArrayOfFrameSlot(List<Parameter> parameters, FrameDescriptor frameDescriptor) {
+		FrameSlot[] result = new FrameSlot[parameters.size()];
+		final int nbParam = parameters.size();
+		CompilerAsserts.partialEvaluationConstant(nbParam);
+		for (int i = 0; i < nbParam; i++) {
+			result[i] = frameDescriptor.addFrameSlot(parameters.get(i).name);
+		}
+		return result;
+	}
 
 	public List<Parameter> parameters;
 
@@ -24,7 +43,7 @@ public abstract class Executable extends AstExpression implements Expression {
 		this.name = name;
 		this.parameters = parameters;
 	}
-
+	
 	public void addOverload(Executable executable) {
 		if (overloads == null) {
 			overloads = new ArrayList<Executable>();
@@ -127,7 +146,7 @@ public abstract class Executable extends AstExpression implements Expression {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 //	public final Type getType() {
 //		if (this.type == null) {
 //			this.type = parser.types.createFunctionalType(parser.types.createType());

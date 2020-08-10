@@ -10,6 +10,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.GenerateWrapper;
+import com.oracle.truffle.api.instrumentation.InstrumentableNode;
+import com.oracle.truffle.api.instrumentation.ProbeNode;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
@@ -17,7 +20,8 @@ import ini.IniTypes;
 
 @TypeSystemReference(IniTypes.class)
 @NodeInfo(language = "INI", description = "The abstract base node for all expressions")
-public abstract class AstElement extends Node implements AstNode {
+@GenerateWrapper
+public abstract class AstElement extends Node implements AstNode, InstrumentableNode {
 
 	public List<Expression> annotations;
 
@@ -34,7 +38,7 @@ public abstract class AstElement extends Node implements AstNode {
 	/**
 	 * Returns the function identifier used as a key for the FrameSlots.
 	 */
-	public static String getFunctionIdentifier(String functionName, int nbParameters) {
+	public static String getExecutableIdentifier(String functionName, int nbParameters) {
 		return String.format("%s parameters:%d", functionName, nbParameters);
 	}
 
@@ -140,6 +144,16 @@ public abstract class AstElement extends Node implements AstNode {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean isInstrumentable() {
+		return true;
+	}
+	
+	@Override
+	public WrapperNode createWrapper(ProbeNode probe) {
+		return new AstElementWrapper(this, probe);
 	}
 
 }

@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.martiansoftware.jsap.JSAP;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.source.Source;
@@ -38,12 +37,50 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	public static final String ID = "INI";
 	public static final String MIME_TYPE = "application/x-ini";
 	
+	public static final String ROOT_FUNCTION_NAME = "";
 	
 
 	@Override
 	protected IniContext createContext(Env env) {
 		return new IniContext(this, env);
 	}
+	
+    @Override
+    protected void initializeContext(IniContext context) throws Exception {
+       System.err.println("Initializing context");
+    }
+	
+	@Override
+	protected void finalizeContext(IniContext context) {
+        // stop and join all the created Threads
+		System.err.println("Finalizing context");
+        boolean interrupted = false;
+        for (int i = 0; i < context.startedThreads.size();) {
+            Thread threadToJoin  = context.startedThreads.get(i);
+            try {
+                if (threadToJoin != Thread.currentThread()) {
+                    threadToJoin.interrupt();
+                    threadToJoin.join();
+                }
+                i++;
+            } catch (InterruptedException ie) {
+                interrupted = true;
+            }
+        }
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
+    }
+	
+	@Override
+    protected void initializeThread(IniContext context, Thread thread) {
+        System.err.println("New thread :" + thread);
+    }
+
+    @Override
+    protected void disposeThread(IniContext context, Thread thread) {
+        System.err.println("Disposed thread :" + thread);
+    }
 	
     public static IniContext getCurrentContext() {
         return getCurrentContext(IniLanguage.class);
@@ -77,9 +114,9 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
     }
 
 	private IniFunction wrapNodesAndCreateCallTarget(AstElement[] topLevelNodes, MaterializedFrame globalFrame) {
-		IniFunction function = IniFunction.create(
+		IniFunction function = IniFunction.createStatic(
         		null,
-        		"rootFunction",
+        		ROOT_FUNCTION_NAME,
         		new FrameSlot[] {},
         		topLevelNodes,
         		globalFrame.getFrameDescriptor());
@@ -116,5 +153,11 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	@Override
 	protected boolean isObjectOfLanguage(Object object) {
 		return false;
+	}
+	
+	@Override
+	protected boolean isThreadAccessAllowed(Thread thread,
+            boolean singleThreaded) {
+		return true;
 	}
 }
