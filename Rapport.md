@@ -1,5 +1,14 @@
 # Rapport
 
+## Préambule : remarque sur le fonctionnement d'INI
+
+### timer.ini
+
+Dans le fichier ini/examples/processes/timer.ini, le programme ne va jamais s'arrêter, car même si les
+deux event sont stoppés, il va sans cesse revenir sur la même règle et ne jamais en sortir.
+
+Solution : Mettre un `return` a la fin de la règle `i>10`
+
 ## Explication de quelques points du language
 
 ### IniMain
@@ -47,13 +56,13 @@ Si vous avez un doute sur ce que renvoie votre programme, finissez le par un `re
 
 Les listes en INI sont implémentées grâce à IniList, qui modélise le comportement d'une liste. (Pour l'instant, il sert de wrapper a une ArrayList).
 
-Pour l'instant, il n'y a pas de builtin pour rajouter un élément à la fin
-de la liste, alors il suffit de rajouter un élément a l'index juste après la fin
+Pour l'instant, il n'y a pas de builtin pour rajouter un élément à la fin d'une liste (append).
+La seule manière disponible actuellement pour rajouter un élément à la fin d'une liste, c'est de le faire à la main.
 
 ```
-myList = [1,2]
-myList[2] = 3
-myList == [1,2,3]
+myList = [1,2] // On déclare une liste de deux éléments
+myList[2] = 3 // On rajoute un troisième élément à la liste
+myList == [1,2,3] // true
 ```
 
 En revanche, on ne peut pas encore supprimer un élément.
@@ -61,18 +70,42 @@ En revanche, on ne peut pas encore supprimer un élément.
 De même, il n'y a pas de type check sur les élements de la liste, et une
 même liste peut contenir des éléments de différents types.
 
+### Threads et Process
+
+Problème rencontré : Si on lance deux fois le même process, ils partagent les mêmes instances des rules (pas de soucis), des AtPredicate (idem), et des At (ouch). Donc si on lance deux fois le même process, et que le premier stop ses At, alors le second aura ses At stoppés également, puisque ce sont les mêmes objets.
+
+Solution, faire un nouveau thread à chaque process --> Fonctionne pas mieux, mais au moins, les process marchent en parallèle
+
+Les Process marchent de la même manière qu'il fonctionnaient auparavant, globalement.
+
+La Node Process (ou ProcessCreator) va créer un process et le stocker dans le FunctionRegistry. La Node ProcessExecutor est appellée lorsqu'on invoque le process.
+Elle est responsable de l'instanciation du process en tant que thread. ProcessRunner
+
+#### Comment créer un thread ?
+
+Pour créer un thread, on ne peut pas juste faire `new Thread(myRunnable).start()`. Sinon, le PolyglotEngine va râler. Alors, il faut créer un thread grâce à Truffle. En utilisant la variable Env
+qui est passée au contexe à l'instanciation du language (voir `IniLanguage.createContext(Env env)`), on va faire `env.createThread(myRunnable, env.getContext())`. 
+Le deuxième argument signifie que le Thread va fonctionner avec le même contexte du PolyglotEngine. Ce n'est peut être pas obligatoire, mais je ne suis pas sûr.
+
+Ensuite, il faut se souvenir des threads que tu as commencé, comme ça à la fin, tu peux tous les join dans `IniLanguage.finalizeContext()`.
+
+Oh, et il faut bien utiliser `Thread.start()` et non `Thread.run()`. Ce dernier va juste se contenter de lancer la méthode run du thread, sans l'enregistrer dans le PolyglotEngine (et en plus, ça ne s'executera pas en parallèle)
+
+Voilà ce qui arrivent si on démarre mal les thread `java.lang.IllegalStateException: The language did not complete all polyglot threads but should have: [Thread[Polyglot-INI-0,5,main]]`.
+Dans ce cas, il faut aller regarder la création du Thread Polyglot-Ini-0
+
 ## Quelques fonctionnalités utiles
 
 ### Frame
 
-Les `Frames` et leurs enfants les `VirtualFrame` et les `MaterializedFrame` sont des structures de données données par Truffle qui servent de Stack d'execution. Et en plus elle est optimisée.
+Les `Frames` et leurs enfants les `VirtualFrame` et les `MaterializedFrame` sont des structures de données données par Truffle qui servent de Stack d'execution. Elles permettent d'y stocker des variables pour pouvoir les retrouver plus tard. Et elles sont construites de manière optimisée par rapport à GraalVM.
 
 Les valeurs sont stockées dans des frames avec des clés, ces clés sont des `FrameSlot`. On peut trouver les `FrameSlot` grâce au `FrameDescriptor`
 
 Les `Frame` possèdent un `FrameDescriptor` qui permettra de savoir quels sont les `FrameSlot` utilisés, et quels types de valeurs sont stockées dans la `Frame`
 
 La VirtualFrame, c'est la concretisation de l'interface Frame.  
-La MaterializedFrame, c'est une VirtualFrame qu'on peut stocker dans des attributs ou cast en objet, ou passer dans un for loop sans aucun soucis.
+La MaterializedFrame, c'est une VirtualFrame qu'on peut stocker dans des attributs ou cast en objet, ou passer dans un for loop sans aucun soucis. Seulement, cette frame matérialisée et plus lente que sa soeur virtuele
 
 ### IniContext
 
@@ -106,6 +139,29 @@ l'annotation `@CachedContext(IniLanguage.class)` avant un paramètre dans une fo
         return value;
     }
 ```
+
+### @ExplodeLoop
+
+Les annotations `@ExplodeLoop` peuvent être placées sur des méthodes qui contiennent des boucles avec un nombre d'itération connu à la compilation (celle du JIT compiler, pas la compilation du javac), ce qui est le cas des variables `final` ou `@CompilationFinal`.
+Si le compilateur graal rencontre une telle annotation, il va "dérouler" la boucle, et "inliner" toutes les itérations de la boucle côte à côte.
+Théoriquement, cet inlining permet d'accélerer l'execution, légèrement, puisque il n'y a plus à gerer la boucle.
+
+Par ailleurs, cette annotation est indispensable sur certaines méthodes où il y a un passage de `VirtualFrame` à l'intérieur de la boucle.
+Par exemple, la méthode `execute` de `IniRootNode`. Elle contient une boucle `for` qui execute les différentes `bodyNodes`. Lorsqu'elle execute une bodyNode, elle leur passe sa virtualFrame.
+Et bien, il se trouve que dans Truffle, si tu fais une boucle for, la virtualFrame ne peut pas être utilisée à l'interieur, a moins d'être matérialisée avec `frame.materialize()`. Mais si c'est le cas, elle perd de sa vitesse.
+Alors, grâce à `@ExplodeLoop`, il n'y a techniquement plus de boucle for, ce qui permet d'utiliser la VirtualFrame tranquilement.
+
+### @Child et @Children
+
+Dans un AST, chaque Node peut posséder une ou plusieurs Node enfants. Ce concept est représenté dans Truffle grâce à des annotations `@Child` et `@Children`.
+
+Lorsqu'une Node possède des enfants, ils doivent être déclarés dans ses champs (attributs). Et l'annotation `@Child` doit accompagner la déclaration. Si c'est une array de Nodes, c'est `@Children` qui doit accompagner la déclaration.
+
+Ces annotations permettent à Truffle de construire en interne l'Abstract Syntax Tree, et de faire des optimisations dessus.
+Quand une Node fait partie de l'AST (qu'elle a été découverte par Truffle grâce notamment aux annotations `@Child` et `@Children`), on dit qu'elle est adoptée.
+Il faut faire assez attention à ce que toutes les Nodes de l'AST soient adoptées, sinon, il peut en découler des bugs.
+
+L'Adoption des Nodes est indispensable pour l'utilisation de certaines méthodes. C'est le cas par exemple de la méthode `lookupContextReference(IniLanguage.class)` et de l'annotation `@CachedContext`. Ces méthodes et annotations étant indispensable au bon fonctionnement de INI, il n'est pas possible de retirer les annotations `@Child` et `@Children` afin de comparer les performances avec et sans.
 
 ## Quelles fonctionnalités ralentissent ou accélèrent INI ?
 
@@ -278,15 +334,6 @@ Confidence interval = [479.73599596163913927654 ; 484.26400403836086072346]
 Un seul endroit avec du profiling --> Pas très utile.
 Mais pourra être utile plus tard à d'autres endroits. Tester utilité avec la même méthode.
 
-### @ExplodeLoop
-
-#### Without (Invocation, Function, IniRootNode.create)
-
-Average time over 200 runs : 485  
-Standard deviation = 34.43784255727992028999  
-Error margin = 4.87024640033746136538  
-Confidence interval = [480.12975359966253863462 ; 489.87024640033746136538]  
-
 
 ### @Child et @Children
 
@@ -304,7 +351,7 @@ Et je pense que dans la structure interne du programme, `lookupContextReference`
 
 Si jamais je n'utilisais pas `lookupContextReference`, je pense que je pourrais sûrement retirer toutes ces annotations, et comparer la vitesse. (Malheureusement, je n'ai pas eu le temps de le faire maintenant)
 
-### Les @Specialization
+### Les @Specialization TODO TESTER SANS SPECIALISATION
 
 #### Une seule fois fib(30)
 
@@ -345,7 +392,7 @@ Confidence interval = [473.28780531672226744630 ; 478.71219468327773255370]
 
 ### Listes
 
-#### Avant
+#### Avant une éventuelle optimisation
 
 Average time over 50 runs : 7
 Standard deviation = 2.69814751264640829311
@@ -359,5 +406,15 @@ Standard deviation = 4.07430975749267252494
 Error margin = 1.15238882327103467964
 Confidence interval = [17.84761117672896532036 ; 20.15238882327103467964]
 
+Ce programme ne prend pas assez de temps... Il nous faudrait quelque chose de plus gourmand, comme un bubble sort par exemple ! (TODO)
 
-Ce programme ne prend pas assez de temps... Il nous faudrait quelque chose de plus gourmand, comme un bubble sort par exemple !
+## Règles
+
+Evenements règles.
+Réactif plutôt que de checker à chaque fois eventListener
+
+Remplacer atEvery par un consume en deux temps
+un consume qui consume dans un channel
+et un producer qui produit une data dans le channel tout les tick.
+
+Se focaliser sur produce et consume.
