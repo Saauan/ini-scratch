@@ -1,5 +1,6 @@
 package ini.runtime;
 
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 import ini.ast.AstElement;
@@ -12,12 +13,13 @@ public class IniThread extends Thread {
 	public String atName;
 	static int threadCount = 1;
 	private At at;
-	private VirtualFrame frame;
+	private MaterializedFrame frame;
 
 	public IniThread(At at, AstElement toEval, VirtualFrame frame) {
 		this.toEval = toEval;
 		this.at = at;
-		this.frame = frame;
+		// We need to materialize the frame to store it in a field
+		this.frame = frame.materialize();
 		if ((toEval instanceof Rule) && ((Rule) toEval).atPredicate != null) {
 			this.setName(((Rule) toEval).atPredicate.toString() + ":" + threadCount++);
 		}
@@ -32,6 +34,7 @@ public class IniThread extends Thread {
 			toEval.executeVoid(frame);
 		} catch (IniException e) {
 			try {
+				// Delegate to the process runner
 				at.processRunner.handleException(frame, e);
 			} catch (RuntimeException re) {
 				System.err.println(e);
