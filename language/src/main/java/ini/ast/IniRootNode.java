@@ -1,6 +1,7 @@
 package ini.ast;
 
 import java.util.List;
+import java.util.Map;
 
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -35,6 +36,10 @@ public class IniRootNode extends RootNode {
 	@Override
 	@ExplodeLoop
 	public Object execute(VirtualFrame frame) {
+		// If it is not the root function (main)
+		if(name != IniLanguage.ROOT_FUNCTION_NAME) {
+			setUpGlobalVariables(frame);
+		}
 		AstElement[] s = this.bodyNodes;
 		Object res = 0;
 		final int nbNodes = s.length;
@@ -66,7 +71,20 @@ public class IniRootNode extends RootNode {
 		return res;
 	}
 	
-	public void waitForProcessToEnd(VirtualFrame frame) throws InterruptedException {
+	/*
+	 * Adds all the global variable to the current frame 
+	 */
+	private void setUpGlobalVariables(VirtualFrame frame) {
+		Map<String, Object> globalVariables = lookupContextReference(IniLanguage.class).get().getGlobalVariables();
+		for(Map.Entry<String, Object> globalVariablesEntry : globalVariables.entrySet()) {
+			String name = globalVariablesEntry.getKey();
+			Object value = globalVariablesEntry.getValue();
+			frame.setObject(frame.getFrameDescriptor().findOrAddFrameSlot(name), value);
+		}
+		
+	}
+	
+	private void waitForProcessToEnd(VirtualFrame frame) throws InterruptedException {
 		List<ProcessRunner> startedProcess = lookupContextReference(IniLanguage.class).get().startedProcesses;
 		for (ProcessRunner process : startedProcess) {
 			process.waitForProcessToEnd();

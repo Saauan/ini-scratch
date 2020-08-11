@@ -3,8 +3,10 @@ package ini;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.oracle.truffle.api.Truffle;
@@ -23,6 +25,7 @@ import ini.ast.ReadArgumentFromContextNode;
 import ini.eval.function.BuiltInExecutable;
 import ini.eval.function.PrintFunctionFactory;
 import ini.eval.function.PrintlnFunctionFactory;
+import ini.eval.function.ProduceFunctionFactory;
 import ini.eval.function.SizeFunctionFactory;
 import ini.eval.function.SleepFunctionFactory;
 import ini.eval.function.StopFunctionFactory;
@@ -43,6 +46,9 @@ public class IniContext {
 	/* The global frame is the rootFrame */
 	private final MaterializedFrame globalFrame;
 	private final FrameDescriptor globalFrameDescriptor;
+	/* globalVariable are variables that are available in every frame. They must be set in the root frame
+	 * (name, value) */
+	private Map<String, Object> globalVariables; // TODO make something faster
 
 	private final IniLanguage lang;
 	private final IniFunctionRegistry functionRegistry;
@@ -61,6 +67,7 @@ public class IniContext {
 		this.lang = lang;
 		this.functionRegistry = new IniFunctionRegistry(lang);
 		this.globalFrame = this.initGlobalFrame(lang);
+		this.globalVariables = new HashMap<String, Object>();
 		this.importedFiles = new HashSet<String>();
 		this.env = env;
 		this.startedThreads = new ArrayList<Thread>();
@@ -116,6 +123,19 @@ public class IniContext {
 	public MaterializedFrame getGlobalFrame() {
 		return this.globalFrame;
 	}
+	
+	/**
+	 * When a variable is added, each time a new IniRootNode is created, the new frame will contain the variable
+	 * @param name
+	 * @param value
+	 */
+	public void addGlobalVariable(String name, Object value) {
+		this.globalVariables.put(name, value);
+	}
+	
+	public Map<String, Object> getGlobalVariables(){
+		return this.globalVariables;
+	}
 
 	public static NodeInfo lookupNodeInfo(Class<?> clazz) {
 		if (clazz == null) {
@@ -133,6 +153,7 @@ public class IniContext {
 		MaterializedFrame materializedFrame = frame.materialize();
 		installBuiltin(materializedFrame, PrintFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, PrintlnFunctionFactory.getInstance(), 1);
+		installBuiltin(materializedFrame, ProduceFunctionFactory.getInstance(), 2);
 		installBuiltin(materializedFrame, SleepFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, SizeFunctionFactory.getInstance(), 1);
 		installBuiltin(materializedFrame, StopFunctionFactory.getInstance(), 1);
