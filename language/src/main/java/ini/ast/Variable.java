@@ -1,6 +1,8 @@
 package ini.ast;
 
 import java.io.PrintStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
@@ -9,8 +11,6 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
-
-import ini.parser.IniParser;
 
 /**
  * When executed, returns the value of the variable
@@ -123,11 +123,23 @@ public abstract class Variable extends AstExpression implements VariableAccess {
         return readObject;
     }
     
-    
-
+    /**
+     * If the result a FutureData, it is unwrapped and return, otherwise does nothing
+     * 
+     * @param result
+     * @return
+     */
+	@SuppressWarnings("unchecked")
 	private Object checkFutureData(Object result) {
-		if (result instanceof ProcessReturnValue) {
-			result = ((ProcessReturnValue) result).executeGeneric(null);
+		if (result instanceof Future) {
+			try {
+				result = ((Future<Object>) result).get();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new RuntimeException(e);
+			} catch (ExecutionException e) {
+				// I don't know what to do here
+			}
 		}
 		return result;
 	}
@@ -149,10 +161,5 @@ public abstract class Variable extends AstExpression implements VariableAccess {
 	public void accept(Visitor visitor) {
 		visitor.visitVariable(this);
 	}
-
-//	@Override
-//	public Object executeGeneric(VirtualFrame virtualFrame) {
-//		return readObject(virtualFrame);
-//	}
 	
 }

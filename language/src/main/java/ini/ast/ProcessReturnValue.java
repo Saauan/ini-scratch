@@ -23,8 +23,6 @@ public class ProcessReturnValue extends AstExpression implements Future<Object>{
 
 	@Override
 	public void prettyPrint(PrintStream out) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void setReturnValue(Object value) {
@@ -54,32 +52,31 @@ public class ProcessReturnValue extends AstExpression implements Future<Object>{
 
 	@Override
 	public boolean cancel(boolean arg0) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Object get() throws InterruptedException, ExecutionException {
-		// TODO Auto-generated method stub
-		return null;
+		setSignal.await();
+		assert isReturnValueSet;
+		return this.returnValue;
 	}
 
 	@Override
-	public Object get(long arg0, TimeUnit arg1) throws InterruptedException, ExecutionException, TimeoutException {
-		// TODO Auto-generated method stub
-		return null;
+	public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		setSignal.await(timeout, unit);
+		assert isReturnValueSet;
+		return this.returnValue;
 	}
 
 	@Override
 	public boolean isCancelled() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isDone() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.isReturnValueSet;
 	}
 
 }
