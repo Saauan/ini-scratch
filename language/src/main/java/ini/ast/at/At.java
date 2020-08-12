@@ -82,7 +82,7 @@ public abstract class At extends AstElement{
 		atPredicates.put("every", AtEvery.class);
 //		atPredicates.put("cron", AtCron.class);
 //		atPredicates.put("read_keyboard", AtReadKeyboard.class);
-//		atPredicates.put("consume", AtConsume.class);
+		atPredicates.put("consume", AtConsume.class);
 	}
 
 	public int getId() {

@@ -8,6 +8,7 @@ import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.ProbeNode;
 
 import ini.ast.at.At;
+import ini.ast.at.AtConsume;
 import ini.ast.at.AtEvery;
 
 @GenerateWrapper
@@ -45,6 +46,7 @@ public class AtPredicate extends NamedElement {
 			kind = Kind.INIT;
 		}
 		if (name.equals("consume")) {
+			this.attachedAt = new AtConsume();
 			kind = Kind.CONSUME;
 		}
 		if (name.equals("end")) {
@@ -55,9 +57,11 @@ public class AtPredicate extends NamedElement {
 		}
 		if (name.equals("update")) {
 			kind = Kind.UPDATE;
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 		if (name.equals("update_sync")) {
 			kind = Kind.UPDATE_SYNC;
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 		if (name.equals("every")) {
 			this.attachedAt= new AtEvery();
@@ -65,6 +69,7 @@ public class AtPredicate extends NamedElement {
 		}
 		if (name.equals("cron")) {
 			kind = Kind.CRON;
+			throw new UnsupportedOperationException("Not implemented yet");
 		}
 		if (name.equals("error")) {
 			kind = Kind.ERROR;
