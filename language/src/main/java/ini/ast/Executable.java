@@ -115,6 +115,7 @@ public abstract class Executable extends AstExpression implements Expression {
 		throw new RuntimeException("cannot find matching overload for invocation " + invocation);
 	}
 
+	@Deprecated
 	protected final void setDefaultValue(int parameterIndex, Expression expression) {
 		parameters.get(parameterIndex).defaultValue = expression;
 	}

@@ -33,6 +33,7 @@ public class ProcessExecutor extends AstExpression{
 		ProcessRunner runner = new ProcessRunner(returnValue, frame.materialize(), wrappedProcess);
 		
 		Env env = lookupContextReference(IniLanguage.class).get().getEnv();
+		IniLanguage.LOGGER.debug("Creating a thread in ProcessExecutor");
 		Thread processThread = env.createThread(runner, env.getContext());
 		IniContext context = lookupContextReference(IniLanguage.class).get(); 
 		context.startedThreads.add(processThread);

@@ -1,11 +1,6 @@
 package ini.runtime;
 
 import com.oracle.truffle.api.RootCallTarget;
-import com.oracle.truffle.api.frame.FrameDescriptor;
-import com.oracle.truffle.api.frame.FrameSlot;
-
-import ini.IniLanguage;
-import ini.ast.AstElement;
 
 public abstract class IniExecutable {
 	
