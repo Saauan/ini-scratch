@@ -98,7 +98,6 @@ public class Scanner implements Visitor {
 
 	public void visitChannel(ChannelDeclaration channel) {
 		visitAstElement(channel);
-		scan(channel.typeVariable);
 	}
 
 	public void visitCharLiteral(CharLiteral charLiteral) {

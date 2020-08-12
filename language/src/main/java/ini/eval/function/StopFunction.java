@@ -26,7 +26,7 @@ public abstract class StopFunction extends BuiltInExecutable {
 
 	@Specialization
 	public void stop(ChannelDeclaration channelToTerminate) {
-		ChannelDeclaration channel = (ChannelDeclaration) channelToTerminate;
+//		ChannelDeclaration channel = (ChannelDeclaration) channelToTerminate;
 		try {
 //			BrokerClient.getDefaultInstance(eval.parser.env, channel.visibility == Visibility.GLOBAL).produce(
 //					new Channel<>(channel.mappedName, Data.class, channel.getChannelConfiguration()),

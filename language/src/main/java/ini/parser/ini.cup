@@ -235,11 +235,11 @@ binding ::= DECLARE:d IDENTIFIER:name lambda_opt LPAREN:ft type_list_opt:types R
 
 channel_decl ::= CHANNEL:d visibility:v IDENTIFIER:name LPAREN type_opt:t RPAREN annotations_opt:a
 	{:
-		RESULT = new ChannelDeclaration(name.toString(), (TypeVariable)t, (ChannelDeclaration.Visibility)v, false, (List)a);
+		RESULT = new ChannelDeclaration(name.toString(), (ChannelDeclaration.Visibility)v, false, (List)a);
 	:}
 	| CHANNEL:d visibility:v IDENTIFIER:name LSPAREN RSPAREN LPAREN type_opt:t RPAREN annotations_opt:a
 	{:
-		RESULT = new ChannelDeclaration(name.toString(), (TypeVariable)t, (ChannelDeclaration.Visibility)v, true, (List)a);
+		RESULT = new ChannelDeclaration(name.toString(), (ChannelDeclaration.Visibility)v, true, (List)a);
 	:}
 ;
 
