@@ -37,7 +37,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	public static final String ID = "INI";
 	public static final String MIME_TYPE = "application/x-ini";
 	
-	public static final String ROOT_FUNCTION_NAME = "";
+	public static final String ROOT_FUNCTION_NAME = "root_function:main";
 	
 
 	@Override
@@ -47,13 +47,13 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	
     @Override
     protected void initializeContext(IniContext context) throws Exception {
-       System.err.println("Initializing context");
+    	IniLanguage.LOGGER.debug("Initializing context");
     }
 	
 	@Override
 	protected void finalizeContext(IniContext context) {
         // stop and join all the created Threads
-		System.err.println("Finalizing context");
+		IniLanguage.LOGGER.debug("Finalizing context");
         boolean interrupted = false;
         for (int i = 0; i < context.startedThreads.size();) {
             Thread threadToJoin  = context.startedThreads.get(i);
@@ -74,12 +74,12 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	
 	@Override
     protected void initializeThread(IniContext context, Thread thread) {
-        System.err.println("New thread :" + thread);
+		IniLanguage.LOGGER.debug("New thread :" + thread);
     }
 
     @Override
     protected void disposeThread(IniContext context, Thread thread) {
-        System.err.println("Disposed thread :" + thread);
+    	IniLanguage.LOGGER.debug("Disposed thread :" + thread);
     }
 	
     public static IniContext getCurrentContext() {

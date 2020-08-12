@@ -105,7 +105,7 @@ public abstract class At extends AstElement{
 	}
 
 	public void runThread(Thread thread) {
-		System.err.println("Running thread : " + thread);
+		IniLanguage.LOGGER.debug("Running thread : " + thread);
 		pushThreadInQueue();
 		if (async) {
 			getThreadExecutor().execute(null);
@@ -152,7 +152,7 @@ public abstract class At extends AstElement{
 	public void destroy() {
 		// we stop the executor in another thread in case we are in the tread of
 		// a running task that would prevent proper shutdown
-		System.err.println("Creating a thread in destroy");
+		IniLanguage.LOGGER.debug("Creating a thread in destroy");
 		IniContext context = lookupContextReference(IniLanguage.class).get();
 		Thread destructionThread = context.getEnv().createThread(new Thread() {
 			public void run() {
