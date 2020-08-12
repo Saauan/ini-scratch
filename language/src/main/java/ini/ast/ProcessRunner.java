@@ -85,6 +85,16 @@ public class ProcessRunner implements Runnable {
 
 			// While the rules are not terminated and can be executed, execute them in order
 			do {
+				/* For some reason, when executing ini/channels/timer.ini when all child threads are over, the execution
+				 * blocks for no reason at "boolean atLeastOneRuleExecuted = true", it means that the thread seems to be
+				 * executing normally, but nothing happens.
+				 * 
+				 * When blocking, if we pause in the Eclipse debugger and resume, it unblocks
+				 * If before this hellish line, we put a print, or a sleep, it works as intended
+				 * 
+				 * I did not manage to pinpoint where this bug comes from
+				 * */
+				Thread.sleep(50);
 				boolean atLeastOneRuleExecuted = true;
 				while (atLeastOneRuleExecuted) {
 					atLeastOneRuleExecuted = false;
@@ -106,6 +116,8 @@ public class ProcessRunner implements Runnable {
 		} catch (ReturnException r) {
 			At.destroyAll(ats);
 			res = r.getResult();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		} finally {
 			returnValue.setReturnValue(res);
 			endSignal.countDown();

@@ -11,11 +11,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
-import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.ProbeNode;
 
+import ini.IniContext;
 import ini.IniLanguage;
 import ini.ast.Assignment;
 import ini.ast.AstElement;
@@ -93,25 +93,6 @@ public abstract class At extends AstElement{
 		return terminated;
 	}
 
-	synchronized public void terminate() {
-		terminated = true;
-		// we stop the executor in another thread in case we are in the thread of
-		// a running task that would prevent proper shutdown
-		lookupContextReference(IniLanguage.class).get().getEnv().createThread(new Thread() {
-			public void run() {
-				if (threadExecutor != null) {
-					threadExecutor.shutdown();
-					try {
-						while (!threadExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}, lookupContextReference(IniLanguage.class).get().getEnv().getContext()).start();
-	}
-
 	public void restart(VirtualFrame frame) {
 		terminated = false;
 		threadExecutor = null;
@@ -146,10 +127,34 @@ public abstract class At extends AstElement{
 		return threadExecutor;
 	}
 
+	synchronized public void terminate() {
+		IniContext context = lookupContextReference(IniLanguage.class).get();
+		// we stop the executor in another thread in case we are in the thread of
+		// a running task that would prevent proper shutdown
+		Thread terminationThread = context.getEnv().createThread(new Thread() {
+			public void run() {
+				if (threadExecutor != null) {
+					threadExecutor.shutdown();
+					try {
+						while (!threadExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}, context.getEnv().getContext());
+		context.startedThreads.add(terminationThread);
+		terminationThread.start();
+		terminated = true;
+	}
+	
 	public void destroy() {
 		// we stop the executor in another thread in case we are in the tread of
 		// a running task that would prevent proper shutdown
-		lookupContextReference(IniLanguage.class).get().getEnv().createThread(new Thread() {
+		System.err.println("Creating a thread in destroy");
+		IniContext context = lookupContextReference(IniLanguage.class).get();
+		Thread destructionThread = context.getEnv().createThread(new Thread() {
 			public void run() {
 				if (threadExecutor != null) {
 					if (threadExecutor != null && !threadExecutor.isShutdown()) {
@@ -166,7 +171,15 @@ public abstract class At extends AstElement{
 					}
 				}
 			}
-		}, lookupContextReference(IniLanguage.class).get().getEnv().getContext()).start();
+		}, context.getEnv().getContext());
+		context.startedThreads.add(destructionThread);
+		destructionThread.start();
+		try {
+			destructionThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	synchronized private void pushThread() {
