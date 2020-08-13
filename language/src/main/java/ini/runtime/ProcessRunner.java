@@ -97,7 +97,7 @@ public class ProcessRunner implements Runnable {
 				 * 
 				 * I did not manage to pinpoint where this bug comes from
 				 * */
-				Thread.sleep(50);
+				Thread.sleep(10);
 				boolean atLeastOneRuleExecuted = true;
 				while (atLeastOneRuleExecuted) {
 					atLeastOneRuleExecuted = false;
