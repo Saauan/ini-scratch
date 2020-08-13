@@ -55,7 +55,9 @@ public class Rule extends AstExpression {
 		}
 		out.println(" {");
 		for(int i=0; i<this.statements.length; i++ ) {
+			out.print("   ");
 			statements[i].prettyPrint(out);
+			out.println("");
 		}
 		out.println("  }");
 	}

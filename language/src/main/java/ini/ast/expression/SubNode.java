@@ -42,4 +42,8 @@ public abstract class SubNode extends BinaryNode {
     	throw IniException.typeError(this, left, right);
     }
 
+    @Override
+    public String getSymbol() {
+    	return "-";
+    }
 }

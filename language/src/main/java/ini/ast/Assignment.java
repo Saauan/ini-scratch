@@ -37,6 +37,8 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
 	/* The slot is final for the compiler only */
 	@CompilationFinal
 	private FrameSlot slot;
+	
+	public abstract AstExpression getAssignmentValue();
 
 	@Deprecated
 	public Assignment(VariableAccess assignee) {
@@ -259,7 +261,7 @@ public abstract class Assignment extends AstExpression implements Statement, Exp
 		 * annotation. I would only be able to use its value, if I pass it as a
 		 * parameter of prettyPrint
 		 */
-//		assignment.prettyPrint(out);
+		getAssignmentValue().prettyPrint(out);
 	}
 
 	@Override

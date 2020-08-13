@@ -22,6 +22,14 @@ public class ListExpression extends AstExpression implements Expression {
 
 	@Override
 	public void prettyPrint(PrintStream out) {
+		out.print("[");
+		for(int i=0;i<elements.length;i++) {
+			elements[i].prettyPrint(out);
+			if(i<elements.length-1) {
+				out.print(",");
+			}
+		}
+		out.print("]");
 	}
 
 	@Override

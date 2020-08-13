@@ -42,4 +42,8 @@ public abstract class DivNode extends BinaryNode {
     	throw IniException.typeError(this, left, right);
     }
 
+    @Override
+    public String getSymbol() {
+    	return "/";
+    }
 }

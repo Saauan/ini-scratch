@@ -1,6 +1,7 @@
 package ini.ast;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,9 +55,9 @@ public class Invocation extends AstExpression implements Statement, Expression {
 	@Override
 	@Deprecated
 	public void prettyPrint(PrintStream out) {
-//		out.print(name + "(");
-//		prettyPrintList(out, argumentsNodes, ",");
-//		out.print(")");
+		out.print(name + "(");
+		prettyPrintList(out, Arrays.asList(argumentNodes), ",");
+		out.print(")");
 	}
 
 	@Override

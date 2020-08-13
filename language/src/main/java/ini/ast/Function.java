@@ -37,12 +37,10 @@ public class Function extends Executable {
 		prettyPrintList(out, parameters, ",");
 		out.println(") {");
 		out.println("Not implemented yet");
-//		AstElement[] s = statements;
-//		while (s != null) {
-//			s.get().prettyPrint(out);
-//			out.println();
-//			s = s.next();
-//		}
+		AstElement[] s = statements;
+		for(AstElement statement : s) {
+			statement.prettyPrint(out);
+		}
 		out.println("}");
 	}
 

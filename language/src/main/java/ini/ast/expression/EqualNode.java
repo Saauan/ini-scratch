@@ -79,5 +79,10 @@ public abstract class EqualNode extends BinaryNode {
     protected Object typeError(Object left, Object right) {
     	throw IniException.typeError(this, left, right);
     }
+    
+    @Override
+    public String getSymbol() {
+    	return "==";
+    }
 
 }

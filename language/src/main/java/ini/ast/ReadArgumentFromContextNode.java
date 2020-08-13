@@ -24,6 +24,7 @@ public class ReadArgumentFromContextNode extends AstExpression implements Expres
 
 	@Override
 	public void prettyPrint(PrintStream out) {
+		out.print("arg at index : " + argumentIndex);
 	}
 
 	@Override

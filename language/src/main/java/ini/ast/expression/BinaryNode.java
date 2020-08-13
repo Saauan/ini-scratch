@@ -16,7 +16,10 @@ import ini.ast.Expression;
 @NodeChild("rightNode")
 public abstract class BinaryNode extends AstExpression implements Expression {
 	
-	public static String symbol;
+	public abstract AstExpression getLeftNode();
+	public abstract AstExpression getRightNode();
+	
+	public abstract String getSymbol();
 	
 	public BinaryNode() {
 		super();
@@ -24,7 +27,9 @@ public abstract class BinaryNode extends AstExpression implements Expression {
 	
 	@Override
 	public void prettyPrint(PrintStream out) {
-		out.print("Binary Operator");
+		getLeftNode().prettyPrint(out);
+		out.print(getSymbol());
+		getRightNode().prettyPrint(out);
 	}
 	
 	

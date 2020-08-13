@@ -81,4 +81,9 @@ public abstract class AddNode extends BinaryNode {
     	throw IniException.typeError(this, left, right);
     }
 
+    @Override
+    public String getSymbol() {
+    	return "+";
+    }
+
 }
