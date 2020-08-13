@@ -20,7 +20,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import ini.ast.AstElement;
 import ini.ast.AstExpression;
 import ini.ast.IniRootNode;
-import ini.ast.ProcessRunner;
 import ini.ast.ReadArgumentFromContextNode;
 import ini.eval.function.BuiltInExecutable;
 import ini.eval.function.PrintFunctionFactory;
@@ -31,6 +30,7 @@ import ini.eval.function.SleepFunctionFactory;
 import ini.eval.function.StopFunctionFactory;
 import ini.eval.function.TimeFunctionFactory;
 import ini.runtime.IniFunction;
+import ini.runtime.ProcessRunner;
 
 /**
  * The run-time state of INI during execution. The context is created by the

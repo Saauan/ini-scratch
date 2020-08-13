@@ -11,6 +11,8 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.RootNode;
 
 import ini.IniLanguage;
+import ini.runtime.ProcessRunner;
+import ini.runtime.ReturnException;
 
 /**
  * The Root Node is the root node of an execution tree. It executes a list of

@@ -9,6 +9,7 @@ import com.oracle.truffle.api.instrumentation.ProbeNode;
 
 import ini.IniContext;
 import ini.IniLanguage;
+import ini.runtime.ProcessRunner;
 
 /* That is the class that will be called to execute the process 
  * Wraps a Process Node so as to access its rules */
@@ -44,7 +45,8 @@ public class ProcessExecutor extends AstExpression{
 
 	@Override
 	public void prettyPrint(PrintStream out) {
-		// TODO Auto-generated method stub
+		out.print("executor for process :");
+		wrappedProcess.prettyPrint(out);
 		
 	}
 	

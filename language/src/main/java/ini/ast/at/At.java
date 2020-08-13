@@ -22,9 +22,9 @@ import ini.ast.AstElement;
 import ini.ast.AstExpression;
 import ini.ast.AtPredicate;
 import ini.ast.Expression;
-import ini.ast.ProcessRunner;
 import ini.ast.Rule;
 import ini.ast.Variable;
+import ini.runtime.ProcessRunner;
 
 @GenerateWrapper
 public abstract class At extends AstElement{

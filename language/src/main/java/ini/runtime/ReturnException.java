@@ -1,4 +1,4 @@
-package ini.ast;
+package ini.runtime;
 
 import com.oracle.truffle.api.nodes.ControlFlowException;
 

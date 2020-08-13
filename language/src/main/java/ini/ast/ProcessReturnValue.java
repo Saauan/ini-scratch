@@ -23,6 +23,7 @@ public class ProcessReturnValue extends AstExpression implements Future<Object>{
 
 	@Override
 	public void prettyPrint(PrintStream out) {
+		out.print(returnValue == null ? "Not returned yet" : returnValue);
 	}
 
 	public void setReturnValue(Object value) {
