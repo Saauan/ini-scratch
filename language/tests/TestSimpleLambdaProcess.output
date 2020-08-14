@@ -1,0 +1,7 @@
+init
+ready
+i < 3
+i < 3
+i < 3
+i == 3
+end

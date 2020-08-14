@@ -101,7 +101,8 @@ public class IniRootNode extends RootNode {
 	
 	private void waitForProcessToEnd(VirtualFrame frame) throws InterruptedException {
 		List<ProcessRunner> startedProcess = lookupContextReference(IniLanguage.class).get().startedProcesses;
-		for (ProcessRunner process : startedProcess) {
+		for (int i = 0; i < startedProcess.size(); i++) {
+			ProcessRunner process = startedProcess.get(i);
 			process.waitForProcessToEnd();
 		}
 	}
