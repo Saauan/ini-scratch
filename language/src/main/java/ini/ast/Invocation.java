@@ -10,6 +10,8 @@ import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.IndirectCallNode;
@@ -69,12 +71,19 @@ public class Invocation extends AstExpression implements Statement, Expression {
 	@ExplodeLoop
 	public Object executeGeneric(VirtualFrame virtualFrame) {
 		if (cachedFunction == null) {
+			/* This is probably the first execution of the node, we have to initialize the cachedFunction */
+			
 			/* We are about to change a @CompilationFinal field. */
 			CompilerDirectives.transferToInterpreterAndInvalidate();
-			/* First execution of the node: lookup the function in the function registry. */
-			cachedFunction = this.lookupFunction(getExecutableIdentifier(this.name, this.argumentNodes.length));
+			
+			cachedFunction = this.lookupLambdaFunction(virtualFrame, this.name);
+			
 			if (cachedFunction == null) {
-				throw new IniException(String.format("The function %s was not found", this.name), this);
+				/* It is not a lambda function, lookup as a normal function */
+				cachedFunction = this.lookupFunction(getExecutableIdentifier(this.name, this.argumentNodes.length));
+				if (cachedFunction == null) {
+					throw new IniException(String.format("The function %s was not found", this.name), this);
+				}
 			}
 		}
 
@@ -93,6 +102,28 @@ public class Invocation extends AstExpression implements Statement, Expression {
 		}
 		
 		return this.callNode.call(cachedFunction.callTarget, argumentValues);
+	}
+
+	/**
+	 * Returns the function if found within the frame, if the function is not found, returns null
+	 */
+	private IniExecutable lookupLambdaFunction(VirtualFrame frame, String lambdaName) {
+		IniExecutable function = null;
+		FrameSlot slot = frame.getFrameDescriptor().findFrameSlot(lambdaName);
+		if (slot != null) {
+			Object possibleFunction;
+			try {
+				possibleFunction = frame.getObject(slot);
+			} catch (FrameSlotTypeException e) {
+				throw new IniException(String.format("Cannot invoke %s as a lambda function, it is stored as a different type", lambdaName), this);
+			}
+			if (possibleFunction instanceof IniExecutable) {
+				function = (IniExecutable) possibleFunction;
+			} else {
+				throw new IniException(String.format("Cannot invoke %s as a lambda function, it is stored as a different type", lambdaName), this);
+			}
+		}
+		return function;
 	}
 
 	public IniExecutable lookupFunction(String functionId) {

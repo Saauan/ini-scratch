@@ -10,15 +10,28 @@ import ini.ast.AstElement;
 import ini.ast.IniRootNode;
 
 public class IniFunction extends IniExecutable {
+	
+	/* The current number of lambda functions created */
+	private static int nbLambdas = 0;
 
 	public IniFunction(RootCallTarget callTarget, String name) {
 		super(callTarget, name);
 	}
 	
+	/**
+	 * Returns an IniFunction made with a callTarget (targetting a IniRootNode), and a name
+	 * 
+	 * @param name if the name is null, it is a lambda function
+	 */
 	public static IniFunction createStatic(IniLanguage lang, String name, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
 			FrameDescriptor frameDescriptor) {
 		return new IniFunction(Truffle.getRuntime()
-				.createCallTarget(IniRootNode.create(lang, name, parametersSlots, bodyNodes, frameDescriptor)), name);
+				.createCallTarget(IniRootNode.create(lang,name, parametersSlots, bodyNodes, frameDescriptor)),
+													(name == null) ? getLambdaId() : name);
+	}
+	
+	public static String getLambdaId() {
+		return String.format("lambda_function-%s", nbLambdas);
 	}
 
 }

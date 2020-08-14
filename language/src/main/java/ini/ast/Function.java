@@ -14,7 +14,6 @@ import ini.runtime.IniFunction;
 @NodeInfo(shortName = "function", description = "builds an IniFunction")
 public class Function extends Executable {
 
-	private IniFunction function;
 	@Children
 	public AstElement[] statements;
 	public boolean oneExpressionLambda = false;
@@ -22,10 +21,6 @@ public class Function extends Executable {
 	public Function(String name, List<Parameter> parameters, Sequence<AstElement> statements) {
 		super(name, parameters);
 		this.statements = (AstElement[]) Utils.convertSequenceToArray(statements);
-	}
-
-	public IniFunction getFunction() {
-		return this.function;
 	}
 
 	@Override
@@ -59,9 +54,10 @@ public class Function extends Executable {
 		IniFunction function = IniFunction.createStatic(lookupContextReference(IniLanguage.class).get().getLang(), name,
 				convertListOfParametersToArrayOfFrameSlot(parameters, frameDescriptor), statements, frameDescriptor);
 
-		this.function = function;
-
-		registerFunction(function, getExecutableIdentifier(this.name, this.parameters.size()));
+		/* If we are creating a "normal" function, and not a lambda function, we register it */
+		if(this.name != null) {
+			registerFunction(function, getExecutableIdentifier(this.name, this.parameters.size()));
+		}
 		return function;
 	}
 
