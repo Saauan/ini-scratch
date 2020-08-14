@@ -44,8 +44,9 @@ public abstract class Variable extends AstExpression implements VariableAccess {
 	}
 	
     /**
-     * Returns the descriptor of the accessed local variable. */
-    protected FrameSlot getSlotSafe(VirtualFrame frame) {
+     * Returns the descriptor of the accessed local variable.
+     * Initializes the slot if necessary */
+    public FrameSlot getSlotSafe(VirtualFrame frame) {
     	if(this.slot == null) {
     		CompilerDirectives.transferToInterpreterAndInvalidate();
     		initializeSlot(frame);
