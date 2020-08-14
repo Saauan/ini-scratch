@@ -18,8 +18,6 @@ import ini.runtime.IniProcess;
 @GenerateWrapper
 public class Process extends Executable{
 
-	IniProcess process;
-
 	@Children
 	public Rule[] initRules = new Rule[0];
 	@Children
@@ -119,11 +117,12 @@ public class Process extends Executable{
 		FrameDescriptor frameDescriptor = new FrameDescriptor();
 		IniProcess process = IniProcess.createStatic(lookupContextReference(IniLanguage.class).get().getLang(), name,
 				convertListOfParametersToArrayOfFrameSlot(parameters, frameDescriptor), this, frameDescriptor);
-
-		this.process = process;
-
-		/* Register the process */
-		lookupContextReference(IniLanguage.class).get().getFunctionRegistry().register(getExecutableIdentifier(this.name, this.parameters.size()), process);
+		
+		/* Register the process if it is not a lambda process */
+		if(this.name != null) {
+			lookupContextReference(IniLanguage.class).get().getFunctionRegistry().register(getExecutableIdentifier(this.name, this.parameters.size()), process);
+		}
+		
 		return process;
 
 	}

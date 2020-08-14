@@ -11,6 +11,9 @@ import ini.ast.IniRootNode;
 import ini.ast.ProcessExecutor;
 
 public class IniProcess extends IniExecutable {
+	
+	/* The current number of lambda functions created */
+	private static int nbLambdas = 0;
 
 	public IniProcess(RootCallTarget callTarget, String name) {
 		super(callTarget, name);
@@ -20,7 +23,12 @@ public class IniProcess extends IniExecutable {
 			FrameDescriptor frameDescriptor) {
 		AstElement[] bodyNodes = {new ProcessExecutor(process)};
 		return new IniProcess(Truffle.getRuntime()
-				.createCallTarget(IniRootNode.create(lang, name, parametersSlots, bodyNodes, frameDescriptor)), name);
+				.createCallTarget(IniRootNode.create(lang, name, parametersSlots, bodyNodes, frameDescriptor))
+													, (name == null) ? getLambdaId() : name);
+	}
+	
+	public static String getLambdaId() {
+		return String.format("lambda_process-%s", nbLambdas);
 	}
 
 }
