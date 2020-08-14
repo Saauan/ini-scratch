@@ -69,6 +69,19 @@ public class IniRootNode extends RootNode {
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
+			/* WARNING
+			 * The statement below, return 0, is here only to avoid these kinds of errors
+			 * 
+			 * org.graalvm.polyglot.PolyglotException: java.lang.AssertionError: Language INI returned an invalid return value [yourValue]. Must be an interop value.
+        		at com.oracle.truffle.polyglot.PolyglotContextImpl.eval(PolyglotContextImpl.java:827)
+        		at org.graalvm.polyglot.Context.eval(Context.java:345)
+        		at ini.IniMain.executeSource(IniMain.java:91)
+        		at ini.IniMain.main(IniMain.java:49)
+        		
+        		If you ever plan to implement the InteropLibrary, you really shoud consider removing this statement
+        		as it usually is the last return before the end of the execution of INI.
+        		*/
+			return 0; 
 		}
 		return res;
 	}
