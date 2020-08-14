@@ -17,6 +17,7 @@ import com.oracle.truffle.api.source.Source;
 
 import ini.ast.AstElement;
 import ini.ast.AstNode;
+import ini.ast.Executable;
 import ini.ast.Function;
 import ini.ast.Invocation;
 import ini.parser.IniParser;
@@ -128,7 +129,7 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 	 */
 	public boolean isMainFunctionPresent(IniParser parser) {
 		for (AstNode topLevel : parser.topLevels) {
-			if ((topLevel instanceof Function) && "main".equals(((Function) topLevel).name)) {
+			if ((topLevel instanceof Executable) && "main".equals(((Executable) topLevel).name)) {
 				return true;
 			}
 		}
