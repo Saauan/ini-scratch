@@ -11,6 +11,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+import ini.IniLanguage;
 import ini.ast.AstExpression;
 import ini.ast.Process;
 import ini.ast.ProcessReturnValue;
@@ -28,11 +29,21 @@ public class ProcessRunner implements Runnable {
 	private MaterializedFrame frame;
 	private Process wrappedProcess;
 	private CountDownLatch endSignal = new CountDownLatch(1);
+	public CountDownLatch atHasBeenExecutedSignal;
+	private boolean isReactive = true;
+	public List<Thread> startedThreads = new ArrayList<Thread>();
+
+	// The number of times the rules have been checked
+	private int nbRulesCheck = 0;
 
 	public ProcessRunner(ProcessReturnValue returnValue, MaterializedFrame frame, Process wrappedProcess) {
 		this.returnValue = returnValue;
 		this.frame = frame;
 		this.wrappedProcess = wrappedProcess;
+	}
+	
+	public boolean isReactive() {
+		return isReactive;
 	}
 
 	@Override
@@ -86,26 +97,30 @@ public class ProcessRunner implements Runnable {
 				rule.executeVoid(frame);
 			}
 
-			// While the rules are not terminated and can be executed, execute them in order
-			do {
-				/* For some reason, when executing ini/channels/timer.ini when all child threads are over, the execution
-				 * blocks for no reason at "boolean atLeastOneRuleExecuted = true", it means that the thread seems to be
-				 * executing normally, but nothing happens.
-				 * 
-				 * When blocking, if we pause in the Eclipse debugger and resume, it unblocks
-				 * If before this hellish line, we put a print, or a sleep, it works as intended
-				 * 
-				 * I did not manage to pinpoint where this bug comes from
-				 * */
-				Thread.sleep(10);
-				boolean atLeastOneRuleExecuted = true;
-				while (atLeastOneRuleExecuted) {
-					atLeastOneRuleExecuted = false;
-					for (Rule rule : this.wrappedProcess.rules) {
-						atLeastOneRuleExecuted = rule.executeBoolean(frame) ? true : atLeastOneRuleExecuted;
+			executeRulesWhilePossible();
+			if (ats != null) {
+
+				// While the rules are not terminated and can be executed, execute them in order
+				do {
+					/*
+					 * For some reason, when executing ini/channels/timer.ini when all child threads
+					 * are over, the execution blocks for no reason at
+					 * "boolean atLeastOneRuleExecuted = true", it means that the thread seems to be
+					 * executing normally, but nothing happens.
+					 * 
+					 * When blocking, if we pause in the Eclipse debugger and resume, it unblocks If
+					 * before this hellish line, we put a print, or a sleep, it works as intended
+					 * 
+					 * I did not manage to pinpoint where this bug comes from
+					 */
+					Thread.sleep(10);
+					if (isReactive()) {
+						atHasBeenExecutedSignal = new CountDownLatch(1);
+						atHasBeenExecutedSignal.await();
 					}
-				}
-			} while (!At.checkAllTerminated(ats));
+					executeRulesWhilePossible();
+				} while (!At.checkAllTerminated(ats));
+			}
 
 			// Destroy the ats
 			At.destroyAll(ats);
@@ -114,16 +129,56 @@ public class ProcessRunner implements Runnable {
 			for (Rule rule : this.wrappedProcess.endRules) {
 				rule.executeBoolean(frame);
 			}
+			// Ensures all the threads created in the process are over when the process ends.
+			joinAllThreads();
 		} catch (IniException e) {
 			handleException(frame, e);
 		} catch (ReturnException r) {
 			At.destroyAll(ats);
 			res = r.getResult();
+			joinAllThreads();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+			interruptAllThreads();
 		} finally {
+			System.err.println("The rules were checked " + this.nbRulesCheck + " times");
 			returnValue.setReturnValue(res);
 			endSignal.countDown();
+		}
+	}
+
+	private void executeRulesWhilePossible() {
+		boolean atLeastOneRuleExecuted = true;
+		while (atLeastOneRuleExecuted) {
+			this.nbRulesCheck ++;
+			atLeastOneRuleExecuted = false;
+			for (Rule rule : this.wrappedProcess.rules) {
+				atLeastOneRuleExecuted = rule.executeBoolean(frame) ? true : atLeastOneRuleExecuted;
+			}
+		}
+	}
+	
+	/**
+	 * Ensures all the threads created in the process are over when the process ends.
+	 */
+	private synchronized void joinAllThreads() {
+		IniLanguage.LOGGER.debug("Joining all threads in process " + this);
+		try {
+			for (int i = 0; i < startedThreads.size(); i++) {
+				Thread threadToJoin = startedThreads.get(i);
+				threadToJoin.join();
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			interruptAllThreads();
+		}
+	}
+	
+	private synchronized void interruptAllThreads() {
+		IniLanguage.LOGGER.debug("Interrupting all threads in process " + this);
+		for (int i=0; i<startedThreads.size(); i++) {
+			Thread threadToJoin = startedThreads.get(i);
+			threadToJoin.interrupt();
 		}
 	}
 
@@ -146,5 +201,10 @@ public class ProcessRunner implements Runnable {
 	public void waitForProcessToEnd() throws InterruptedException {
 		this.endSignal.await();
 	}
+	
+	public String toString() {
+		return "Process " + this.wrappedProcess.name;
+	}
+	
 
 }

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
+import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.GenerateWrapper;
 import com.oracle.truffle.api.instrumentation.ProbeNode;
@@ -24,6 +25,7 @@ import ini.ast.AtPredicate;
 import ini.ast.Expression;
 import ini.ast.Rule;
 import ini.ast.Variable;
+import ini.runtime.IniThread;
 import ini.runtime.ProcessRunner;
 
 @GenerateWrapper
@@ -284,5 +286,38 @@ public abstract class At extends AstElement{
 	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
 	    return new AtWrapper(this, probeNode);
 	  }
+
+	protected void createAndRunRuleThread(VirtualFrame frame, At thisAt, Env env, IniContext context) {
+		Thread ruleThread = env.createThread(new IniThread(thisAt, getRule(), frame), env.getContext());
+		context.startedThreads.add(ruleThread);
+		runThread(ruleThread);
+		awakeProcess(env, ruleThread, context);
+	}
+	
+	
+	/*
+	 * Awake the current processRunner in a new Thread so it does not block the execution.
+	 * */
+	synchronized protected void awakeProcess(Env env, Thread threadToJoin, IniContext context) {
+		if (processRunner.isReactive()) {
+			ProcessRunner processToAwake = this.processRunner;
+			Thread joinerThread = env.createThread(new Thread() {
+				public void run() {
+					try {
+						threadToJoin.join();
+					} catch (InterruptedException e) {
+
+					} finally {
+						if(processToAwake.atHasBeenExecutedSignal != null) {
+							processToAwake.atHasBeenExecutedSignal.countDown();
+						}
+						
+					}
+				}
+			}, env.getContext());
+			context.startedThreads.add(joinerThread);
+			runThread(joinerThread);
+		}
+	}
 
 }

@@ -12,7 +12,6 @@ import ini.ast.ChannelDeclaration;
 import ini.ast.ChannelDeclaration.Visibility;
 import ini.broker.BrokerClient;
 import ini.broker.Channel;
-import ini.runtime.IniThread;
 
 public class AtConsume extends At {
 
@@ -67,9 +66,7 @@ public class AtConsume extends At {
 						}
 						IniLanguage.LOGGER.debug("starting event thread for " + AtConsume.this);
 						// Set up the ruleThread
-						ruleThread = env.createThread(new IniThread(this, getRule(), frame), env.getContext());
-						context.startedThreads.add(ruleThread);
-						runThread(ruleThread);
+						createAndRunRuleThread(frame, this, env, context);
 					}
 					return true;
 				}, context);
