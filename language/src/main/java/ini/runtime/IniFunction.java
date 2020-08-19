@@ -25,13 +25,14 @@ public class IniFunction extends IniExecutable {
 	 */
 	public static IniFunction createStatic(IniLanguage lang, String name, FrameSlot[] parametersSlots, AstElement[] bodyNodes,
 			FrameDescriptor frameDescriptor) {
+		String correctName = (name == null) ? getLambdaId() : name;
 		return new IniFunction(Truffle.getRuntime()
-				.createCallTarget(IniRootNode.create(lang,name, parametersSlots, bodyNodes, frameDescriptor)),
-													(name == null) ? getLambdaId() : name);
+				.createCallTarget(IniRootNode.create(lang,correctName, parametersSlots, bodyNodes, frameDescriptor)),
+													correctName);
 	}
 	
 	public static String getLambdaId() {
-		return String.format("lambda_function-%s", nbLambdas);
+		return String.format("lambda_function-%s", nbLambdas ++);
 	}
 
 }
