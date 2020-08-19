@@ -6,9 +6,10 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class Parameter extends NamedElement {
 
-	public Expression defaultValue;
+	public AstExpression defaultValue;
 	
-	public Parameter(String name, Expression defaultValue) {
+	
+	public Parameter(String name, AstExpression defaultValue) {
 		super(name);
 		this.defaultValue = defaultValue;
 	}

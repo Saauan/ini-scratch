@@ -5,14 +5,15 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.profiles.ConditionProfile;
 
 import ini.ast.AstExpression;
+import ini.ast.Visitor;
 import ini.runtime.IniException;
 
 public abstract class ShortCircuitNode extends AstExpression {
 
 	@Child
-	protected AstExpression left;
+	public AstExpression left;
 	@Child
-	protected AstExpression right;
+	public AstExpression right;
 
 	/**
 	 * Short circuits might be used just like a conditional statement it makes sense
@@ -54,4 +55,9 @@ public abstract class ShortCircuitNode extends AstExpression {
 	protected abstract boolean isEvaluateRight(boolean leftValue);
 
 	protected abstract boolean execute(boolean leftValue, boolean rightValue);
+	
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visitShortCiruitNode(this);
+	}
 }

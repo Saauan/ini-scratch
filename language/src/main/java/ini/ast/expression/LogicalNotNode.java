@@ -10,11 +10,14 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import ini.ast.AstExpression;
 import ini.runtime.IniException;
 
-@NodeChild("valueNode")
 @NodeInfo(shortName = "!")
-public abstract class LogicalNotNode extends AstExpression {
+public abstract class LogicalNotNode extends UnaryNode {
 
 	public LogicalNotNode() {
+	}
+	
+	public String getSymbol() {
+		return "!";
 	}
 	
 	@Specialization

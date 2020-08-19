@@ -46,5 +46,9 @@ public class Substraction implements Operation {
 	public Object doOp(Object value) {
 		throw new IniException(String.format("value %s is not compatible with substraction", value), null);
 	}
+	
+	public String toString() {
+		return "-";
+	}
 
 }

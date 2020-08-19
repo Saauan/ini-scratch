@@ -7,14 +7,17 @@ import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-import ini.ast.AstExpression;
 import ini.runtime.IniException;
 
 @NodeChild("valueNode")
 @NodeInfo(shortName = "-")
-public abstract class MinusNode extends AstExpression {
+public abstract class MinusNode extends UnaryNode {
 
 	public MinusNode() {
+	}
+	
+	public String getSymbol() {
+		return "-";
 	}
 	
 	@Specialization

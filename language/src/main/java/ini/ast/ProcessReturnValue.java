@@ -80,4 +80,9 @@ public class ProcessReturnValue extends AstExpression implements Future<Object>{
 		return this.isReturnValueSet;
 	}
 
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visitProcessReturnValue(this);
+	}
+
 }

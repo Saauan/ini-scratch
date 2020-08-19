@@ -2,6 +2,11 @@ package ini.ast;
 
 import java.util.List;
 
+import ini.ast.at.At;
+import ini.ast.expression.BinaryNode;
+import ini.ast.expression.ShortCircuitNode;
+import ini.ast.expression.UnaryNode;
+
 //import ini.eval.function.BoundExecutable;
 
 public class Scanner implements Visitor {
@@ -44,16 +49,20 @@ public class Scanner implements Visitor {
 
 	public void visitArrayAccess(ArrayAccess arrayAccess) {
 		visitAstElement(arrayAccess);
-		scan(arrayAccess.indexExpression);
-		scan(arrayAccess.targetExpression);
+		scan(arrayAccess.getIndex());
+		scan(arrayAccess.getTargetArray());
 	}
 
 	public void visitAssignment(Assignment assignment) {
-//		visitAstElement(assignment);
-//		scan(assignment.assignee);
-//		scan(assignment.assignment);
+		visitAstElement(assignment);
+		scan(assignment.assignee);
+		scan(assignment.getAssignmentValue());
 	}
 
+	public void visitAt(At at) {
+		visitAstElement(at);
+	}
+	
 	public void visitAtBinding(AtBinding atBinding) {
 		visitAstElement(atBinding);
 		scan(atBinding.configurationTypes);
@@ -63,12 +72,19 @@ public class Scanner implements Visitor {
 	public void visitAtPredicate(AtPredicate atPredicate) {
 		visitAstElement(atPredicate);
 		scan(atPredicate.outParameters);
+		scan(atPredicate.attachedAt);
 	}
 
 	public void visitBinaryOperator(BinaryOperator binaryOperator) {
 		visitAstElement(binaryOperator);
 		scan(binaryOperator.left);
 		scan(binaryOperator.right);
+	}
+	
+	public void visitBinaryNode(BinaryNode binaryNode) {
+		visitAstElement(binaryNode);
+		scan(binaryNode.getLeftNode());
+		scan(binaryNode.getRightNode());
 	}
 
 	public void visitBinding(Binding binding) {
@@ -93,7 +109,10 @@ public class Scanner implements Visitor {
 	public void visitCaseStatement(CaseStatement caseStatement) {
 		visitAstElement(caseStatement);
 		scan(caseStatement.cases);
-		scan(caseStatement.defaultStatements);
+		if(caseStatement.defaultStatements != null) {
+			scan(caseStatement.defaultStatements);
+		}
+		
 	}
 
 	public void visitChannel(ChannelDeclaration channel) {
@@ -150,6 +169,10 @@ public class Scanner implements Visitor {
 		visitAstElement(listExpression);
 		scan(listExpression.elements);
 	}
+	
+	public void visitNumberLiteral(NumberLiteral numberLiteral) {
+		visitAstElement(numberLiteral);
+	}
 
 	public void visitParameter(Parameter parameter) {
 		visitAstElement(parameter);
@@ -167,8 +190,22 @@ public class Scanner implements Visitor {
 		scan(process.atRules);
 		scan(process.errorRules);
 		scan(process.endRules);
+		scan(process.readyRules);
 	}
 
+	public void visitProcessExecutor(ProcessExecutor processExecutor) {
+		visitAstElement(processExecutor);
+		scan(processExecutor.wrappedProcess);
+	}
+	
+	public void visitProcessReturnValue(ProcessReturnValue processReturnValue) {
+		visitAstElement(processReturnValue);
+	}
+	
+	public void visitReadArgumentFromContextNode(ReadArgumentFromContextNode readArgumentFromContextNode) {
+		visitAstElement(readArgumentFromContextNode);
+	}
+	
 	public void visitReturnStatement(ReturnStatement returnStatement) {
 		visitAstElement(returnStatement);
 		scan(returnStatement.valueNode);
@@ -178,7 +215,8 @@ public class Scanner implements Visitor {
 		visitAstElement(rule);
 		scan(rule.synchronizedAtsNames);
 		scan(rule.guard);
-		scan((AstElement[]) rule.statements); //FIX: dirty cast
+		scan(rule.statements); //FIX: dirty cast
+		scan(rule.atPredicate);
 	}
 
 	public void visitSetConstructor(SetConstructor setConstructor) {
@@ -196,6 +234,12 @@ public class Scanner implements Visitor {
 		visitAstElement(setExpression);
 		scan(setExpression.set);
 		scan(setExpression.expression);
+	}
+	
+	public void visitShortCiruitNode(ShortCircuitNode shortCircuitNode) {
+		visitAstElement(shortCircuitNode);
+		scan(shortCircuitNode.left);
+		scan(shortCircuitNode.right);
 	}
 
 	public void visitStringLiteral(StringLiteral stringLiteral) {
@@ -223,6 +267,11 @@ public class Scanner implements Visitor {
 	public void visitUnaryOperator(UnaryOperator unaryOperator) {
 		visitAstElement(unaryOperator);
 		scan(unaryOperator.operand);
+	}
+	
+	public void visitUnaryNode(UnaryNode unaryNode) {
+		visitAstElement(unaryNode);
+		scan(unaryNode.getValueNode());
 	}
 
 	public void visitUserType(UserType userType) {

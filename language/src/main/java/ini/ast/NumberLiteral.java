@@ -22,5 +22,10 @@ public class NumberLiteral extends AstExpression implements Expression {
 	public Number executeGeneric(VirtualFrame virtualFrame) {
 		return value;
 	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visitNumberLiteral(this);
+	}
 	
 }

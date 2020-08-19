@@ -25,6 +25,7 @@ import ini.ast.AtPredicate;
 import ini.ast.Expression;
 import ini.ast.Rule;
 import ini.ast.Variable;
+import ini.ast.Visitor;
 import ini.runtime.IniThread;
 import ini.runtime.ProcessRunner;
 
@@ -43,7 +44,6 @@ public abstract class At extends AstElement{
 	private AtPredicate atPredicate;
 	/* The class actually performing the execution of the process */
 	public ProcessRunner processRunner;
-	/* TODO : Never changed, useful ? */
 	private boolean async = false;
 
 	public At() {
@@ -318,6 +318,11 @@ public abstract class At extends AstElement{
 			context.startedThreads.add(joinerThread);
 			runThread(joinerThread);
 		}
+	}
+	
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visitAt(this);
 	}
 
 }

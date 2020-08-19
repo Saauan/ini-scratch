@@ -13,29 +13,22 @@ import ini.ast.Visitor;
  * "right"). For concrete subclasses of this class, the Truffle DSL creates two child fields, and
  * the necessary constructors and logic to set them.
  */
-@NodeChild("leftNode")
-@NodeChild("rightNode")
-public abstract class BinaryNode extends AstExpression implements Expression {
+@NodeChild("valueNode")
+public abstract class UnaryNode extends AstExpression implements Expression {
 	
-	public abstract AstExpression getLeftNode();
-	public abstract AstExpression getRightNode();
+	public abstract AstExpression getValueNode();
 	
 	public abstract String getSymbol();
 	
-	public BinaryNode() {
-		super();
-	}
-	
 	@Override
 	public void prettyPrint(PrintStream out) {
-		getLeftNode().prettyPrint(out);
+		getValueNode().prettyPrint(out);
 		out.print(getSymbol());
-		getRightNode().prettyPrint(out);
 	}
 	
 	@Override
 	public void accept(Visitor visitor) {
-		visitor.visitBinaryNode(this);
+		visitor.visitUnaryNode(this);
 	}
 	
 

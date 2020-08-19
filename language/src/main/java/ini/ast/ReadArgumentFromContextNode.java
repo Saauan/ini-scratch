@@ -7,6 +7,8 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 /**
  * Reads an argument from the frame's argument at a specific index and returns
  * it
+ * 
+ * It is used by IniRootNode when creating a new function
  */
 public class ReadArgumentFromContextNode extends AstExpression implements Expression {
 
@@ -20,6 +22,7 @@ public class ReadArgumentFromContextNode extends AstExpression implements Expres
 
 	@Override
 	public void accept(Visitor visitor) {
+		visitor.visitReadArgumentFromContextNode(this);
 	}
 
 	@Override

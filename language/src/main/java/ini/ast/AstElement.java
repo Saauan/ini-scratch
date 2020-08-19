@@ -55,11 +55,6 @@ public abstract class AstElement extends Node implements AstNode, Instrumentable
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		System.out.println("DEBUG : No visitor accepted, default method in AstElement"); // TODO
-	}
-
-	@Override
 	public String toString() {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		prettyPrint(new PrintStream(os));

@@ -47,4 +47,8 @@ public class Addition implements Operation {
 		throw new IniException(String.format("value %s is not compatible with addition", value), null);
 	}
 
+	public String toString() {
+		return "+";
+	}
+	
 }

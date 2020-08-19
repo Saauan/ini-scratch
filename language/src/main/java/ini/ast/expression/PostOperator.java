@@ -3,7 +3,6 @@ package ini.ast.expression;
 import java.io.PrintStream;
 
 import com.oracle.truffle.api.dsl.Fallback;
-import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -16,12 +15,9 @@ import ini.runtime.IniException;
 /**
  * Things like -- or ++ that change the value and change the value in the frame
  */
-@NodeChild("valueNode")
-public abstract class PostOperator extends AstExpression {
+public abstract class PostOperator extends UnaryNode {
 	
 	private final Operation operation;
-	
-	protected abstract AstExpression getValueNode();
 	
 	public PostOperator(Operation operation) {
 		this.operation = operation;
@@ -42,7 +38,11 @@ public abstract class PostOperator extends AstExpression {
 	}
 	
 	public void prettyPrint(PrintStream out) {
-		
+		out.println("PostOperator");
+	}
+	
+	public String getSymbol() {
+		return this.operation.toString()+this.operation.toString();
 	}
 	
 	@Specialization

@@ -116,7 +116,7 @@ public abstract class Executable extends AstExpression implements Expression {
 	}
 
 	@Deprecated
-	protected final void setDefaultValue(int parameterIndex, Expression expression) {
+	protected final void setDefaultValue(int parameterIndex, AstExpression expression) {
 		parameters.get(parameterIndex).defaultValue = expression;
 	}
 

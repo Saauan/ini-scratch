@@ -17,7 +17,7 @@ import ini.runtime.ProcessRunner;
 public class ProcessExecutor extends AstExpression{
 	
 	@Child
-	private Process wrappedProcess;
+	public Process wrappedProcess;
 
 	public ProcessExecutor(Process wrappedProcess) {
 		this.wrappedProcess = wrappedProcess;
@@ -53,4 +53,10 @@ public class ProcessExecutor extends AstExpression{
 	@Override public WrapperNode createWrapper(ProbeNode probeNode) {
 	    return new ProcessExecutorWrapper(this, probeNode);
 	  }
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visitProcessExecutor(this);
+		
+	}
 }
