@@ -44,6 +44,20 @@ $ mvn clean package
 $ ./run_ini {target_file} 
 ```
 
+## For Docker users
+
+To use a graalVM image, you should use the standard `oracle/graalvm-ce image`  
+
+If you want to build a container with the ini folder in it, I advise you do this :
+
+If you are on windows :
+
+`docker run -it -v %cd%:/ini_volume --name graal-container --entrypoint "sh" oracle/graalvm-ce`
+
+If you are on Linux :
+
+`docker run -it -v $(pwd) --name graal-container --entrypoint "sh" oracle/graalvm-ce`
+
 # Examples
 
 The goal of these examples is to give a first overview of the INI syntax and semantics. Download the full [INI language specifications](https://github.com/cincheo/ini/raw/master/doc/ini_language_specs/ini_language_specs.pdf). Other examples can be found [here](https://github.com/cincheo/ini/tree/master/ini/examples).

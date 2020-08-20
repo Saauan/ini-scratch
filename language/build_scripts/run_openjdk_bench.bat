@@ -1,1 +1,0 @@
-docker run -it --rm -v %cd%:/ini_volume saauan/ini-bench:openjdk
