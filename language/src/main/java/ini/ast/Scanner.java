@@ -9,6 +9,9 @@ import ini.ast.expression.UnaryNode;
 
 //import ini.eval.function.BoundExecutable;
 
+/**
+ * Scans a node, and all its children
+ */
 public class Scanner implements Visitor {
 
 	public Scanner scan(AstNode node) {
@@ -35,7 +38,7 @@ public class Scanner implements Visitor {
 		return this;
 	}
 	
-	private <T extends AstNode> Scanner scan(AstElement[] array) {
+	protected <T extends AstNode> Scanner scan(AstElement[] array) {
 		int nbElements = array.length;
 		for(int i=0; i<nbElements; i++) {
 			scan(array[i]);
@@ -191,6 +194,7 @@ public class Scanner implements Visitor {
 		scan(process.errorRules);
 		scan(process.endRules);
 		scan(process.readyRules);
+		scan(process.rules);
 	}
 
 	public void visitProcessExecutor(ProcessExecutor processExecutor) {

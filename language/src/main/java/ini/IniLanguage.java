@@ -20,6 +20,8 @@ import ini.ast.AstNode;
 import ini.ast.Executable;
 import ini.ast.Function;
 import ini.ast.Invocation;
+import ini.ast.Scanner;
+import ini.ast.VariableAnalyser;
 import ini.parser.IniParser;
 import ini.runtime.IniFunction;
 
@@ -104,6 +106,8 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 			}
 		}
 		
+		analyseProcessRulesVariables(parser);
+		
 		MaterializedFrame globalFrame = getCurrentContext().getGlobalFrame();
 		/* If there is a main, we just add a call to the main function at the end of the program */
 		if(isMainFunctionPresent(parser)) {
@@ -113,6 +117,14 @@ public class IniLanguage extends TruffleLanguage<IniContext>{
 		IniFunction root = wrapNodesAndCreateCallTarget(topLevelNodes, globalFrame);
         return root.callTarget;
     }
+
+    /**
+     * Analyses the parsed AST for variables used in process rules and adds them to the IniContext
+     */
+	private void analyseProcessRulesVariables(IniParser parser) {
+		Scanner scanner = new VariableAnalyser(getCurrentContext().varWatcher);
+		scanner.scan(parser.topLevels);
+	}
 
 	private IniFunction wrapNodesAndCreateCallTarget(AstElement[] topLevelNodes, MaterializedFrame globalFrame) {
 		IniFunction function = IniFunction.createStatic(

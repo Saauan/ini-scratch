@@ -49,12 +49,16 @@ public class IniContext {
 	/* globalVariable are variables that are available in every frame. They must be set in the root frame
 	 * (name, value) */
 	private Map<String, Object> globalVariables; // TODO make something faster
-
-	private final IniLanguage lang;
 	private final IniFunctionRegistry functionRegistry;
+	
+	public final VariableWatcher varWatcher;
+	
+	private final IniLanguage lang;
+	
 	private final InputStream in;
 	private final PrintWriter out;
 	private TruffleLanguage.Env env;
+	
 	
 	private final Set<String> importedFiles;
 	public List<Thread> startedThreads;
@@ -66,6 +70,7 @@ public class IniContext {
 		this.out = new PrintWriter(env.out(), true);
 		this.lang = lang;
 		this.functionRegistry = new IniFunctionRegistry(lang);
+		this.varWatcher = new VariableWatcher(); 
 		this.globalFrame = this.initGlobalFrame(lang);
 		this.globalVariables = new HashMap<String, Object>();
 		this.importedFiles = new HashSet<String>();
