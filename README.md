@@ -56,7 +56,7 @@ If you are on windows :
 
 If you are on Linux :
 
-`docker run -it -v $(pwd) --name graal-container --entrypoint "sh" oracle/graalvm-ce`
+`docker run -it -v $(pwd):/ini_volume --name graal-container --entrypoint "sh" oracle/graalvm-ce`
 
 # Examples
 
