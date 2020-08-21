@@ -34,7 +34,7 @@ public abstract class SubNode extends BinaryNode {
     
     @Specialization
     protected byte sub(byte left, byte right) {
-    	return (byte) (left - right); // TODO check if optimal
+    	return (byte) (left - right);
     }
 
     @Fallback

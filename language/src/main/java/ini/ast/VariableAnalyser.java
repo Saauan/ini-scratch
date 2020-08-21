@@ -33,7 +33,7 @@ public class VariableAnalyser extends Scanner {
 	@Override
 	public void visitVariable(Variable variable) {
 		if(lookingForVariable) {
-			System.err.println(String.format("Watching variable %s, for rule %s", variable.name, ruleToAssociate));
+//			System.err.println(String.format("Watching variable %s, for rule %s", variable.name, ruleToAssociate));
 			watcher.watchVariable(variable.name, ruleToAssociate);
 		}
 		super.visitVariable(variable);

@@ -34,7 +34,7 @@ public abstract class DivNode extends BinaryNode {
     
     @Specialization
     protected byte div(byte left, byte right) {
-    	return (byte) (left / right); // TODO check if optimal
+    	return (byte) (left / right);
     }
 
     @Fallback

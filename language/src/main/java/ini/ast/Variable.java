@@ -118,7 +118,7 @@ public abstract class Variable extends AstExpression implements VariableAccess {
         }
         Object readObject = FrameUtil.getObjectSafe(frame, getSlot());
         if (readObject == null) {
-        	System.err.println(String.format("Warning : %s value is null", this.name)); // TODO remove eventually
+        	System.err.println(String.format("Warning : %s value is null and null is not a type recognised by INI", this.name)); // TODO remove eventually
         }
         readObject = checkFutureData(readObject);
         return readObject;

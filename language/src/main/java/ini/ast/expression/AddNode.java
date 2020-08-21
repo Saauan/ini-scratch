@@ -51,7 +51,7 @@ public abstract class AddNode extends BinaryNode {
     
     @Specialization
     protected byte add(byte left, byte right) {
-    	return (byte) (left + right); // TODO check if optimal
+    	return (byte) (left + right);
     }
 
     /**

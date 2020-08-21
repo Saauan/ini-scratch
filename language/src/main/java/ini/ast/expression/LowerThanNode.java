@@ -6,7 +6,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 import ini.runtime.IniException;
 
-//TODO use comparable interface ?
 @NodeInfo(shortName = "<")
 public abstract class LowerThanNode extends BinaryNode {
 

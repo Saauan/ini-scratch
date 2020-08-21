@@ -48,7 +48,7 @@ public class IniContext {
 	private final FrameDescriptor globalFrameDescriptor;
 	/* globalVariable are variables that are available in every frame. They must be set in the root frame
 	 * (name, value) */
-	private Map<String, Object> globalVariables; // TODO make something faster
+	private Map<String, Object> globalVariables;
 	private final IniFunctionRegistry functionRegistry;
 	
 	public final VariableWatcher varWatcher;

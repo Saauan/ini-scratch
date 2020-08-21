@@ -32,7 +32,6 @@ import ini.runtime.ProcessRunner;
 @GenerateWrapper
 public abstract class At extends AstElement{
 	protected boolean terminated = false;
-	/* TODO : Useful ? */
 	public static Map<String, Class<? extends At>> atPredicates = new HashMap<String, Class<? extends At>>();
 	/* TODO : Useful ? */
 	public List<At> synchronizedAts = new ArrayList<At>();
@@ -179,7 +178,7 @@ public abstract class At extends AstElement{
 		try {
 			destructionThread.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			Thread.currentThread.interrupt();
 			e.printStackTrace();
 		}
 	}

@@ -34,7 +34,7 @@ public abstract class MulNode extends BinaryNode {
     
     @Specialization
     protected byte mul(byte left, byte right) {
-    	return (byte) (left * right); // TODO check if optimal
+    	return (byte) (left * right);
     }
 
     @Fallback

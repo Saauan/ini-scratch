@@ -129,7 +129,7 @@ public class BinaryOperator extends AstExpression implements Expression {
 
 	@Override
 	public Object executeGeneric(VirtualFrame virtualFrame) {
-		// TODO Auto-generated method stub
+		executeVoid(frame);
 		return null;
 	}
 }

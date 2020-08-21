@@ -19,7 +19,6 @@ public abstract class SleepFunction extends BuiltInExecutable {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			// BUG : Throw runtimeException ?
 		}
 		return millis;
 	}

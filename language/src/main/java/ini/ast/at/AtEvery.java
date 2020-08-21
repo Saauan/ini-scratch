@@ -18,12 +18,13 @@ public class AtEvery extends At {
 		At thisAt = this;
 		Env env = lookupContextReference(IniLanguage.class).get().getEnv();
 		IniContext context = lookupContextReference(IniLanguage.class).get();
+		assert(getInContext().get("time") instanceof int) : "time should be an integer";
 		mainThread = env.createThread(new Thread() {
 			@Override
 			public void run() {
 				do {
 					try {
-						sleep((int) getInContext().get("time")); // BUG : Cast to int, may have issues later
+						sleep((int) getInContext().get("time"));
 					} catch (InterruptedException e) {
 						break;
 					}
